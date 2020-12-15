@@ -4,7 +4,7 @@ set relativenumber
 set numberwidth=2
 
 " BACKUPDIR:
-set backupdir=~/.local/share/nvim//backup
+set backupdir=~/.local/share/nvim/backup
 
 " - Use " for different registers
 "   e.g. "a,  "b, "+(system clipboard) 
