@@ -2,11 +2,15 @@
 # fish, vim/nvim/nvim-nightly, pynvim/pyvim, exa, tmux, git, screenfetch, bat, python(pip - pylint, autopep8),
 # Hack font, noto-fonts-emoji, fd, fzf, lazygit, ranger, ranger_devicons, ctags, ripgrep, luarocks
 
+# git config --global user.email "rkdeshdeepak1@gmail.com"
+# git config --global user.name "Deshdeepak"
+# git config --global credential.helper cache/store
 set fish_greeting
 
 # Dot files management
 alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 #dotfiles config status.showUntrackedFiles no
+#dotfiles config --local credential.helper cache/store
 #git --git-dir=$HOME/.dotfiles --work-tree=$HOME config --local core.worktree $HOME
 alias dvim="env GIT_DIR=$HOME/.dotfiles GIT_WORK_TREE=$HOME vim"
 
