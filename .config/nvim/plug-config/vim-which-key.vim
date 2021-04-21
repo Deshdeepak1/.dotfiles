@@ -27,6 +27,8 @@ let g:which_key_map['ss'] = [ ':source %', 'Source']
 let g:which_key_map['Q'] = [ ':quitall!', 'ForceQuit']
 let g:which_key_map['o'] = [ ':only', 'OnlyWindow']
 let g:which_key_map['H'] = [ ':vert help', 'Help']
+let g:which_key_map['h'] = 'HSplit'
+let g:which_key_map['v'] = 'VSplit'
 
 " Double Mappings:
 let g:which_key_map['sq'] = [ ':wq', 'Save&Quit']
