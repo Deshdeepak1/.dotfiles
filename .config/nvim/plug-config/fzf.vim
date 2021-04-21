@@ -19,7 +19,7 @@ map <M-b> :Buffers<CR>
 
 " F is for FZF
 let g:which_key_map.F = {
-    \ 'name' : '+FIZF',
+    \ 'name' : '+FZF',
     \ 'f' : [':Files', 'Files'],
     \ 'b' : [':Buffers', 'Buffers'],
     \ 'r' : [':Rg', 'RipGrep'],

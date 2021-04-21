@@ -17,8 +17,11 @@ let g:signify_sign_show_text = 1
 "nmap <leader>gJ 9999<leader>gJ
 "nmap <leader>gK 9999<leader>gk
 
-nnoremap <leader>gc :G commit -m<Space>
+nnoremap <leader>gc :G commit -m ""
 nnoremap <leader>gaa :G add<Space>
+nnoremap <leader>gm :GMove<Space>
+nnoremap <leader>gb :G branch<Space>
+nnoremap <leader>gC :G checkout<Space>
 
 " g is for git
 let g:which_key_map.g = {
@@ -31,13 +34,20 @@ let g:which_key_map.g = {
     \ 'aa' : 'CustAdd',
     \ 'a' : [':Gw', 'Add'],
     \ 'A' : [':G add .', 'AddCDir'],
-    \ 'l' : [':Gclog', 'Log'],
-    \ 'b' : [':G blame', 'Blame'],
-    \ 'p' : [':G push', 'Push'],
+    \ 'r' : [':GDelete', 'Remove'],
+    \ 'R' : [':GRename', 'Rename'],
+    \ 'm' : 'Move',
     \ 'c' : 'Commit',
-    \ 'cc' : [':GV!', 'Commits'],
-    \ 'C' : [':GV', 'AllCommits'],
+    \ 'p' : [':G push', 'Push'],
+    \ 'P' : [':G pull', 'Pull'],
+    \ 'f' : [':G fetch', 'Fetch'],
+    \ 'l' : [':Gclog', 'Log'],
+    \ 'b' : 'Branch',
+    \ 'C' : 'Checkout',
+    \ 'bb' : [':G blame', 'Blame'],
     \ 'B' : [':GBrowse', 'Browse'],
+    \ 'cc' : [':GV!', 'Commits'],
+    \ 'CC' : [':GV', 'AllCommits'],
   \ }
 
 " If you like colors instead
