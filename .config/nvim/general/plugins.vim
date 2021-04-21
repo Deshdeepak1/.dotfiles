@@ -1,6 +1,5 @@
 call plug#begin('~/.local/share/nvim/plugged')
 
-Plug 'gruvbox-community/gruvbox'
 Plug 'tpope/vim-surround'
 Plug 'mg979/vim-visual-multi'
 Plug 'neoclide/coc.nvim'
@@ -27,7 +26,6 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 " FZF:
-Plug 'joshdick/onedark.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
@@ -36,6 +34,10 @@ Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
+
+" Themes:
+Plug 'gruvbox-community/gruvbox'
+Plug 'joshdick/onedark.vim'
 
 call plug#end()
 
