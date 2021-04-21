@@ -12,12 +12,6 @@ set softtabstop=4
 " VIOFF
 set nocompatible
 
-" ARROWS OFF:
-noremap <Up> <Nop>
-noremap <Down> <Nop>
-noremap <Left> <Nop>
-noremap <Right> <Nop>
-
 syntax enable
 set mouse=a
 set smartindent
@@ -32,8 +26,9 @@ set undofile
 set incsearch
 set scrolloff=8
 set termguicolors
-set updatetime=300
+set updatetime=100
 set cursorline
+set signcolumn=yes
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c

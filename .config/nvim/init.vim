@@ -1,9 +1,9 @@
 " - Use " for different registers
 "   e.g. "a,  "b, "+(system clipboard)
 
+source ~/.config/nvim/general/mappings.vim
 source ~/.config/nvim/general/settings.vim
 source ~/.config/nvim/general/plugins.vim
-source ~/.config/nvim/general/mappings.vim
 source ~/.config/nvim/general/misc.vim
 source ~/.config/nvim/general/snippets.vim
 
