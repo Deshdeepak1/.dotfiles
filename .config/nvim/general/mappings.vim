@@ -7,6 +7,11 @@ nnoremap <leader>v :vsplit<Space>
 "" Tab Open:
 nnoremap <leader>n :tabnew<Space>
 
+" File Open:
+" gf - NewTab, gF - Same
+nnoremap gf <C-W>gf
+vnoremap gf <C-W>gf
+
 " Split Navigations:
 map <C-h> <C-w>h
 map <C-j> <C-w>j

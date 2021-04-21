@@ -27,6 +27,7 @@ let g:which_key_map['ss'] = [ ':source %', 'Source']
 let g:which_key_map['Q'] = [ ':quitall!', 'ForceQuit']
 let g:which_key_map['o'] = [ ':only', 'OnlyWindow']
 let g:which_key_map['H'] = [ ':vert help', 'Help']
+let g:which_key_map['d'] = [ ':call DVim()', 'DVim']
 let g:which_key_map['h'] = 'HSplit'
 let g:which_key_map['v'] = 'VSplit'
 let g:which_key_map['n'] = 'NewTab'

@@ -35,3 +35,8 @@ let g:which_key_map.S = {
     \ 'S' : [':Startify', 'Startify'],
     \ 'D' : [':StartifyDebug', 'StartifyDebug'],
   \ }
+
+autocmd User StartifyReady nnoremap d :call DVim()<CR>
+autocmd User StartifyBufferOpened nnoremap d <Nop>
+
+let g:startify_custom_footer = startify#pad(['[d]  DVim'])
