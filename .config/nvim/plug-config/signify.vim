@@ -20,7 +20,6 @@ let g:signify_sign_show_text = 1
 nnoremap <leader>gaa :G add<Space>
 nnoremap <leader>gm :GMove<Space>
 nnoremap <leader>gb :G branch<Space>
-nnoremap <leader>gC :G checkout<Space>
 
 " g is for git
 let g:which_key_map.g = {
@@ -28,8 +27,8 @@ let g:which_key_map.g = {
     \ 'h' : [':SignifyToggleHighlight', 'Highlight'],
     \ 't' : [':SignifyToggle', 'Toggle'],
     \ 's' : [':G', 'Status'],
-    \ 'd' : [':G diff', 'Diff'],
-    \ 'D' : [':SignifyDiff', 'DiffSplit'],
+    \ 'd' : [':Gdiffsplit', 'DiffSplit'],
+    \ 'D' : [':G diff', 'Diff'],
     \ 'aa' : 'CustAdd',
     \ 'a' : [':Gw', 'Add'],
     \ 'A' : [':G add .', 'AddCDir'],
@@ -42,7 +41,7 @@ let g:which_key_map.g = {
     \ 'f' : [':G fetch', 'Fetch'],
     \ 'l' : [':Gclog', 'Log'],
     \ 'b' : 'Branch',
-    \ 'C' : 'Checkout',
+    \ 'C' : [':GCheckout', 'Checkout'],
     \ 'bb' : [':G blame', 'Blame'],
     \ 'B' : [':GBrowse', 'Browse'],
     \ 'cc' : [':GV!', 'Commits'],

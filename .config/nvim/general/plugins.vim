@@ -28,6 +28,7 @@ Plug 'vim-airline/vim-airline-themes'
 " FZF:
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'stsewd/fzf-checkout.vim'
 
 " Telescope:
 Plug 'nvim-lua/popup.nvim'
