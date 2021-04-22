@@ -17,7 +17,6 @@ let g:signify_sign_show_text = 1
 "nmap <leader>gJ 9999<leader>gJ
 "nmap <leader>gK 9999<leader>gk
 
-nnoremap <leader>gc :G commit -m ""
 nnoremap <leader>gaa :G add<Space>
 nnoremap <leader>gm :GMove<Space>
 nnoremap <leader>gb :G branch<Space>
@@ -37,7 +36,7 @@ let g:which_key_map.g = {
     \ 'r' : [':GDelete', 'Remove'],
     \ 'R' : [':GRename', 'Rename'],
     \ 'm' : 'Move',
-    \ 'c' : 'Commit',
+    \ 'c' : [':G commit', 'Commit'],
     \ 'p' : [':G push', 'Push'],
     \ 'P' : [':G pull', 'Pull'],
     \ 'f' : [':G fetch', 'Fetch'],
