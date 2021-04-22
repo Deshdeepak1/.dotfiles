@@ -68,6 +68,7 @@ lua require'plug-colorizer'
 " Gruvbox
 colorscheme gruvbox
 highlight Normal ctermbg=None guibg=None
+hi HighlightedyankRegion cterm=bold gui=bold ctermbg=0 guibg=Grey
 
 " Onedark
 "colorscheme onedark

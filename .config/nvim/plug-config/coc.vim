@@ -1,4 +1,4 @@
-let g:coc_global_extensions = ['coc-pairs', 'coc-git', 'coc-json', 'coc-pyright', 'coc-explorer', 'coc-lua', 'coc-snippets']
+let g:coc_global_extensions = ['coc-pairs', 'coc-git', 'coc-json', 'coc-pyright', 'coc-explorer', 'coc-lua', 'coc-snippets', 'coc-marketplace', 'coc-yank']
 
 " Remap for rename current word
 nmap <F2> <Plug>(coc-rename)
@@ -112,6 +112,8 @@ nnoremap <silent><nowait> <space>Ca  :<C-u>CocList diagnostics<cr>
 nnoremap <silent><nowait> <space>Cx  :<C-u>CocList extensions<cr>
  "Show commands.
 nnoremap <silent><nowait> <space>Cc  :<C-u>CocList commands<cr>
+ "Show marketplace.
+nnoremap <silent><nowait> <space>Cm  :<C-u>CocList marketplace<cr>
  "Find symbol of current document.
 nnoremap <silent><nowait> <space>Co  :<C-u>CocList outline<cr>
  "Search workspace symbols.
