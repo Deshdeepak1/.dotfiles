@@ -41,7 +41,7 @@ let g:which_key_map.g = {
     \ 'f' : [':G fetch', 'Fetch'],
     \ 'l' : [':Gclog', 'Log'],
     \ 'b' : 'Branch',
-    \ 'C' : [':GCheckout', 'Checkout'],
+    \ 'C' : [':GBranches', 'Checkout'],
     \ 'bb' : [':G blame', 'Blame'],
     \ 'B' : [':GBrowse', 'Browse'],
     \ 'cc' : [':GV!', 'Commits'],

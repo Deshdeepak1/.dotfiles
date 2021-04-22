@@ -8,12 +8,15 @@ Plug 'voldikss/vim-floaterm'
 Plug 'liuchengxu/vim-which-key'
 Plug 'mhinz/vim-startify'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'mattn/emmet-vim'
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'junegunn/rainbow_parentheses.vim'
 
 Plug 'justinmk/vim-sneak'
 Plug 'unblevable/quick-scope'
+
+" Snippets:
+Plug 'honza/vim-snippets'
+Plug 'mattn/emmet-vim'
 
 " Git:
 Plug 'mhinz/vim-signify'

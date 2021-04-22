@@ -15,5 +15,5 @@ ab plugins ~/.config/nvim/general/plugins.vim
 ab mappings ~/.config/nvim/general/mappings.vim
 ab misc ~/.config/nvim/general/misc.vim
 ab functions ~/.config/nvim/general/functions.vim
-ab snippets ~/.config/nvim/general/snippets.vim
+ab snipps ~/.config/nvim/general/snippets.vim
 ab frc ~/.config/fish/config.fish

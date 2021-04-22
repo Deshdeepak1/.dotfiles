@@ -1,4 +1,4 @@
-let g:coc_global_extensions = ['coc-pairs', 'coc-git', 'coc-json', 'coc-pyright', 'coc-explorer', 'coc-lua']
+let g:coc_global_extensions = ['coc-pairs', 'coc-git', 'coc-json', 'coc-pyright', 'coc-explorer', 'coc-lua', 'coc-snippets']
 
 " Remap for rename current word
 nmap <F2> <Plug>(coc-rename)
