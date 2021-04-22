@@ -20,6 +20,7 @@ autocmd  FileType which_key set laststatus=0 noshowmode noruler
 " Single Mappings:
 let g:which_key_map['e'] = [ ':CocCommand explorer', 'Explorer']
 let g:which_key_map['/'] = [ '<Plug>NERDCommenterToggle', 'Comment']
+let g:which_key_map['sc'] = [ ':call Codi()', 'Codi']
 let g:which_key_map['s'] = [ ':update', 'Save']
 let g:which_key_map['q'] = [ ':quit', 'Quit']
 let g:which_key_map['qq'] = [ ':quitall', 'QuitAll']

@@ -10,6 +10,7 @@ Plug 'mhinz/vim-startify'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'junegunn/rainbow_parentheses.vim'
+Plug 'metakirby5/codi.vim'
 
 Plug 'justinmk/vim-sneak'
 Plug 'unblevable/quick-scope'
@@ -56,6 +57,7 @@ source ~/.config/nvim/plug-config/fzf.vim
 source ~/.config/nvim/plug-config/rainbow.vim
 source ~/.config/nvim/plug-config/signify.vim
 source ~/.config/nvim/plug-config/quickscope.vim
+source ~/.config/nvim/plug-config/codi.vim
 
 " Colorizer:
 "luafile ~/.config/nvim/lua/plug-colorizer.lua
