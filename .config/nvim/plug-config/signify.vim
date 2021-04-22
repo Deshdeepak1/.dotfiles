@@ -17,7 +17,7 @@ let g:signify_sign_show_text = 1
 "nmap <leader>gJ 9999<leader>gJ
 "nmap <leader>gK 9999<leader>gk
 
-nnoremap <leader>gaa :G add<Space>
+nnoremap <leader>gF :G add<Space>
 nnoremap <leader>gm :GMove<Space>
 nnoremap <leader>gb :G branch<Space>
 
@@ -29,7 +29,7 @@ let g:which_key_map.g = {
     \ 's' : [':G', 'Status'],
     \ 'd' : [':Gdiffsplit', 'DiffSplit'],
     \ 'D' : [':G diff', 'Diff'],
-    \ 'aa' : 'CustAdd',
+    \ 'F' : 'CustAdd',
     \ 'a' : [':Gw', 'Add'],
     \ 'A' : [':G add .', 'AddCDir'],
     \ 'r' : [':GDelete', 'Remove'],
