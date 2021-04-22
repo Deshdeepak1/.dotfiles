@@ -8,5 +8,33 @@
         "v": "open:vsplit"
     },
     "coc.preferences.formatOnSaveFiletypes": ["css", "markdown", "javascript", "html", "yaml", "python", "java", "c", "cpp", "vim"],
-    "snippets.userSnippetsDirectory": "~/.config/nvim/snippets"
+    "snippets.userSnippetsDirectory": "~/.config/nvim/snippets",
+    "git.enableGutters": false,
+    "suggest.completionItemKindLabels": {
+    "method": "",
+    "function": "",
+    "variable": "",
+    "field": "綠",
+    "typeParameter": "<>",
+    "constant": "",
+    "class": "",
+    "interface": "禍",
+    "struct": " ",
+    "event": "",
+    "operator": "",
+    "module": "",
+    "property": " ",
+    "enum": "",
+    "reference": "",
+    "keyword": "",
+    "file": "",
+    "folder": " ",
+    "color": "",
+    "unit": "塞",
+    "snippet": "",
+    "text": "",
+    "constructor": "",
+    "value": "",
+    "enumMember": ""
+  }
 }
