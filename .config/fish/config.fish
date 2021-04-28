@@ -33,9 +33,3 @@ export FZF_CTRL_T_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_ALT_C_COMMAND="fd --exclude '.git/' --hidden --type d"
 
 # Functions
-function codi
-   nvim -c \
-     "let g:startify_disable_at_vimenter = 1 |\
-     hi CodiVirtualText guifg=cyan
-     Codi python" "$argv"
-end
