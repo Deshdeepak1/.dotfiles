@@ -29,4 +29,5 @@ let g:which_key_map.f = {
 let g:which_key_map.r = {
     \ 'name' : 'Run',
     \ 'p' : [':FloatermNew --autoclose=0 python %'  , 'python'],
+    \ 'r' : [':FloatermNew --autoclose=0 make && ./main', 'raylib']
   \ }

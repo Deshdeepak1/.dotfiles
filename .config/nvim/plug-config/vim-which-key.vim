@@ -20,11 +20,8 @@ autocmd  FileType which_key set laststatus=0 noshowmode noruler
 " Single Mappings:
 let g:which_key_map['e'] = [ ':CocCommand explorer', 'Explorer']
 let g:which_key_map['/'] = [ '<Plug>NERDCommenterToggle', 'Comment']
-let g:which_key_map['sc'] = [ ':call Codi()', 'Codi']
 let g:which_key_map['s'] = [ ':update', 'Save']
 let g:which_key_map['q'] = [ ':quit', 'Quit']
-let g:which_key_map['qq'] = [ ':quitall', 'QuitAll']
-let g:which_key_map['ss'] = [ ':source %', 'Source']
 let g:which_key_map['Q'] = [ ':quitall!', 'ForceQuit']
 let g:which_key_map['o'] = [ ':only', 'OnlyWindow']
 let g:which_key_map['H'] = [ ':vert help', 'Help']
@@ -32,9 +29,13 @@ let g:which_key_map['d'] = [ ':call DVim()', 'DVim']
 let g:which_key_map['h'] = 'HSplit'
 let g:which_key_map['v'] = 'VSplit'
 let g:which_key_map['n'] = 'NewTab'
+let g:which_key_map['w'] = 'Saveas'
 
 " Double Mappings:
 let g:which_key_map['sq'] = [ ':wq', 'Save&Quit']
+let g:which_key_map['qq'] = [ ':quitall', 'QuitAll']
+let g:which_key_map['ss'] = [ ':source %', 'Source']
+let g:which_key_map['sc'] = [ ':call Codi()', 'Codi']
 
 " c is for comment
 let g:which_key_map.c = {

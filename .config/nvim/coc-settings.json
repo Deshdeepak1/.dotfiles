@@ -7,7 +7,13 @@
         "<cr>": ["expandable?", "expand", "open"],
         "v": "open:vsplit"
     },
-    "coc.preferences.formatOnSaveFiletypes": ["css", "markdown", "javascript", "html", "yaml", "python", "java", "c", "cpp", "vim"],
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": ["--igonre", "E501"],
+    "pyright.organizeimports.provider": "isort",
+    "pyright.disableDiagnostics": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "black",
+    "coc.preferences.formatOnSaveFiletypes": ["css", "markdown", "javascript", "html", "yaml", "python", "java", "vim"],
     "snippets.userSnippetsDirectory": "~/.config/nvim/snippets",
     "git.enableGutters": false,
     "suggest.completionItemKindLabels": {

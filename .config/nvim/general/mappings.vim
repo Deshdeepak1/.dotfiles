@@ -1,4 +1,6 @@
 let mapleader=" "
+" Saveas:
+nnoremap <leader>w :saveas<Space>
 
 "" Split Open:
 nnoremap <leader>h :split<Space>

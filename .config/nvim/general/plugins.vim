@@ -12,6 +12,7 @@ Plug 'norcalli/nvim-colorizer.lua'
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'metakirby5/codi.vim'
 Plug 'dag/vim-fish'
+Plug 'ryanoasis/vim-devicons'
 
 Plug 'justinmk/vim-sneak'
 Plug 'unblevable/quick-scope'

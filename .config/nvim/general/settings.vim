@@ -41,12 +41,12 @@ set splitright splitbelow
 
 
 " CHAR LIMIT:
-highlight ColorColumn ctermbg=gray
-"" filetype detect
-"" if &filetype=='python'
-""     set cc=79
-"" endif
-autocmd BufNewFile,BufRead *.py set cc=79
+"highlight ColorColumn ctermbg=gray
+"filetype detect
+"if &filetype=='python'
+    "set cc=79
+"endif
+"autocmd BufNewFile,BufRead *.py set cc=79
 
 " Remove trailing whitespace
 autocmd BufWritePre * %s/\s\+$//e

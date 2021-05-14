@@ -1,10 +1,12 @@
-let g:startify_padding_left = 50
+let g:startify_padding_left = 60
 
 let g:startify_custom_header = startify#center([
   \ '    / | / /__  ____ _   __(_)___ ___ ',
   \ '   /  |/ / _ \/ __ \ | / / / __ `__ \',
   \ '  / /|  /  __/ /_/ / |/ / / / / / / /',
-  \ ' /_/ |_/\___/\____/|___/_/_/ /_/ /_/ '])
+  \ ' /_/ |_/\___/\____/|___/_/_/ /_/ /_/ ',
+  \ '                                     ',
+  \ '                                     '])
 
 let g:startify_files_number = 5
 let g:startify_session_persistence = 1

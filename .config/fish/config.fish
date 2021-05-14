@@ -1,11 +1,13 @@
 # Programs Recommended:
 # fish, vim/nvim/nvim-nightly, pynvim/pyvim, exa, tmux, git, screenfetch, bat, python(pip - pylint, autopep8),
 # Hack font, noto-fonts-emoji, fd, fzf, lazygit, ranger, ranger_devicons, ctags, ripgrep, luarocks
+# awesomewm, dmenu-jacob-git, termite,
 
 # git config --global user.email "rkdeshdeepak1@gmail.com"
 # git config --global user.name "Deshdeepak"
 # git config --global credential.helper cache/store
 set fish_greeting
+export TERM="xterm-256color"
 
 # Dot files management
 alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
@@ -31,3 +33,5 @@ alias cat="bat"
 export FZF_DEFAULT_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_CTRL_T_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_ALT_C_COMMAND="fd --exclude '.git/' --hidden --type d"
+
+set  PATH $HOME/.local/bin $PATH
