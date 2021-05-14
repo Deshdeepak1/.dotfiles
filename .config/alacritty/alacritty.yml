@@ -1,0 +1,108 @@
+env:
+  TERM: xterm-256color
+  COLORTERM: truecolor
+
+# Window configuration
+window:
+  dimensions:
+    columns: 140
+    lines: 30
+  padding:
+    x: 3
+    y: 3
+  decorations: none
+  startup_mode: Maximized
+
+scrolling:
+  history: 5000
+  multiplier: 3
+
+background_opacity: 0.9
+tabspaces: 4
+
+# Font configuration
+font:
+  normal:
+    family: Mononoki Nerd Font
+    style: Regular
+  bold:
+    family: Mononoki Nerd Font
+    style: Bold
+  italic:
+    family: Mononoki Nerd Font
+    style: Italic
+  size: 9.5
+  offset:
+    x: 0
+    y: 0
+draw_bold_text_with_bright_colors: true
+
+# KDE Breeze (Ported from Konsole)
+colors:
+  # Default colors
+  primary:
+    background: '#232627'
+    foreground: '#fcfcfc'
+
+    dim_foreground: '#eff0f1'
+    bright_foreground: '#ffffff'
+    dim_background: '#31363b'
+    bright_background: '#000000'
+
+  # Normal colors
+  normal:
+    black: '#232627'
+    red: '#ed1515'
+    green: '#11d116'
+    yellow: '#f67400'
+    blue: '#1d99f3'
+    magenta: '#9b59b6'
+    cyan: '#1abc9c'
+    white: '#fcfcfc'
+
+  # Bright colors
+  bright:
+    black: '#7f8c8d'
+    red: '#c0392b'
+    green: '#1cdc9a'
+    yellow: '#fdbc4b'
+    blue: '#3daee9'
+    magenta: '#8e44ad'
+    cyan: '#16a085'
+    white: '#ffffff'
+
+  # Dim colors
+  dim:
+    black: '#31363b'
+    red: '#783228'
+    green: '#17a262'
+    yellow: '#b65619'
+    blue: '#1b668f'
+    magenta: '#614a73'
+    cyan: '#186c60'
+    white: '#63686d'
+
+cursor:
+  style: Block
+  unfocused_hollow: true
+
+key_bindings:
+    # (Windows, Linux, and BSD only)
+  - { key: N,         mods: Control|Shift, action: SpawnNewInstance }
+  - { key: V,         mods: Control|Shift, action: Paste                       }
+  - { key: C,         mods: Control|Shift, action: Copy                        }
+  - { key: Insert,    mods: Shift,         action: PasteSelection              }
+  - { key: Key0,      mods: Control,       action: ResetFontSize               }
+  - { key: Equals,    mods: Control,       action: IncreaseFontSize            }
+  - { key: Plus,      mods: Control,       action: IncreaseFontSize            }
+  - { key: Minus,     mods: Control,       action: DecreaseFontSize            }
+  - { key: Minus,     mods: Control,       action: DecreaseFontSize            }
+  - { key: F11,       mods: None,          action: ToggleFullscreen            }
+  - { key: Paste,     mods: None,          action: Paste                       }
+  - { key: Copy,      mods: None,          action: Copy                        }
+  - { key: L,         mods: Control,       action: ClearLogNotice              }
+  - { key: L,         mods: Control,       chars: "\x0c"                       }
+  - { key: PageUp,    mods: None,          action: ScrollPageUp,   mode: ~Alt  }
+  - { key: PageDown,  mods: None,          action: ScrollPageDown, mode: ~Alt  }
+  - { key: Home,      mods: Shift,         action: ScrollToTop,    mode: ~Alt  }
+  - { key: End,       mods: Shift,         action: ScrollToBottom, mode: ~Alt  }

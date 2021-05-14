@@ -1,0 +1,90 @@
+[terminal]
+term = xterm-256color
+
+[options]
+allow_bold = false
+#audible_bell = false
+bold_is_bright = true
+cell_height_scale = 1.0
+cell_width_scale = 1.15
+clickable_url = true
+dynamic_title = true
+font = Mononoki Nerd Font 10
+fullscreen = true
+mouse_autohide = true
+scrollback_lines = 10000
+browser = xdg-open
+cursor_blink = off
+cursor_shape = block
+
+[colors]
+foreground          = #fcfcfc
+foreground_bold     = #ffffff
+foreground_dim      = #eff0f1
+background          = rgba(35, 38, 39, 0.93)
+highlight = #4A4A4A
+
+# 16 color space
+
+color0   = #212121
+color1   = #ed1515
+color2   = #11d116
+color3   = #f67400
+color4   = #1d99f3
+color5   = #9b59b6
+color6   = #1abc9c
+color7   = #fcfcfc
+color8   = #7f8c8d
+color9   = #c0392b
+color10  = #1cdc9a
+color11  = #fdbc4b
+color12  = #3daee9
+color13  = #8e44ad
+color14  = #16a085
+color15  = #ffffff
+color16  = #31363b
+color17  = #783228
+color18  = #17a262
+color19  = #b65619
+color20  = #1b668f
+color21  = #614a73
+color22  = #186c60
+color23  = #63686d
+
+
+# Black, Gray, Silver, White
+#color0  = #212121
+#color8  = #4A4A4A
+#color7  = #EEFFFF
+#color15 = #FFFFFF
+
+#color1  = #ed1515
+#color9  = #c0392b
+
+## Green
+#color2  = #11d116
+#color10 = #C3E88D
+
+## Yellow
+#color3  = #FFCB6B
+#color11 = #FFCB6B
+
+## Blue
+#color4  = #82AAFF
+#color12 = #82AAFF
+
+## Purple
+#color5  = #C792EA
+#color13 = #C792EA
+
+## Teal
+#color6  = #89DDFF
+#color14 = #89DDFF
+
+## Extra colors
+#color16 = #F78C6C
+#color17 = #FF5370
+#color18 = #303030
+#color19 = #353535
+#color20 = #B2CCD6
+#color21 = #EEFFFF
