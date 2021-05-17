@@ -8,6 +8,7 @@ local wibox = require("wibox")
 
 -- Theme handling library
 local beautiful = require("beautiful")
+local switcher = require("awesome-switcher")
 
 -- Notification library
 local naughty = require("naughty")
@@ -380,7 +381,17 @@ clientkeys = gears.table.join(
             c.maximized_horizontal = not c.maximized_horizontal
             c:raise()
         end ,
-        {description = "(un)maximize horizontally", group = "client"})
+        {description = "(un)maximize horizontally", group = "client"}),
+    awful.key({ "Mod1",           }, "Tab",
+      function ()
+          switcher.switch( 1, "Mod1", "Alt_L", "Shift", "Tab")
+      end),
+
+    awful.key({ "Mod1", "Shift"   }, "Tab",
+      function ()
+          switcher.switch(-1, "Mod1", "Alt_L", "Shift", "Tab")
+      end)
+
 )
 
 -- Bind all key numbers to tags.
@@ -584,3 +595,4 @@ awful.spawn.with_shell("feh --randomize --bg-fill /home/deshdeepak/wallpapers")
 
 -- Gaps
 beautiful.useless_gap = 3
+
