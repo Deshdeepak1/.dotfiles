@@ -1,8 +1,10 @@
-1. pacstrap - base base-devel linux linux-firmware neovim git networkmanager man-db man-pages texinfo sudo
+1. pacstrap - base base-devel linux linux-firmware neovim git networkmanager man-db man-pages texinfo sudo wget curl grub
+              os-prober lightdm xorg-server xf86-video-intel mesa pulseaudio pulsemixer alsa-utils pulseaudio-alsa
 2. paru
 3. paru - fish neovim-nightly-bin exa tmux bat ffmpeg mpv noto-fonts-emoji fd fzf lazygit ranger ctags ripgrep luarocks
           awesomewm dmenu-jacob-git termite network-manager-applet nodejs python-pip vimiv feh volumeicon picom npm
-          python-pynvim xclip
+          python-pynvim xclip brave-bin awesome-terminal-fonts ttf-font-awesome nerd-fonts-hack nerd-fonts-mononoki
+          ueberzug xdg-user-dirs pcmanfm-gtk3 xarchiver sshfs  gvfs gvfs-mtp gvfs-google ffmpegthumbnailer
 4. pip - youtube-dl pylint autopep8 black flake8
-5. others - MononokiNerdFont HackNerdfont ranger_devicons vim-plug
+5. others - vim-plug ranger_devicons
 
