@@ -1,0 +1,30 @@
+#!/bin/sh
+
+abspath () {
+    case "$1" in
+        /*) printf "%s\n" "$1";;
+        *)  printf "%s\n" "$PWD/$1";;
+    esac
+}
+
+
+listfiles () {
+    find -L "$(dirname "$target")" -maxdepth 1 -type f -iregex \
+        '.*\(jpe?g\|bmp\|png\|gif\)$' -print0 | sort -z
+}
+
+if [ -f /usr/bin/sxiv ]; then
+    if [ -d "${@: -1}" ] || [ -h "${@: -1}" ]; then
+        /usr/bin/sxiv -t "$@"
+    elif [ "$#" -ne 1 ]; then
+        /usr/bin/sxiv "$@"
+    else
+        target="$(abspath "$1")"
+        count="$(listfiles | grep -m 1 -ZznF "$target" | cut -d: -f1)"
+        listfiles | xargs -0 /usr/bin/sxiv -n "$count" --
+  fi
+elif command -v feh >/dev/null 2>&1; then
+  feh "$@"
+else
+  notify-send -u critical "Please install SXIV or FEH!"
+fi

@@ -6,7 +6,7 @@
           python-pynvim xclip brave-bin awesome-terminal-fonts ttf-font-awesome nerd-fonts-hack nerd-fonts-mononoki
           ueberzug xdg-user-dirs pcmanfm-gtk3 xarchiver sshfs  gvfs gvfs-mtp gvfs-google ffmpegthumbnailer polkit-gnome
           lxappearance-gtk3 arc-icon-theme breeze-gtk arch-silence-grub-theme-git lightdm-gtk-greeter
-          breeze-default-cursor-theme telegram-desktop
+          breeze-default-cursor-theme telegram-desktop trash-cli
 4. pip - youtube-dl pylint autopep8 black flake8
 5. others - vim-plug ranger_devicons tpm
 

@@ -586,7 +586,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 -- Autostart Applications
-awful.spawn.with_shell("compton")
+awful.spawn.with_shell("picom")
 awful.spawn.with_shell("nm-applet")
 awful.spawn.with_shell("feh --randomize --bg-fill /home/deshdeepak/wallpapers")
 --awful.spawn.with_shell("volumeicon")

@@ -1,0 +1,28 @@
+#!/bin/sh
+
+rotate() {
+    degree="$1"
+    file="$2"
+    echo $file | tr '\n' '\0' | xargs -0 realpath | sort | uniq | while read file; do
+    case "$(file -b -i "$file")" in
+        image/jpeg*) jpegtran -rotate "$degree" -copy all -outfile "$file" "$file" ;;
+        *)           mogrify  -rotate "$degree" "$file" ;;
+		esac
+    done
+}
+
+while read file
+do
+    case "$1" in
+        "d")
+            trash-put "$file" ;;
+        "c")
+            xclip -in -filter | tr '\n' ' ' | xclip -in -selection clipboard ;;
+        "w")
+            feh --bg-fill "$file" ;;
+        "less")
+            rotate 270 "$file" ;;
+        "greater")
+            rotate  90 "$file" ;;
+        esac
+done
