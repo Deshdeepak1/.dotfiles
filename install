@@ -2,9 +2,11 @@
               os-prober lightdm xorg-server xf86-video-intel mesa pulseaudio pulsemixer alsa-utils pulseaudio-alsa
 2. paru
 3. paru - fish neovim-nightly-bin exa tmux bat ffmpeg mpv noto-fonts-emoji fd fzf lazygit ranger ctags ripgrep luarocks
-          awesomewm dmenu-jacob-git termite network-manager-applet nodejs python-pip vimiv feh volumeicon picom npm
+          awesomewm dmenu-jacob-git termite network-manager-applet nodejs python-pip sxiv feh volumeicon picom npm
           python-pynvim xclip brave-bin awesome-terminal-fonts ttf-font-awesome nerd-fonts-hack nerd-fonts-mononoki
-          ueberzug xdg-user-dirs pcmanfm-gtk3 xarchiver sshfs  gvfs gvfs-mtp gvfs-google ffmpegthumbnailer
+          ueberzug xdg-user-dirs pcmanfm-gtk3 xarchiver sshfs  gvfs gvfs-mtp gvfs-google ffmpegthumbnailer polkit-gnome
+          lxappearance-gtk3 arc-icon-theme breeze-gtk arch-silence-grub-theme-git lightdm-gtk-greeter
+          breeze-default-cursor-theme telegram-desktop
 4. pip - youtube-dl pylint autopep8 black flake8
-5. others - vim-plug ranger_devicons
+5. others - vim-plug ranger_devicons tpm
 
