@@ -15,5 +15,6 @@ text/x-install=nvim.desktop;
 text/plain=nvim.desktop;
 image/jpeg=sxiv.desktop;feh.desktop;
 image/png=sxiv.desktop;feh.desktop;
+inode/directory=ranger.desktop;
 
 [Removed Associations]

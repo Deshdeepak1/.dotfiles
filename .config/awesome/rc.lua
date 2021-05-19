@@ -274,6 +274,16 @@ globalkeys = gears.table.join(
             end
         end,
         {description = "go back", group = "client"}),
+    awful.key({ "Mod1",           }, "Tab",
+        function ()
+            switcher.switch( 1, "Mod1", "Alt_L", "Shift", "Tab")
+        end,
+        {description = "Switcher:Go Next", group = "client"}),
+    awful.key({ "Mod1", "Shift"   }, "Tab",
+        function ()
+            switcher.switch(-1, "Mod1", "Alt_L", "Shift", "Tab")
+        end,
+        {description = "Switcher:Go back", group = "client"}),
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
@@ -381,16 +391,7 @@ clientkeys = gears.table.join(
             c.maximized_horizontal = not c.maximized_horizontal
             c:raise()
         end ,
-        {description = "(un)maximize horizontally", group = "client"}),
-    awful.key({ "Mod1",           }, "Tab",
-      function ()
-          switcher.switch( 1, "Mod1", "Alt_L", "Shift", "Tab")
-      end),
-
-    awful.key({ "Mod1", "Shift"   }, "Tab",
-      function ()
-          switcher.switch(-1, "Mod1", "Alt_L", "Shift", "Tab")
-      end)
+        {description = "(un)maximize horizontally", group = "client"})
 
 )
 
@@ -590,7 +591,6 @@ awful.spawn.with_shell("picom")
 awful.spawn.with_shell("nm-applet")
 awful.spawn.with_shell("feh --randomize --bg-fill /home/deshdeepak/wallpapers")
 --awful.spawn.with_shell("volumeicon")
---awful.spawn.with_shell("nitrogen --restore")
 --awful.spawn.with_shell("/home/deshdeepak/.config/polybar/launch.sh")
 
 -- Gaps
