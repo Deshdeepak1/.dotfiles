@@ -8,6 +8,9 @@ local wibox = require("wibox")
 
 -- Theme handling library
 local beautiful = require("beautiful")
+
+
+-- Custom
 local switcher = require("awesome-switcher")
 
 -- Notification library
@@ -330,10 +333,14 @@ globalkeys = gears.table.join(
 
 
     -- Brave
-    awful.key({ modkey },            "b",     function () awful.util.spawn("brave-browser-beta") end,
+    awful.key({ modkey },            "b",     function () awful.util.spawn("brave") end,
               {description = "Brave", group = "Applications"}),
-    awful.key({ modkey, "Shift" },   "b",     function () awful.util.spawn("brave-browser-beta --incognito") end,
+    awful.key({ modkey, "Shift" },   "b",     function () awful.util.spawn("brave --incognito") end,
               {description = "Brave(Incognito)", group = "Applications"}),
+
+    -- Pcmanfm
+    awful.key({ modkey },            "e",     function () awful.util.spawn("pcmanfm") end,
+              {description = "FileManager", group = "Applications"}),
 
     awful.key({ modkey }, "x",
               function ()
@@ -527,7 +534,7 @@ client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
-
+    c.placement = awful.placement.center
     if awesome.startup
       and not c.size_hints.user_position
       and not c.size_hints.program_position then
@@ -592,7 +599,4 @@ awful.spawn.with_shell("nm-applet")
 awful.spawn.with_shell("feh --randomize --bg-fill /home/deshdeepak/wallpapers")
 --awful.spawn.with_shell("volumeicon")
 --awful.spawn.with_shell("/home/deshdeepak/.config/polybar/launch.sh")
-
--- Gaps
-beautiful.useless_gap = 3
 

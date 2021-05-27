@@ -9,6 +9,8 @@ text/plain=nvim.desktop
 x-scheme-handler/mailto=brave-browser.desktop
 image/jpeg=sxiv.desktop
 image/png=sxiv.desktop
+application/pdf=org.pwmt.zathura.desktop
+x-scheme-handler/tg=userapp-Telegram Desktop-HIMY30.desktop
 
 [Added Associations]
 text/x-install=nvim.desktop;
@@ -16,5 +18,7 @@ text/plain=nvim.desktop;
 image/jpeg=sxiv.desktop;feh.desktop;
 image/png=sxiv.desktop;feh.desktop;
 inode/directory=ranger.desktop;
+application/pdf=org.pwmt.zathura.desktop;
+x-scheme-handler/tg=userapp-Telegram Desktop-HIMY30.desktop;
 
 [Removed Associations]
