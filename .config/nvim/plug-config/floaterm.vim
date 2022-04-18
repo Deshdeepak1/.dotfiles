@@ -12,6 +12,7 @@ let g:floaterm_height=0.8
 let g:floaterm_wintitle=0
 let g:floaterm_autoclose=1
 let g:floaterm_opener='tabe'
+let g:floaterm_shell="fish"
 
 let g:which_key_map['t'] = [':FloatermToggle', 'Terminal']
 
@@ -29,5 +30,6 @@ let g:which_key_map.f = {
 let g:which_key_map.r = {
     \ 'name' : 'Run',
     \ 'p' : [':FloatermNew --autoclose=0 python %'  , 'python'],
+    \ 'c' : [':FloatermNew --autoclose=0 g++ % && ./a.out'  , 'cpp'],
     \ 'r' : [':FloatermNew --autoclose=0 make && ./main', 'raylib']
   \ }

@@ -11,7 +11,7 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font          = "Mononoki Nerd Font 10"
+theme.font          = "Mononoki Nerd Font 10.5"
 
 theme.bg_normal     = "#282a36"
 theme.bg_focus      = "#535d6c"
@@ -24,8 +24,8 @@ theme.fg_focus      = "#ffffff"
 theme.fg_urgent     = "#ffffff"
 theme.fg_minimize   = "#ffffff"
 
-theme.useless_gap   = 3
-theme.border_width  = 1
+theme.useless_gap   = 3.5
+theme.border_width  = 1.5
 --theme.border_normal = "#000000"
 --theme.border_focus  = "#535d6c"
 --theme.border_marked = "#91231c"
@@ -45,7 +45,9 @@ theme.border_marked = "#CC9393"
 -- prompt_[fg|bg|fg_cursor|bg_cursor|font]
 -- hotkeys_[bg|fg|border_width|border_color|shape|opacity|modifiers_fg|label_bg|label_fg|group_margin|font|description_font]
 -- Example:
---theme.taglist_bg_focus = "#ff0000"
+-- theme.taglist_bg_focus = "#ff0000"
+theme.taglist_spacing = 2
+theme.taglist_font = "some-font 13"
 
 -- Generate taglist squares:
 local taglist_square_size = dpi(4)
@@ -66,8 +68,9 @@ theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
 -- menu_[bg|fg]_[normal|focus]
 -- menu_[border_color|border_width]
 theme.menu_submenu_icon = themes_path.."default/submenu.png"
-theme.menu_height = dpi(15)
-theme.menu_width  = dpi(100)
+theme.menu_height = dpi(20)
+theme.menu_width  = dpi(150)
+theme.menu_font = "some-font 13"
 
 -- You can add as many variables as
 -- you wish and access them by using
@@ -126,9 +129,12 @@ theme.awesome_icon = theme_assets.awesome_icon(
     theme.menu_height, theme.bg_focus, theme.fg_focus
 )
 
+theme.awesome_icon = "/home/deshdeepak/.config/awesome/arch.png"
+
 -- Define the icon theme for application icons. If not set then the icons
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
-theme.icon_theme = nil
+-- theme.icon_theme = nil
+theme.icon_theme = "Breeze_Default"
 
 return theme
 

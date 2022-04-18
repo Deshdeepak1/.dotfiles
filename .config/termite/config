@@ -9,13 +9,15 @@ cell_height_scale = 1.0
 cell_width_scale = 1.15
 clickable_url = true
 dynamic_title = true
-font = Mononoki Nerd Font 10
+font = Mononoki Nerd Font 10.5
 fullscreen = true
 mouse_autohide = true
 scrollback_lines = 10000
 browser = xdg-open
 cursor_blink = off
 cursor_shape = block
+
+# Breeze Theme
 
 [colors]
 foreground          = #fcfcfc
@@ -51,6 +53,7 @@ color21  = #614a73
 color22  = #186c60
 color23  = #63686d
 
+# Breeze Theme End
 
 # Black, Gray, Silver, White
 #color0  = #212121
@@ -88,3 +91,4 @@ color23  = #63686d
 #color19 = #353535
 #color20 = #B2CCD6
 #color21 = #EEFFFF
+

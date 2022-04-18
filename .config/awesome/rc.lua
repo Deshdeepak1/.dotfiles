@@ -2,6 +2,7 @@
 local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
+-- awful.util.shell = "sh"
 
 -- Widget and layout library
 local wibox = require("wibox")
@@ -9,6 +10,8 @@ local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
 
+-- Awesome-freedesktop
+local freedesktop = require("freedesktop")
 
 -- Custom
 local switcher = require("awesome-switcher")
@@ -19,7 +22,7 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
-require("awful.hotkeys_popup.keys")
+-- require("awful.hotkeys_popup.keys")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -29,6 +32,58 @@ if awesome.startup_errors then
                      title = "Oops, there were errors during startup!",
                      text = awesome.startup_errors })
 end
+
+-- battery warning
+-- created by bpdp
+
+local function trim(s)
+  return s:find'^%s*$' and '' or s:match'^%s*(.*%S)'
+end
+
+
+local battery = wibox.widget.textbox()
+
+local function bat_notification()
+  
+  local f_capacity = assert(io.open("/sys/class/power_supply/C245/capacity", "r"))
+  local f_status = assert(io.open("/sys/class/power_supply/C245/status", "r"))
+
+  local bat_capacity = tonumber(f_capacity:read("*all"))
+  local bat_status = trim(f_status:read("*all"))
+
+  if (bat_capacity <= 10 and bat_status == "Discharging") then
+    st_color = "red"
+    naughty.notify({ title      = "Battery Warning"
+      , text       = "Battery low! " .. bat_capacity .."%" .. " left!"
+      , fg="#ff0000"
+      , bg="#deb887"
+      , timeout    = 15
+      -- , position   = "bottom_left"
+    })
+  elseif (bat_status == "Discharging") then
+    st_color = "yellow"
+  elseif (bat_capacity == 100) then
+    st_color = "cyan"
+    naughty.notify({ title      = "Battery Warning"
+      , text       = "Battery Full Charged"
+      , fg="#00ff00"
+      --, bg="#deb887"
+      , timeout    = 15
+      -- , position   = "bottom_left"
+    })
+  elseif (bat_status == "Charging") then
+    st_color = "light green"
+  end
+  cap = tostring(bat_capacity)
+  battery.markup = "<span font='10.5' foreground='" .. st_color .. "'>" .. cap .. "</span>"
+end
+
+battimer = timer({timeout = 120})
+battimer:connect_signal("timeout", bat_notification)
+battimer:start()
+bat_notification()
+
+-- end here for battery warning
 
 -- Handle runtime errors after startup
 do
@@ -66,17 +121,17 @@ modkey = "Mod4"
 awful.layout.layouts = {
     awful.layout.suit.floating,
     awful.layout.suit.tile,
-    --awful.layout.suit.tile.left,
-    --awful.layout.suit.tile.bottom,
-    --awful.layout.suit.tile.top,
-    --awful.layout.suit.fair,
-    --awful.layout.suit.fair.horizontal,
-    --awful.layout.suit.spiral,
-    --awful.layout.suit.spiral.dwindle,
+    -- awful.layout.suit.tile.left,
+    awful.layout.suit.tile.bottom,
+    -- awful.layout.suit.tile.top,
+    -- awful.layout.suit.fair,
+    -- awful.layout.suit.fair.horizontal,
+    -- awful.layout.suit.spiral,
+    -- awful.layout.suit.spiral.dwindle,
     awful.layout.suit.max,
     awful.layout.suit.max.fullscreen,
-    --awful.layout.suit.magnifier,
-    --awful.layout.suit.corner.nw,
+    awful.layout.suit.magnifier,
+    -- awful.layout.suit.corner.nw,
     -- awful.layout.suit.corner.ne,
     -- awful.layout.suit.corner.sw,
     -- awful.layout.suit.corner.se,
@@ -92,10 +147,11 @@ myawesomemenu = {
    { "Quit", function() awesome.quit() end },
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "Terminal", terminal }
-                                  }
+mymainmenu = freedesktop.menu.build({ before = { { "Awesome", myawesomemenu, beautiful.awesome_icon },},
+                          after  =  { { "Terminal", terminal }, },
+                          sub_menu = "Applications"
                         })
+
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
@@ -109,7 +165,48 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock()
+clock_fgs = {
+    "cyan",
+    "light blue",
+    "violet",
+    "light green",
+    "light pink",
+    "magenta",
+}
+math.randomseed(os.time())
+clock_fg = clock_fgs[math.random(#clock_fgs)]
+clock = "<b><span foreground='" .. clock_fg .."'>%a %d %b, %H:%M</span></b>"
+mytextclock = wibox.widget.textclock(clock)
+
+-- Net Connection Status Widget
+jio = wibox.widget.textbox()
+
+
+local function set_con_status(out,err,er,ec)
+    local status = "Error"
+    local st = "E"
+    local st_color = "red"
+    if ec == 0 then
+        status = "Connected"
+        st = "C"
+        st_color = "light green"
+    elseif ec == 1 then
+        status = "Disconnected"
+        st = "D"
+        st_color = "yellow"
+    end
+    jio.markup = "<span font='13' foreground='" .. st_color .. "'><b>" .. st .. "</b></span>"
+    naughty.notify({text = status})
+end
+
+local function check_connection()
+    awful.spawn.easy_async_with_shell("ping -w 1 google.com", set_con_status)
+end
+
+
+local function handle_jio()
+    awful.spawn.easy_async_with_shell("jio", check_connection)
+end
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -164,6 +261,7 @@ local function set_wallpaper(s)
     end
 end
 
+tags = { "", "🌐", "", "📁", "", "⚙️", "", "", "" }
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
@@ -172,7 +270,10 @@ awful.screen.connect_for_each_screen(function(s)
     --set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    -- awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    -- awful.tag({ "CODE", "BR", "FM", "EX", "TG", "EX", "EX", "EX", "EX" }, s, awful.layout.layouts[1])
+    awful.tag(tags, s, awful.layout.layouts[1])
+    -- awful.tag({ "⚙️", "", " ", "", "", "", "", "", "", "", "🏠", "📃", "🎵", "💬", "🔵", "", "", "", "", "", "", "" }, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -194,6 +295,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist {
         screen  = s,
+        width = 32,
         filter  = awful.widget.tasklist.filter.currenttags,
         buttons = tasklist_buttons
     }
@@ -214,11 +316,16 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             --mykeyboardlayout,
+            spacing = 5,
+            jio,
             wibox.widget.systray(),
             mytextclock,
             s.mylayoutbox,
+            battery
         },
     }
+    -- Set and check connection status
+    check_connection()
 end)
 -- }}}
 
@@ -240,7 +347,7 @@ globalkeys = gears.table.join(
               {description = "view next", group = "tag"}),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
-    awful.key({ modkey, "Control" }, "q", function () awful.spawn("i3lock-fancy") end,
+    awful.key({ modkey, "Control" }, "q", function () awful.spawn("loginctl lock-session") end,
               {description="Lock", group="awesome"}),
 
     awful.key({ modkey,           }, "j",
@@ -255,8 +362,8 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
-              {description = "show main menu", group = "awesome"}),
+    -- awful.key({}, "Menu", function () mymainmenu:show() end,
+              -- {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
@@ -288,10 +395,11 @@ globalkeys = gears.table.join(
         end,
         {description = "Switcher:Go back", group = "client"}),
 
+
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "Open a terminal", group = "launcher"}),
-    awful.key({ modkey, "Shift"   }, "Return", function () awful.spawn(terminal .. " -e tmux") end,
+    awful.key({ modkey, "Shift"   }, "Return", function () awful.spawn(terminal .. " -e \"fish -c tmux\"") end,
               {description = "Open terminal with tmux", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "Reload awesome", group = "awesome"}),
@@ -329,7 +437,21 @@ globalkeys = gears.table.join(
 
     -- Dmenu
     awful.key({ modkey },            "r",     function () awful.util.spawn("dmenu_run -p 'Run:'  -fn 'Mononoki Nerd Font' -sf lightgreen") end,
-              {description = "run dmenu", group = "launcher"}),
+              {description = "Programs", group = "Dmenu"}),
+    awful.key({ modkey },            "y",     function () awful.util.spawn_with_shell("yt -g") end,
+              {description = "Youtube", group = "Dmenu"}),
+
+    -- Clipmenu
+    awful.key({ modkey },            "c",     function () awful.util.spawn("clipmenu") end,
+              {description = "Clipmenu", group = "Dmenu"}),
+
+    -- Flameshot
+    awful.key({ modkey, "Shift" },            "p",     function () awful.util.spawn("flameshot screen -p /home/deshdeepak/Pictures") end,
+              {description = "Entire desktop", group = "Screenshot"}),
+    awful.key({ modkey, "Control" },            "p",     function () awful.util.spawn("flameshot gui -p /home/deshdeepak/Pictures") end,
+              {description = "Manual", group = "Screenshot"}),
+    awful.key({ modkey, "Mod1" },            "p",     function () awful.util.spawn("flameshot launcher") end,
+              {description = "Capture Mode", group = "Screenshot"}),
 
 
     -- Brave
@@ -342,6 +464,12 @@ globalkeys = gears.table.join(
     awful.key({ modkey },            "e",     function () awful.util.spawn("pcmanfm") end,
               {description = "FileManager", group = "Applications"}),
 
+    -- JioWifi
+    awful.key({ modkey },            "i", handle_jio,
+              {description = "Handle Jio Connection", group = "JioWifi"}),
+    awful.key({ modkey, "Shift" },            "r", check_connection,
+              {description = "Refresh Connection Status", group = "JioWifi"}),
+
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run {
@@ -353,8 +481,24 @@ globalkeys = gears.table.join(
               end,
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
-    awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+    -- awful.key({ modkey }, "p", function() menubar.show() end,
+              -- {description = "show the menubar", group = "launcher"})
+    -- Rofi 
+    awful.key({ modkey }, "p", function() awful.util.spawn("rofi -modi drun -show drun -show-icons -display-drun 'Launch' ") end,
+              {description = "Applications Menu", group = "Rofi"}),
+    awful.key({ modkey }, "w", function() awful.util.spawn_with_shell("rofi-wifi-menu.sh") end,
+              {description = "Wifi Menu", group = "Rofi"}),
+    awful.key({ modkey, "Shift" }, "w", function() awful.util.spawn("rofi -modi window -show window -show-icons") end,
+              {description = "Window Menu", group = "Rofi"}),
+    awful.key({ modkey, "Mod1" }, "c", function() awful.util.spawn("rofi -show calc -modi calc -no-show-match -no-sort") end,
+              {description = "Window Menu", group = "Rofi"}),
+    awful.key({ modkey, "Shift" }, "e", function() awful.util.spawn("rofi -modi filebrowser -show filebrowser -show-icons") end,
+              {description = "File Browser", group = "Rofi"}),
+    awful.key({ modkey, "Shift"}, "c", function() awful.util.spawn_with_shell("CM_LAUNCHER='rofi' clipmenu") end,
+              {description = "Clipmenu", group = "Rofi"}),
+    awful.key({ modkey, "Mod1"}, "l", function() awful.util.spawn_with_shell("rofi -modi power_menu:rofi-power-menu -show power_menu") end,
+              {description = "Power Menu", group = "Rofi"})
+
 )
 
 clientkeys = gears.table.join(
@@ -494,16 +638,11 @@ awful.rules.rules = {
           "pinentry",
         },
         class = {
-          "Arandr",
-          "Blueman-manager",
-          "Gpick",
-          "Kruler",
-          "MessageWin",  -- kalarm.
           "Sxiv",
-          "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
-          "Wpa_gui",
-          "veromix",
-          "xtightvncviewer"},
+          "mpv",
+          "KotatogramDesktop",
+          "Pcmanfm"
+        },
 
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
@@ -522,9 +661,13 @@ awful.rules.rules = {
       }, properties = { titlebars_enabled = false }
     },
 
-    -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
+    -- Set default tags for some windows
+    { rule = { class = "Brave-browser" },
+      properties = { screen = 1, tag = tags[2], switchtotag = true, placement = awful.placement.centered} },
+    { rule = { class = "KotatogramDesktop" },
+      properties = { screen = 1, tag = tags[5], switchtotag = false, placement = awful.placement.centered } },
+    { rule = { class = "Pcmanfm" },
+      properties = { screen = 1, tag = tags[4], switchtotag = true, placement = awful.placement.centered } }
 }
 -- }}}
 
@@ -546,7 +689,7 @@ end)
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
     -- buttons for the titlebar
-    awful.spawn.with_shell("termite")
+    awful.spawn.with_shell(terminal)
     local buttons = gears.table.join(
         awful.button({ }, 1, function()
             c:emit_signal("request::activate", "titlebar", {raise = true})
@@ -596,7 +739,9 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Autostart Applications
 awful.spawn.with_shell("picom")
 awful.spawn.with_shell("nm-applet")
+awful.spawn.with_shell("CM_SELECTIONS='clipboard' /usr/bin/clipmenud")
 awful.spawn.with_shell("feh --randomize --bg-fill /home/deshdeepak/wallpapers")
---awful.spawn.with_shell("volumeicon")
---awful.spawn.with_shell("/home/deshdeepak/.config/polybar/launch.sh")
-
+-- awful.spawn.with_shell("bash -c \"killall -9 volumeicon\"")
+-- awful.spawn.with_shell("volumeicon")
+-- awful.spawn.with_shell("flameshot")
+-- awful.spawn.with_shell("/home/deshdeepak/.config/polybar/launch.sh")

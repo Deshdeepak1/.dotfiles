@@ -1,12 +1,17 @@
 let mapleader=" "
+
+" Clipboard copy
+nnoremap cp "+
+vnoremap cp "+
+
 " Saveas:
 nnoremap <leader>w :saveas<Space>
 
-"" Split Open:
+" Split Open:
 nnoremap <leader>h :split<Space>
 nnoremap <leader>v :vsplit<Space>
 
-"" Tab Open:
+" Tab Open:
 nnoremap <leader>n :tabnew<Space>
 
 " File Open:
@@ -61,3 +66,7 @@ noremap <Up> <Nop>
 noremap <Down> <Nop>
 noremap <Left> <Nop>
 noremap <Right> <Nop>
+
+" Run commands for filetype:
+autocmd filetype cpp nnoremap <F5> :!g++ "%"  && ./a.out < input.txt > output.txt<CR>
+autocmd filetype nroff nnoremap <F5> :!groff -ms -UT pdf "%" > $(basename "%" .ms).pdf<CR>

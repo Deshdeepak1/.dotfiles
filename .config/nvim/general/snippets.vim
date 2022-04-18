@@ -4,6 +4,7 @@
 nnoremap ,html :-1read $HOME/.config/nvim/snippets/skeleton.html<CR>3jwf>a
 nnoremap ,cl :-1read $HOME/.config/nvim/snippets/skeleton.c<CR>3ja<TAB>
 nnoremap ,cpp  :-1read $HOME/.config/nvim/snippets/skeleton.cpp<CR>4ja<TAB>
+nnoremap ,cpf  :-1read $HOME/.config/nvim/snippets/cp.cpp<CR>4ja<TAB>
 
 " Use <C-l> for trigger snippet expand.
 imap <C-l> <Plug>(coc-snippets-expand)

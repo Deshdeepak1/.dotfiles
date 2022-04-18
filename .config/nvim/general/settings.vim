@@ -21,7 +21,7 @@ set nohlsearch
 set hidden
 set noerrorbells
 set nowrap
-set undodir=~/.config/nvim/undo
+set undodir=~/.local/share/nvim/undo
 set undofile
 set incsearch
 set scrolloff=8
@@ -29,6 +29,12 @@ set termguicolors
 set updatetime=100
 set cursorline
 set signcolumn=yes
+set shell=sh
+
+" Whitespaces
+set lcs=tab:<->,trail:-,nbsp:␣,eol:↲,space:·,precedes:«
+" ,extends:»
+set list
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -49,7 +55,7 @@ set splitright splitbelow
 "autocmd BufNewFile,BufRead *.py set cc=79
 
 " Remove trailing whitespace
-autocmd BufWritePre * %s/\s\+$//e
+"autocmd BufWritePre * %s/\s\+$//e
 
 " BACKUPDIR:
 set backupdir=~/.local/share/nvim/backup

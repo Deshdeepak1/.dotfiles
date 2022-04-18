@@ -13,6 +13,7 @@ Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'metakirby5/codi.vim'
 Plug 'dag/vim-fish'
 Plug 'ryanoasis/vim-devicons'
+Plug 'glench/vim-jinja2-syntax'
 
 Plug 'justinmk/vim-sneak'
 Plug 'unblevable/quick-scope'
@@ -44,7 +45,13 @@ Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
 " Themes:
 Plug 'gruvbox-community/gruvbox'
-Plug 'joshdick/onedark.vim'
+" Plug 'joshdick/onedark.vim'
+" Plug 'dracula/vim', {'as': 'dracula'}
+" Plug 'felipec/vim-felipec'
+
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+
+Plug 'github/copilot.vim'
 
 call plug#end()
 
@@ -60,6 +67,7 @@ source ~/.config/nvim/plug-config/rainbow.vim
 source ~/.config/nvim/plug-config/signify.vim
 source ~/.config/nvim/plug-config/quickscope.vim
 source ~/.config/nvim/plug-config/codi.vim
+source ~/.config/nvim/plug-config/commenter.vim
 
 " Colorizer:
 "luafile ~/.config/nvim/lua/plug-colorizer.lua
@@ -75,6 +83,12 @@ hi HighlightedyankRegion cterm=bold gui=bold ctermbg=0 guibg=DarkGrey
 " Onedark
 "colorscheme onedark
 "source ~/.config/nvim/themes/onedark.vim
+
+" Dracula 
+" colorscheme dracula
+
+" Felipec
+" colorscheme felipec
 
 "Airline
 source ~/.config/nvim/themes/airline.vim

@@ -17,7 +17,9 @@ do
         "d")
             trash-put "$file" ;;
         "c")
-            xclip -in -filter | tr '\n' ' ' | xclip -in -selection clipboard ;;
+            xclip -selection clipboard "$file" -t image/png ;;
+        "C-c")
+            echo -n "$file"|xclip -selection clipboard ;;
         "w")
             feh --bg-fill "$file" ;;
         "less")

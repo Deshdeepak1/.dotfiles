@@ -10,7 +10,8 @@ x-scheme-handler/mailto=brave-browser.desktop
 image/jpeg=sxiv.desktop
 image/png=sxiv.desktop
 application/pdf=org.pwmt.zathura.desktop
-x-scheme-handler/tg=userapp-Telegram Desktop-HIMY30.desktop
+x-scheme-handler/tg=userapp-Kotatogram Desktop-ZDE9C1.desktop
+inode/directory=pcmanfm.desktop
 
 [Added Associations]
 text/x-install=nvim.desktop;
@@ -19,6 +20,6 @@ image/jpeg=sxiv.desktop;feh.desktop;
 image/png=sxiv.desktop;feh.desktop;
 inode/directory=ranger.desktop;
 application/pdf=org.pwmt.zathura.desktop;
-x-scheme-handler/tg=userapp-Telegram Desktop-HIMY30.desktop;
+x-scheme-handler/tg=userapp-Telegram Desktop-HIMY30.desktop;userapp-Kotatogram Desktop-ZDE9C1.desktop;
 
 [Removed Associations]
