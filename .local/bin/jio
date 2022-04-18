@@ -1,0 +1,176 @@
+#!/usr/bin/python
+import csv
+import os
+import sys
+from time import sleep
+from subprocess import getstatusoutput
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.expected_conditions import presence_of_element_located
+
+options = Options()
+options.binary_location = "/usr/bin/brave"
+options.headless = True
+driver = webdriver.Chrome(options=options)
+wait = WebDriverWait(driver, 5)
+driver.get("https://jionetportal.jio.in:8443")
+
+
+def select_account():
+    nums_elements = driver.find_elements(By.CLASS_NAME, "list-group-item")
+    nums = []
+    for num_element in nums_elements:
+        nums.append(num_element.text)
+    nums_string = "\n".join(nums)
+    st, choice = getstatusoutput(f'echo -e "{nums_string}" | dmenu -l 10 -p "Number: "')
+    selected_num_radio = nums_elements[nums.index(choice)]
+    selected_num_radio.click()
+    return choice
+
+
+def confirm_connect():
+    packs = driver.find_elements(By.CLASS_NAME, "list-group-item")
+    for pack in packs:
+        pack_info = pack.text
+        if pack_info.startswith("INACTIVE"):
+            continue
+        pack_info = pack_info.removeprefix("ACTIVE")
+        getstatusoutput(f'notify-send "{pack_info}" -t 10000')
+    sleep(5)
+    st, choice = getstatusoutput(f'echo -e "Yes\nNo" | dmenu -l 2 -p "Confirm: "')
+    if not choice:
+        return False
+    if choice == "Yes":
+        return True
+    if choice == "No":
+        return False
+
+
+def select_login_account():
+    csv_reader = csv.reader(open(os.path.join(os.getenv("HOME"), ".jio.csv")))
+    accounts = [x for x in csv_reader]
+    nums = [x[0] for x in accounts]
+    nums_string = "\n".join(nums)
+    st, choice = getstatusoutput(f'echo -e "{nums_string}" | dmenu -l 10 -p "Account: "')
+    selected_account = accounts[nums.index(choice)]
+    return selected_account
+
+
+
+def login_logout(state):
+    if state == 0:
+        try:
+            wait.until(
+                presence_of_element_located((By.CSS_SELECTOR, "button[value='auth1']"))
+            )
+        except TimeoutException:
+            return login_logout(-1)
+        else:
+            driver.find_element(By.CSS_SELECTOR, "button[value='auth1']").click()
+            return login_logout(1)
+    elif state == 1:
+        phone, password = select_login_account()
+        wait.until(
+            presence_of_element_located((By.CSS_SELECTOR, "input[name='jioId']"))
+        )
+        driver.find_element(By.CSS_SELECTOR, "input[name='jioId']").send_keys(
+            phone
+        )
+        driver.find_element(By.CSS_SELECTOR, "input[name='password']").send_keys(
+            password
+        )
+        ActionChains(driver).send_keys(Keys.TAB * 2).perform()
+        ActionChains(driver).send_keys(Keys.SPACE).perform()
+        driver.find_element(By.CSS_SELECTOR, "button[value='login']").click()
+        return login_logout(2)
+    elif state == 2:
+        try:
+            wait.until(
+                presence_of_element_located(
+                    (By.CSS_SELECTOR, "button[value='selectAccount']")
+                )
+            )
+        except Exception as e:
+            pass
+        else:
+            driver.find_element(By.CSS_SELECTOR, "button[value='selectAccount']")
+        finally:
+            return login_logout(3)
+    elif state == 3:
+        try:
+            wait.until(
+                presence_of_element_located(
+                    (By.CSS_SELECTOR, "button[value='checkForAlreadyLoggedIn']")
+                )
+            )
+        except:
+            pass
+        else:
+            num = select_account()
+            driver.find_element(
+                By.CSS_SELECTOR, "button[value='checkForAlreadyLoggedIn']"
+            ).click()
+        try:
+            wait.until(
+                presence_of_element_located(
+                    (By.CSS_SELECTOR, "button[value='selectAccount']")
+                )
+            )
+        except:
+            pass
+        else:
+            driver.find_element(
+                By.CSS_SELECTOR, "button[value='selectAccount']"
+            ).click()
+        wait.until(
+            presence_of_element_located(
+                (By.CSS_SELECTOR, "button[value='connect']")
+            )
+        )
+        if not confirm_connect():
+            return 2
+        wait.until(
+            presence_of_element_located(
+                (By.CSS_SELECTOR, "button[value='connect']")
+            )
+        )
+        driver.find_element(By.CSS_SELECTOR, "button[value='connect']").click()
+        try:
+            wait.until(
+                presence_of_element_located((By.LINK_TEXT, "Logout & disconnect Wi-Fi"))
+            )
+        except:
+            getstatusoutput("nmcli c up JioNet@JEC")
+            return login_logout(3)
+        else:
+            return 0
+    elif state == -1:
+        try:
+            wait.until(
+                presence_of_element_located((By.LINK_TEXT, "Logout & disconnect Wi-Fi"))
+            )
+            driver.find_element(By.LINK_TEXT, "Logout & disconnect Wi-Fi").click()
+        except:
+            getstatusoutput("nmcli c up JioNet@JEC")
+            driver.refresh()
+            return login_logout(0)
+        else:
+            wait.until(presence_of_element_located((By.LINK_TEXT, "Ok")))
+            driver.find_element(By.LINK_TEXT, "Ok").click()
+            wait.until(
+                presence_of_element_located((By.LINK_TEXT, "Back to login page"))
+            )
+            driver.find_element(By.LINK_TEXT, "Back to login page").click()
+            getstatusoutput("nmcli c up JioNet@JEC")
+            return 2
+
+
+c = login_logout(0)
+driver.close()
+driver.quit()
+exit(c)

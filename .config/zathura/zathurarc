@@ -1,0 +1,12 @@
+set window-title-basename true
+set selection-clipboard clipboard
+#
+# Startup options
+#
+set adjust-open width
+# set recolor true
+
+# include dracula # Dracula theme
+# include nord # Nord theme
+include lighthaus # Lighthaus theme
+set guioptions none
