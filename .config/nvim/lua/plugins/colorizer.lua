@@ -1,4 +1,9 @@
-require'colorizer'.setup(
+local st_ok, colorizer = pcall(require, "colorizer")
+if not st_ok then
+    return
+end
+
+colorizer.setup(
   {'*';},
   {
     RGB      = true;         -- #RGB hex codes
@@ -9,4 +14,5 @@ require'colorizer'.setup(
 	  hsl_fn   = true;         -- CSS hsl() and hsla() functions
 	  css      = true;         -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
 	  css_fn   = true;         -- Enable all CSS *functions*: rgb_fn, hsl_fn
-  })
+})
+

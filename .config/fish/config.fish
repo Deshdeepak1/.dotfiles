@@ -17,9 +17,10 @@ alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 alias dvim="env GIT_DIR=$HOME/.dotfiles GIT_WORK_TREE=$HOME vim"
 
 # Abbreviations
-abbr    vrc     "dvim ~/.vimrc"
-abbr    nvrc    "dvim ~/.config/nvim/init.vim"
+# abbr    vrc     "dvim ~/.vimrc"
+abbr    nvrc    "dvim ~/.config/nvim/init.lua"
 abbr    frc     "dvim ~/.config/fish/config.fish"
+abbr    awrc    "dvim ~/.config/awesome/rc.lua"
 abbr    fpac    "pacman -Slq | fzf -m --preview 'cat (pacman -Si {1} | psub) (pacman -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro sudo pacman -Sy"
 abbr    fyay    "yay -Slq | fzf -m --preview 'cat (yay -Si {1} | psub) (yay -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro  yay -Sy"
 abbr    fparu   "paru -Slq | fzf -m --preview 'cat (paru -Si {1} | psub) (paru -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro  paru -Sy"
@@ -45,8 +46,15 @@ set -Ux FZF_DEFAULT_OPTS "--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#
 set  PATH $HOME/.local/bin $PATH
 set fish_cursor_unknown block
 export EDITOR="vim"
-export TERM="xterm-256color"
-#
+
+# Time Fixing
+# Start ntpd service
+# timedatectl set-ntp true
+
+# export TERM="xterm-256color" # same with no export : set by termite
+# export TERM="screen-256color"
+# export TERM="tmux-256color"
+
 #fortune | cowsay | lolcat
 fm6000 -r -m 5 -g 5 -c random
 

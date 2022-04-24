@@ -488,6 +488,8 @@ globalkeys = gears.table.join(
               {description = "Applications Menu", group = "Rofi"}),
     awful.key({ modkey }, "w", function() awful.util.spawn_with_shell("rofi-wifi-menu.sh") end,
               {description = "Wifi Menu", group = "Rofi"}),
+    awful.key({ modkey, "Mod1" }, "b", function() awful.util.spawn_with_shell("rofi-bluetooth") end,
+              {description = "Bluetooth Menu", group = "Rofi"}),
     awful.key({ modkey, "Shift" }, "w", function() awful.util.spawn("rofi -modi window -show window -show-icons") end,
               {description = "Window Menu", group = "Rofi"}),
     awful.key({ modkey, "Mod1" }, "c", function() awful.util.spawn("rofi -show calc -modi calc -no-show-match -no-sort") end,
