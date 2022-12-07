@@ -1,11 +1,4 @@
-
--- Assignments
--- o = vim.opt
--- o.number = true
--- o.relativenumber = true
-local exp = vim.fn.expand
-
--- options table ( Similar to dicts)
+local expand = vim.fn.expand
 local options = {
     number = true,
     relativenumber = true,
@@ -29,7 +22,7 @@ local options = {
     -- nowrap = true,
     -- wrap = true,
     wrap = false,
-    undodir = exp("~/.local/share/nvim/undo"),
+    undodir = expand("~/.local/share/nvim/undo"),
     undofile = true,
     incsearch = true,
     scrolloff = 8,
@@ -43,14 +36,14 @@ local options = {
     conceallevel = 0,
     swapfile = false,
     fileencoding = "utf-8",
-    completeopt = { "menuone", "noselect" } ,
+    completeopt = { "menuone", "noselect" },
 
     -- Whitespaces
-    listchars = "tab:<->,trail:-,nbsp:␣,space:·,precedes:«",
+    -- listchars = "tab:<->,trail:-,nbsp:␣,space:·,precedes:«",
+    listchars = "tab:<->,trail:-,nbsp:␣,space:·",
     -- ,eol:↲,extends:»
     list = true,
 
-    -- Don't pass messages to |ins-completion-menu|.
 
     -- Autocompletion
     -- wildmode = "longest,list",
@@ -67,7 +60,7 @@ local options = {
     --highlight ColorColumn ctermbg=gray
     --filetype detect
     --if &filetype=='python'
-        --set cc=79
+    --set cc=79
     --endif
     --autocmd BufNewFile,BufRead *.py set cc=79
 
@@ -75,29 +68,16 @@ local options = {
     --autocmd BufWritePre * %s/\s\+$//e
 
     -- BACKUPDIR:
-    backupdir = exp("~/.local/share/nvim/backup"),
-
+    backup = false,
+    backupdir = expand("~/.local/share/nvim/backup"),
 }
--- for loop, pairs
 for k, v in pairs(options) do
     vim.opt[k] = v
 end
-
--- Append string
+vim.opt.whichwrap:append "l,h,<,>,[,]"
 vim.opt.shortmess:append "c"
--- vim.opt.iskeyword:append "-"
-
--- vim command
-vim.cmd "set whichwrap+=<,>,[,],h,l"
-
--- Colorschemes
--- gruvbox
--- monokai_pro , monokai
--- molokai
--- onehalfdark
--- codemonkey
--- darkplus
--- onedarker
-
--- vim.cmd "hi HighlightedyankRegion cterm=bold gui=bold ctermbg=DarkGrey guibg=DarkGrey"
-vim.cmd "au TextYankPost * silent! lua vim.highlight.on_yank { higroup='IncSearch', timeout=200 }"
+--vim.opt.clipboard:append "unnamedplus"
+vim.highlight.on_yank { higroup = 'IncSearch', timeout = 200, on_macro = true }
+vim.api.nvim_create_autocmd("TextYankPost", { callback = function()
+    vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 200, on_macro = true })
+end })

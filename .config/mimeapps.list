@@ -10,8 +10,13 @@ x-scheme-handler/mailto=brave-browser.desktop
 image/jpeg=sxiv.desktop
 image/png=sxiv.desktop
 application/pdf=org.pwmt.zathura.desktop
-x-scheme-handler/tg=userapp-Kotatogram Desktop-ZDE9C1.desktop
+x-scheme-handler/tg=userapp-Kotatogram Desktop-OJG8K1.desktop
 inode/directory=pcmanfm.desktop
+x-scheme-handler/rdp=org.remmina.Remmina.desktop
+x-scheme-handler/spice=org.remmina.Remmina.desktop
+x-scheme-handler/vnc=org.remmina.Remmina.desktop
+x-scheme-handler/remmina=org.remmina.Remmina.desktop
+application/x-remmina=org.remmina.Remmina.desktop
 
 [Added Associations]
 text/x-install=nvim.desktop;
@@ -20,6 +25,12 @@ image/jpeg=sxiv.desktop;feh.desktop;
 image/png=sxiv.desktop;feh.desktop;
 inode/directory=ranger.desktop;
 application/pdf=org.pwmt.zathura.desktop;
-x-scheme-handler/tg=userapp-Telegram Desktop-HIMY30.desktop;userapp-Kotatogram Desktop-ZDE9C1.desktop;
+x-scheme-handler/tg=userapp-Telegram Desktop-HIMY30.desktop;userapp-Kotatogram Desktop-ZDE9C1.desktop;userapp-Kotatogram Desktop-OJG8K1.desktop;
+application/json=nvim.desktop;
+x-scheme-handler/rdp=org.remmina.Remmina.desktop;
+x-scheme-handler/spice=org.remmina.Remmina.desktop;
+x-scheme-handler/vnc=org.remmina.Remmina.desktop;
+x-scheme-handler/remmina=org.remmina.Remmina.desktop;
+application/x-remmina=org.remmina.Remmina.desktop;
 
 [Removed Associations]

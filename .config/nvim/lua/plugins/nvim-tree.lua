@@ -1,26 +1,3 @@
-vim.g.nvim_tree_icons = {
-  default = "",
-  symlink = "",
-  git = {
-    -- unstaged = "",
-    unstaged = "✗",
-    -- staged = "S",
-    staged = "✓",
-    unmerged = "",
-    renamed = "➜",
-    deleted = "",
-    untracked = "U",
-    ignored = "◌",
-  },
-  folder = {
-    default = "",
-    open = "",
-    empty = "",
-    empty_open = "",
-    symlink = "",
-  },
-}
-
 local status_ok, nvim_tree = pcall(require, "nvim-tree")
 if not status_ok then
   return
@@ -46,7 +23,7 @@ nvim_tree.setup {
   open_on_tab = false,
   hijack_cursor = false,
   update_cwd = true,
-  update_to_buf_dir = {
+  hijack_directories = {
     enable = true,
     auto_open = true,
   },
@@ -71,10 +48,9 @@ nvim_tree.setup {
   },
   view = {
     width = 30,
-    height = 30,
+    --height = 30,
     hide_root_folder = false,
     side = "left",
-    auto_resize = true,
     mappings = {
       custom_only = false,
       list = {
@@ -87,17 +63,49 @@ nvim_tree.setup {
     number = false,
     relativenumber = false,
   },
-  quit_on_open = 0,
-  git_hl = 1,
-  disable_window_picker = 0,
-  root_folder_modifier = ":t",
-  show_icons = {
-    git = 1,
-    folders = 1,
-    files = 1,
-    folder_arrows = 1,
-    tree_width = 30,
+  actions = {
+    open_file = {
+          quit_on_open = false,
+          resize_window = true,
+        },
+  },
+  renderer = {
+      root_folder_modifier = ":t",
+      highlight_git = false,
+      highlight_opened_files = "none",
+      icons = {
+            show = {
+              git = true,
+              folder = true,
+              file = true,
+              folder_arrow = true,
+            },
+            glyphs = {
+                default = "",
+                symlink = "",
+                git = {
+                  -- unstaged = "",
+                  unstaged = "✗",
+                  -- staged = "S",
+                  staged = "✓",
+                  unmerged = "",
+                  renamed = "➜",
+                  deleted = "",
+                  untracked = "U",
+                  ignored = "◌",
+                },
+                folder = {
+                  default = "",
+                  open = "",
+                  empty = "",
+                  empty_open = "",
+                  symlink = "",
+                },
+
+              },
+        },
   },
 }
 
+-- vim.g.nvim_tree_disable_window_picker = 0
 vim.cmd [[ autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif ]]

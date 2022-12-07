@@ -1,5 +1,4 @@
-require "general.options"
-require "general.keymaps"
-require "general.plugins"
-require "plugins"
-require "lsp"
+require("settings")
+require("keymaps")
+require("plugins")
+require("lsp-config")

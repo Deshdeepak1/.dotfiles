@@ -51,7 +51,7 @@ local function bat_notification()
   local bat_capacity = tonumber(f_capacity:read("*all"))
   local bat_status = trim(f_status:read("*all"))
 
-  if (bat_capacity <= 10 and bat_status == "Discharging") then
+  if (bat_capacity <= 20 and bat_status == "Discharging") then
     st_color = "red"
     naughty.notify({ title      = "Battery Warning"
       , text       = "Battery low! " .. bat_capacity .."%" .. " left!"
@@ -73,6 +73,8 @@ local function bat_notification()
     })
   elseif (bat_status == "Charging") then
     st_color = "light green"
+  else 
+        return
   end
   cap = tostring(bat_capacity)
   battery.markup = "<span font='10.5' foreground='" .. st_color .. "'>" .. cap .. "</span>"
@@ -643,7 +645,8 @@ awful.rules.rules = {
           "Sxiv",
           "mpv",
           "KotatogramDesktop",
-          "Pcmanfm"
+          "Pcmanfm",
+          "Brave-browser"
         },
 
         -- Note that the name property shown in xprop might be set slightly after creation of the client

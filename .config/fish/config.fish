@@ -24,6 +24,8 @@ abbr    awrc    "dvim ~/.config/awesome/rc.lua"
 abbr    fpac    "pacman -Slq | fzf -m --preview 'cat (pacman -Si {1} | psub) (pacman -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro sudo pacman -Sy"
 abbr    fyay    "yay -Slq | fzf -m --preview 'cat (yay -Si {1} | psub) (yay -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro  yay -Sy"
 abbr    fparu   "paru -Slq | fzf -m --preview 'cat (paru -Si {1} | psub) (paru -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro  paru -Sy"
+abbr actv ". venv/bin/activate.fish"
+abbr acth ". ~/hvenv/bin/activate.fish"
 # abbr    fdur    "find . -iname \"*.mp4\" -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+ | xargs -I \"{}\" python -c \"t = {} ; h = t//3600; m = (t % 3600)// 60; s = t % 60; ms =(s * 1000) % 1000;  print('%d hours %d minutes %d seconds %d miliseconds' %(h, m, s, ms))\""
 
 
@@ -34,7 +36,8 @@ alias tb="nc termbin.com 9999"
 alias tbc="nc termbin.com 9999 | xclip -selection c"
 alias jqc="jq -C | cat"
 alias octave="octave -q"
-alias dragon="dragon-drag-and-drop"
+alias dragon="dragon-drop"
+alias aria2cc="aria2c -c -s 16 -x 16 -k 1M -j 32  --file-allocation none"
 # export SHELL="sh"
 
 
@@ -64,7 +67,7 @@ end
 
 function fdur
     # find $argv -iname "*.mp4" -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+ | xargs -I "{}" python -c "t = {} ; h = t//3600; m = (t % 3600)// 60; s = t % 60; ms =(s * 1000) % 1000;  print('%d hours %d minutes %d seconds %d miliseconds' %(h, m, s, ms))"
-    set t (find $argv \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" -o -iname "*.mov" \) -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+)
+    set t (find $argv \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" -o -iname "*.mov" -o -iname "*.m4v" \) -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+)
     if test -z "$t"
         set t 0
     end
@@ -77,7 +80,7 @@ function fdur
 end
 
 function lsdur
-    for i in (find $argv -maxdepth 1 \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" -o -iname "*.mov" \) -type f)
+    for i in (find $argv -maxdepth 1 \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" -o -iname "*.mov" -o -iname "*.m4v" \) -type f)
         printf (set_color blue)/"$i"
         printf " "
         set_color green

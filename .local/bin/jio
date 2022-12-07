@@ -17,7 +17,7 @@ options = Options()
 options.binary_location = "/usr/bin/brave"
 options.headless = True
 driver = webdriver.Chrome(options=options)
-wait = WebDriverWait(driver, 5)
+wait = WebDriverWait(driver, 2)
 driver.get("https://jionetportal.jio.in:8443")
 
 
@@ -41,7 +41,7 @@ def confirm_connect():
             continue
         pack_info = pack_info.removeprefix("ACTIVE")
         getstatusoutput(f'notify-send "{pack_info}" -t 10000')
-    sleep(5)
+    sleep(2)
     st, choice = getstatusoutput(f'echo -e "Yes\nNo" | dmenu -l 2 -p "Confirm: "')
     if not choice:
         return False
@@ -56,10 +56,11 @@ def select_login_account():
     accounts = [x for x in csv_reader]
     nums = [x[0] for x in accounts]
     nums_string = "\n".join(nums)
-    st, choice = getstatusoutput(f'echo -e "{nums_string}" | dmenu -l 10 -p "Account: "')
+    st, choice = getstatusoutput(
+        f'echo -e "{nums_string}" | dmenu -l 10 -p "Account: "'
+    )
     selected_account = accounts[nums.index(choice)]
     return selected_account
-
 
 
 def login_logout(state):
@@ -78,9 +79,7 @@ def login_logout(state):
         wait.until(
             presence_of_element_located((By.CSS_SELECTOR, "input[name='jioId']"))
         )
-        driver.find_element(By.CSS_SELECTOR, "input[name='jioId']").send_keys(
-            phone
-        )
+        driver.find_element(By.CSS_SELECTOR, "input[name='jioId']").send_keys(phone)
         driver.find_element(By.CSS_SELECTOR, "input[name='password']").send_keys(
             password
         )
@@ -128,16 +127,12 @@ def login_logout(state):
                 By.CSS_SELECTOR, "button[value='selectAccount']"
             ).click()
         wait.until(
-            presence_of_element_located(
-                (By.CSS_SELECTOR, "button[value='connect']")
-            )
+            presence_of_element_located((By.CSS_SELECTOR, "button[value='connect']"))
         )
         if not confirm_connect():
             return 2
         wait.until(
-            presence_of_element_located(
-                (By.CSS_SELECTOR, "button[value='connect']")
-            )
+            presence_of_element_located((By.CSS_SELECTOR, "button[value='connect']"))
         )
         driver.find_element(By.CSS_SELECTOR, "button[value='connect']").click()
         try:
