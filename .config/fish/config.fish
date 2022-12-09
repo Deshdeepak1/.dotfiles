@@ -18,9 +18,9 @@ alias dvim="env GIT_DIR=$HOME/.dotfiles GIT_WORK_TREE=$HOME vim"
 
 # Abbreviations
 # abbr    vrc     "dvim ~/.vimrc"
-abbr    nvrc    "dvim ~/.config/nvim/init.lua"
-abbr    frc     "dvim ~/.config/fish/config.fish"
-abbr    awrc    "dvim ~/.config/awesome/rc.lua"
+abbr    nvrc    "cd ~/.config/nvim/ ; dvim ~/.config/nvim/init.lua"
+abbr    frc     "cd ~/.config/fish/ ; dvim ~/.config/fish/config.fish"
+abbr    awrc    "cd ~/.config/awesome/ ; dvim ~/.config/awesome/rc.lua"
 abbr    fpac    "pacman -Slq | fzf -m --preview 'cat (pacman -Si {1} | psub) (pacman -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro sudo pacman -Sy"
 abbr    fyay    "yay -Slq | fzf -m --preview 'cat (yay -Si {1} | psub) (yay -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro  yay -Sy"
 abbr    fparu   "paru -Slq | fzf -m --preview 'cat (paru -Si {1} | psub) (paru -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro  paru -Sy"
@@ -46,9 +46,32 @@ export FZF_CTRL_T_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_ALT_C_COMMAND="fd --exclude '.git/' --hidden --type d"
 set -Ux FZF_DEFAULT_OPTS "--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4"
 
-set  PATH $HOME/.local/bin $PATH
+set  PATH $HOME/.local/share/nvim/mason/bin $HOME/.local/bin $PATH
 set fish_cursor_unknown block
 export EDITOR="vim"
+
+function cd --description 'change directory - activate venv'
+    builtin cd $param $argv
+    # Check if we are inside a git directory
+    if git rev-parse --show-toplevel &>/dev/null
+        set venvdir "$(realpath (git rev-parse --show-toplevel))/venv"
+    else
+        set venvdir "./venv"
+    end
+
+    set actvate_file "$venvdir/bin/activate.fish"
+
+    # If venv is not activated or a different venv is activated and venv exist.
+    if test "$VIRTUAL_ENV" != "$venvdir" -a -f "$actvate_file"
+        . "$actvate_file"
+    # If venv activated but the current (git) dir has no venv.
+    # else if not test -z "$VIRTUAL_ENV" -o -e "$gitdir/.venv"
+    #     deactivate
+    end
+end
+cd $PWD
+
+
 
 # Time Fixing
 # Start ntpd service
@@ -59,7 +82,7 @@ export EDITOR="vim"
 # export TERM="tmux-256color"
 
 #fortune | cowsay | lolcat
-fm6000 -r -m 5 -g 5 -c random
+# fm6000 -r -m 5 -g 5 -c random
 
 function backup --argument filename
     cp $filename $filename.bak

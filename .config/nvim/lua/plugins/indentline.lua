@@ -10,4 +10,4 @@ indentline.setup({
 })
 
 -- vim.cmd [[highlight IndentBlanklineContextChar guifg=#00FF00 gui=nocombine]]
-vim.cmd [[highlight IndentBlanklineContextChar guifg=lightpink gui=nocombine]]
+vim.cmd [[highlight IndentBlanklineContextChar guifg=lightblue gui=nocombine]]

@@ -8,7 +8,7 @@ local opts = { noremap = true, silent = true }
 vim.keymap.set('n', '<space>E', vim.diagnostic.open_float, opts)
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-vim.keymap.set('n', '<space>Q', vim.diagnostic.setloclist, opts)
+vim.keymap.set('n', '<space>lq', vim.diagnostic.setloclist, opts)
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -18,6 +18,9 @@ local on_attach = function(client, bufnr)
     -- if client.name == "pyright" then
     --     vim.api.nvim_command('autocmd BufWritePost <buffer> silent !black %')
     -- end
+    if client.server_capabilities.documentFormattingProvider then
+        vim.api.nvim_command('autocmd BufWritePre <buffer> lua vim.lsp.buf.format()')
+    end
 
     -- Mappings.
     -- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -37,7 +40,7 @@ local on_attach = function(client, bufnr)
     vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, bufopts)
     vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
     vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
-    vim.keymap.set('n', '<space>F', function() vim.lsp.buf.format { async = true } end, bufopts)
+    vim.keymap.set('n', '<space>F', function() vim.lsp.buf.format {} end, bufopts)
 end
 
 local lsp_flags = {

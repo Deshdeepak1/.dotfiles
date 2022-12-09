@@ -1,8 +1,8 @@
 local ensure_packer = function()
     local fn = vim.fn
-    local install_path = fn.stdpath("data").."/site/pack/packer/start/packer.nvim"
+    local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
     if fn.empty(fn.glob(install_path)) > 0 then
-        fn.system({"git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path})
+        fn.system({ "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path })
         vim.cmd [[packadd packer.nvim]]
         return true
     end
@@ -18,11 +18,11 @@ end
 
 -- Have packer use a popup window
 packer.init {
-  display = {
-    open_fn = function()
-      return require("packer.util").float { border = "rounded" }
-    end,
-  },
+    display = {
+        open_fn = function()
+            return require("packer.util").float { border = "rounded" }
+        end,
+    },
 }
 
 packer.startup(function(use)
@@ -74,7 +74,7 @@ packer.startup(function(use)
 
     use("nvim-lua/plenary.nvim")
     use({ "nvim-telescope/telescope.nvim", tag = '0.1.0', })
-    use({'nvim-telescope/telescope-fzf-native.nvim', run = 'make' })
+    use({ 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' })
 
 
     use("neovim/nvim-lspconfig")
@@ -97,10 +97,9 @@ packer.startup(function(use)
     use("JoosepAlviste/nvim-ts-context-commentstring")
     use("p00f/nvim-ts-rainbow")
 
+    use("jose-elias-alvarez/null-ls.nvim")
 
-
-
-
+    -- use("mfussenegger/nvim-dap")
 
     if packer_bootstrap then
         packer.sync()
@@ -147,4 +146,4 @@ require("plugins.which-key")
 require("plugins.nvim-tree")
 require("plugins.telescope")
 require("plugins.treesitter")
-
+require("plugins.null-ls")

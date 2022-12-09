@@ -7,9 +7,9 @@ vim.g.mapleader = " "
 
 -- Save  Quit
 keymap("n", "<leader>q", ":close<CR>", opts)
---keymap("n", "<leader>q", ":bdelete<CR>", opts)
-keymap("n", "<leader>x", ":bdelete<CR>", opts)
-keymap("n", "<leader>q", ":quit<CR>", opts)
+keymap("n", "<leader>q", ":bdelete<CR>", opts)
+-- keymap("n", "<leader>x", ":bdelete<CR>", opts)
+keymap("n", "<leader>Q", ":quit<CR>", opts)
 --keymap("n", "<leader>Q", ":quitall!<CR>", opts)
 keymap("n", "<leader>S", ":luafile %<CR>", opts)
 keymap("n", "<leader>s", ":update<CR>", opts)
@@ -86,5 +86,3 @@ vim.cmd [[ autocmd filetype nroff nnoremap <F5> :!groff -ms -UT pdf "%" > $(base
 -- Comment
 keymap("n", "<leader>/", '<cmd>lua require"Comment.api".toggle.linewise()<cr>', opts)
 keymap('x', '<leader>/', '<ESC><CMD>lua require("Comment.api").toggle.linewise(vim.fn.visualmode())<CR>', opts)
-
-
