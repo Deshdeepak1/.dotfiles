@@ -30,31 +30,10 @@ packer.startup(function(use)
     use("lewis6991/impatient.nvim")
 
     -- Colorschemes
-    -- use "folke/tokyonight.nvim"
-    -- use "lunarvim/onedarker.nvim"
-    -- use "lunarvim/darkplus.nvim"
-    -- use "lunarvim/colorschemes"
     use("tanvirtin/monokai.nvim")
-    -- use("novakne/kosmikoa.nvim")
-    -- use("ful1e5/onedark.nvim")
-    -- use("olimorris/onedarkpro.nvim")
-    -- use("sainnhe/everforest")
-    -- use("sainnhe/edge")
-    -- use("ofirgall/ofirkai.nvim")
-    -- use("sainnhe/sonokai")
-    -- use("bluz71/vim-nightfly-colors")
-    -- use("bluz71/vim-moonfly-colors")
-    -- use("Mofiqul/vscode.nvim")
-    -- use("marko-cerovac/material.nvim")
-    -- use("rafamadriz/neon")
-    -- use("mhartington/oceanic-next")
-    -- use {"sonph/onehalf", rtp = "vim"}
-    -- use "Mofiqul/dracula.nvim"
-    -- use "ellisonleao/gruvbox.nvim"
-    -- use  "gruvbox-community/gruvbox"
-    -- use {"tomasr/molokai", rtp = "colors"}
-    -- use { "navarasu/onedark.nvim" }
-    -- use "sam4llis/nvim-tundra"
+    use("ofirgall/ofirkai.nvim")
+    use("Mofiqul/vscode.nvim")
+    use "Mofiqul/dracula.nvim"
 
     use("kyazdani42/nvim-web-devicons")
     use("windwp/nvim-autopairs")
@@ -105,7 +84,18 @@ packer.startup(function(use)
         packer.sync()
     end
 end)
-local colorscheme = "monokai"
+
+local dracula_st, dracula = pcall(require, "dracula")
+if dracula_st then
+    dracula.setup({
+        -- customize dracula color palette
+        colors = {
+            bg = "#26292C",
+        },
+    })
+end
+local colorscheme = "dracula"
+-- local colorscheme = "doom-one"
 local status_ok, _ = pcall(vim.cmd, "colorscheme " .. colorscheme)
 if not status_ok then
     vim.notify(colorscheme .. " not found")
