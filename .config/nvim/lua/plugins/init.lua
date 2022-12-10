@@ -33,7 +33,9 @@ packer.startup(function(use)
     use("tanvirtin/monokai.nvim")
     use("ofirgall/ofirkai.nvim")
     use("Mofiqul/vscode.nvim")
-    use "Mofiqul/dracula.nvim"
+    use("Mofiqul/dracula.nvim")
+    -- use("rebelot/kanagawa.nvim")
+    -- use("nyoom-engineering/oxocarbon.nvim")
 
     use("kyazdani42/nvim-web-devicons")
     use("windwp/nvim-autopairs")
@@ -94,7 +96,7 @@ if dracula_st then
         },
     })
 end
-local colorscheme = "dracula"
+local colorscheme = "monokai"
 -- local colorscheme = "doom-one"
 local status_ok, _ = pcall(vim.cmd, "colorscheme " .. colorscheme)
 if not status_ok then

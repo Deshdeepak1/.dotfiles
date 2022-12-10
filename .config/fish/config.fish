@@ -50,7 +50,7 @@ set  PATH $HOME/.local/share/nvim/mason/bin $HOME/.local/bin $PATH
 set fish_cursor_unknown block
 export EDITOR="vim"
 
-function cd --description 'change directory - activate venv'
+function venv_act --description 'change directory - activate venv'
     builtin cd $param $argv
     # Check if we are inside a git directory
     if git rev-parse --show-toplevel &>/dev/null
@@ -69,7 +69,6 @@ function cd --description 'change directory - activate venv'
     #     deactivate
     end
 end
-cd $PWD
 
 
 
@@ -141,3 +140,5 @@ function tempup --argument-names file name
     end
     curl --progress-bar -T "$file" "https://temp.sh/$name"
 end
+
+venv_act $PWD
