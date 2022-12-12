@@ -22,7 +22,7 @@ keymap("i", "jk", "<ESC>", opts)
 keymap("i", "kj", "<ESC>", opts)
 
 -- Splits
-keymap("n", "<leader>h", ":split<SPACE>", opts)
+keymap("n", "<leader>H", ":split<SPACE>", opts)
 keymap("n", "<leader>v", ":vsplit<SPACE>", opts)
 keymap("n", "<C-h>", "<c-w>h", opts)
 keymap("n", "<C-l>", "<c-w>l", opts)

@@ -50,8 +50,8 @@ set  PATH $HOME/.local/share/nvim/mason/bin $HOME/.local/bin $PATH
 set fish_cursor_unknown block
 export EDITOR="vim"
 
-function venv_act --description 'change directory - activate venv'
-    builtin cd $param $argv
+function venv_act --on-variable PWD --description 'change directory - activate venv'
+    # builtin cd $param $argv
     # Check if we are inside a git directory
     if git rev-parse --show-toplevel &>/dev/null
         set venvdir "$(realpath (git rev-parse --show-toplevel))/venv"

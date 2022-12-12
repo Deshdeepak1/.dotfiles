@@ -55,5 +55,21 @@ wk.register({
         m = { "<cmd>Telescope marks<cr>", "Marks" },
         M = { "<cmd>Telescope man_pages<cr>", "Man" },
     },
+    h = {
+        name = "Hunk",
+        s = "Stage Hunk",
+        S = "Stage Buffer",
+        r = "Reset Hunk",
+        R = "Reset Buffer",
+        u = "Undo Stage Hunk",
+        p = "Preview Hunk",
+        t = "Toggle Hunk",
+        b = "Blame Line",
+        B = "Blame Line full",
+        T = "Blame Line Toggle",
+        d = "DiffSplit",
+        D = "DiffSplit ~",
+
+    },
 }, { prefix = "<leader>" })
 wk.setup()

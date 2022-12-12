@@ -119,10 +119,6 @@ local comment_ok, comment = pcall(require, "Comment")
 if comment_ok then
     comment.setup()
 end
-local gitsigns_ok, gitsigns = pcall(require, "gitsigns")
-if gitsigns_ok then
-    gitsigns.setup()
-end
 local impatient_ok, impatient = pcall(require, "impatient")
 if impatient_ok then
     impatient.enable_profile()
@@ -139,3 +135,4 @@ require("plugins.nvim-tree")
 require("plugins.telescope")
 require("plugins.treesitter")
 require("plugins.null-ls")
+require("plugins.gitsigns")
