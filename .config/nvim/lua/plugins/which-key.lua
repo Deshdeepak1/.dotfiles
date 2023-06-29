@@ -15,30 +15,30 @@ wk.register({
     ["/"] = { "Comment" },
     g = {
         name = "Git",
-        h = { ":SignifyToggleHighlight<cr>", "Highlight" },
-        t = { ":SignifyToggle<cr>", "Toggle" },
-        s = { ":G<cr>", "Status" },
-        d = { ":Gvdiffsplit<cr>", "DiffSplit" },
-        D = { ":G diff<cr>", "Diff" },
-        a = { ":Gw<cr>", "Add" },
-        A = { ":G add .<cr>", "AddCDir" },
-        r = { ":GDelete<cr>", "Remove" },
-        R = { ":GRename<cr>", "Rename" },
-        c = { ":G commit<cr>", "Commit" },
-        p = { ":G push<cr>", "Push" },
-        P = { ":G pull<cr>", "Pull" },
-        f = { ":G fetch<cr>", "Fetch" },
-        l = { ":Gclog<cr>", "Log" },
-        C = { ":GBranches<cr>", "Checkout" },
-        bb = { ":G blame<cr>", "Blame" },
-        B = { ":GBrowse<cr>", "Browse" },
-        cc = { ":GV!<cr>", "Commits" },
-        CC = { ":GV<cr>", "AllCommits" },
-        F = { ":G add<Space>", "CustAdd" },
-        m = { ":GMove<Space>", "Move" },
-        b = { ":G branch ", "Branch" },
+        h = { "<cmd>SignifyToggleHighlight<cr>", "Highlight" },
+        t = { "<cmd>SignifyToggle<cr>", "Toggle" },
+        s = { "<cmd>G<cr>", "Status" },
+        d = { "<cmd>Gvdiffsplit<cr>", "DiffSplit" },
+        D = { "<cmd>G diff<cr>", "Diff" },
+        a = { "<cmd>Gw<cr>", "Add" },
+        A = { "<cmd>G add .<cr>", "AddCDir" },
+        r = { "<cmd>GDelete<cr>", "Remove" },
+        R = { "<cmd>GRename<cr>", "Rename" },
+        c = { "<cmd>G commit<cr>", "Commit" },
+        p = { "<cmd>G push<cr>", "Push" },
+        P = { "<cmd>G pull<cr>", "Pull" },
+        f = { "<cmd>G fetch<cr>", "Fetch" },
+        l = { "<cmd>Gclog<cr>", "Log" },
+        C = { "<cmd>GBranches<cr>", "Checkout" },
+        bb = { "<cmd>G blame<cr>", "Blame" },
+        B = { "<cmd>GBrowse<cr>", "Browse" },
+        cc = { "<cmd>GV!<cr>", "Commits" },
+        CC = { "<cmd>GV<cr>", "AllCommits" },
+        F = { "<cmd>G add<Space>", "CustAdd" },
+        m = { "<cmd>GMove<Space>", "Move" },
+        b = { "<cmd>G branch ", "Branch" },
     },
-    e = { ":NvimTreeFindFileToggle<cr>", "Explorer" },
+    e = { "<cmd>NvimTreeFindFileToggle<cr>", "Explorer" },
     f = {
         name = "Telescope",
         f = { "<cmd>Telescope find_files<cr>", "Files" },
@@ -71,5 +71,37 @@ wk.register({
         D = "DiffSplit ~",
 
     },
-}, { prefix = "<leader>" })
+    t = {
+        name = "Terminal",
+        t = { "<cmd>ToggleTerm direction=float<CR>", "Float" },
+        v = { "<cmd>ToggleTerm direction=vertical size=45<CR>", "Vertical" },
+        h = { "<cmd>ToggleTerm direction=horizontal size=15<CR>", "Horizontal" },
+        l = { "<cmd>ToggleTermSendCurrentLine<CR>", "Send Line" },
+        p = { "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd='python3', direction='float'}):toggle()<CR>",
+            "python" },
+        P = { "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd='python3', direction='horizontal', size=15}):toggle()<CR>",
+            "python" },
+    },
+    r = {
+        name = "Run",
+        p = { "<cmd>TermExec cmd='python3 %' direction=float<CR>", "python" },
+        P = { "<cmd>TermExec cmd='python3 %' direction=horizontal<CR> size=15", "python" },
+    }
+}, { mode = "n", prefix = "<leader>" })
+wk.register({
+    t = {
+        name = "Terminal",
+        l = { "<cmd>ToggleTermSendVisualLine<CR>", "Send Line" },
+        s = { "<cmd>ToggleTermSendVisualSelection<CR>", "Send Visual Selection" },
+    }
+}, { mode = "v", prefix = "<leader>" })
+wk.register({
+    t = {
+        name = "Terminal",
+        t = { "<cmd>ToggleTerm direction=float<CR>", "Float" },
+        v = { "<cmd>ToggleTerm direction=vertical size=45<CR>", "Vertical" },
+        h = { "<cmd>ToggleTerm direction=horizontal size=15<CR>", "Horizontal" },
+        -- l = { "<cmd>ToggleTermSendCurrentLine<CR>", "Send Line" },
+    }
+}, { mode = "t", prefix = "<leader>" })
 wk.setup()

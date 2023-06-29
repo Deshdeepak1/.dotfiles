@@ -34,8 +34,9 @@ packer.startup(function(use)
     use("ofirgall/ofirkai.nvim")
     use("Mofiqul/vscode.nvim")
     use("Mofiqul/dracula.nvim")
-    -- use("rebelot/kanagawa.nvim")
-    -- use("nyoom-engineering/oxocarbon.nvim")
+    use("nyoom-engineering/oxocarbon.nvim")
+    use { 'rktjmp/lush.nvim' }
+    use { 'rockyzhang24/arctic.nvim' }
 
     use("kyazdani42/nvim-web-devicons")
     use("windwp/nvim-autopairs")
@@ -80,6 +81,10 @@ packer.startup(function(use)
 
     use("jose-elias-alvarez/null-ls.nvim")
 
+    use("christoomey/vim-tmux-navigator")
+
+    use("akinsho/toggleterm.nvim")
+
     -- use("mfussenegger/nvim-dap")
 
     if packer_bootstrap then
@@ -96,7 +101,7 @@ if dracula_st then
         },
     })
 end
-local colorscheme = "monokai"
+local colorscheme = "arctic"
 -- local colorscheme = "doom-one"
 local status_ok, _ = pcall(vim.cmd, "colorscheme " .. colorscheme)
 if not status_ok then
@@ -126,6 +131,10 @@ end
 local mason_ok, mason = pcall(require, "mason")
 if mason_ok then
     mason.setup()
+end
+local ok, toggleterm = pcall(require, "toggleterm")
+if ok then
+    toggleterm.setup()
 end
 require("plugins.indentline")
 require("plugins.cokeline")

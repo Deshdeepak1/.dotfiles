@@ -38,6 +38,7 @@ alias jqc="jq -C | cat"
 alias octave="octave -q"
 alias dragon="dragon-drop"
 alias aria2cc="aria2c -c -s 16 -x 16 -k 1M -j 32  --file-allocation none"
+alias xsc="xclip -sel clipboard"
 # export SHELL="sh"
 
 
