@@ -1,0 +1,4 @@
+[[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
+xrandr --output eDP-1 --brightness 0.5
+picom &
+exec qtile start
