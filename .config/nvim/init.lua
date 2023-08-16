@@ -1,4 +1,3 @@
 require("settings")
 require("keymaps")
-require("plugins")
-require("lsp-config")
+require("lazy-config")

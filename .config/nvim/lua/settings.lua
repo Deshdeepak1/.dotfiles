@@ -11,6 +11,7 @@ local options = {
     smarttab = true,
 
     mouse = "a",
+    mousemoveevent = true,
     smartindent = true,
     -- cindent = true,
     ruler = true,
@@ -22,15 +23,20 @@ local options = {
     -- nowrap = true,
     -- wrap = true,
     wrap = false,
+    foldenable = false,
     undodir = expand("~/.local/share/nvim/undo"),
     undofile = true,
     incsearch = true,
     scrolloff = 8,
     termguicolors = true,
     updatetime = 100,
+    timeout = true,
     timeoutlen = 300,
     cursorline = true,
-    signcolumn = "yes",
+    signcolumn = "yes:1",
+    -- signcolumn = "auto:3",
+    -- signcolumn = "auto:3-4",
+    -- signcolumn = "yes:2",
     -- shell = "sh",
     pumheight = 10,
     conceallevel = 0,
@@ -74,10 +80,14 @@ local options = {
 for k, v in pairs(options) do
     vim.opt[k] = v
 end
+-- vim.opt.formatoptions:remove("o")
+vim.opt.formatoptions:remove("cro")
 vim.opt.whichwrap:append "l,h,<,>,[,]"
 vim.opt.shortmess:append "c"
 --vim.opt.clipboard:append "unnamedplus"
 vim.highlight.on_yank { higroup = 'IncSearch', timeout = 200, on_macro = true }
-vim.api.nvim_create_autocmd("TextYankPost", { callback = function()
-    vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 200, on_macro = true })
-end })
+vim.api.nvim_create_autocmd("TextYankPost", {
+    callback = function()
+        vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 200, on_macro = true })
+    end
+})
