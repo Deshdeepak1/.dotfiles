@@ -1,5 +1,8 @@
+# DO NOT EDIT! This file will be overwritten by LXAppearance.
+# Any customization should be done in ~/.gtkrc-2.0.mine instead.
+
 include "/home/deshdeepak/.gtkrc-2.0.mine"
-gtk-theme-name="Breeze-Dark"
+gtk-theme-name="Arc"
 gtk-icon-theme-name="Arc"
 gtk-font-name="mononoki Nerd Font,  10"
 gtk-cursor-theme-name="Breeze_Default"
