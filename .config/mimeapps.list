@@ -17,6 +17,7 @@ x-scheme-handler/spice=org.remmina.Remmina.desktop
 x-scheme-handler/vnc=org.remmina.Remmina.desktop
 x-scheme-handler/remmina=org.remmina.Remmina.desktop
 application/x-remmina=org.remmina.Remmina.desktop
+x-scheme-handler/webcal=brave-browser.desktop
 
 [Added Associations]
 text/x-install=nvim.desktop;
