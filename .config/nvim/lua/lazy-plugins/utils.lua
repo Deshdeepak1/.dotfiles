@@ -4,6 +4,7 @@ return {
         'nvim-telescope/telescope.nvim',
         tag = "0.1.2",
         -- event = "VeryLazy",
+        -- cond = false,
         cmd = "Telescope",
         dependencies = {
             { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
@@ -46,6 +47,7 @@ return {
             local textobjects = {
                 select = {
                     enable = true,
+                    -- enable = false,
                     lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
                     keymaps = {
                         -- You can use the capture groups defined in textobjects.scm
@@ -59,6 +61,7 @@ return {
                 },
                 move = {
                     enable = true,
+                    -- enable = false,
                     set_jumps = true, -- whether to set jumps in the jumplist
                     goto_next_start = {
                         ["]m"] = "@function.outer",
@@ -81,6 +84,7 @@ return {
 
             local playground = {
                 enable = true,
+                -- enable = false,
                 disable = {},
                 updatetime = 25,         -- Debounced time for highlighting nodes in the playground from source code
                 persist_queries = false, -- Whether the query persists across vim sessions
@@ -100,6 +104,7 @@ return {
 
             local autotag = {
                 enable = true,
+                -- enable = false,
             }
             configs.setup({
                 ensure_installed = {
@@ -110,17 +115,22 @@ return {
                 auto_install = false,
                 highlight = {
                     enable = true,
+                    -- enable = false,
+                    -- additional_vim_regex_highlighting = true,
                 },
                 indent = {
                     enable = true,
-                    disable = { "python", --[[ "lua"  ]] },
+                    -- enable = false,
+                    -- disable = { "python", --[[ "lua"  ]] },
                 },
                 context_commentstring = {
                     enable = true,
+                    -- enable = false,
                     enable_autocmd = false,
                 },
                 incremental_selection = {
                     enable = true,
+                    -- enable = false,
                     keymaps = {
                         init_selection = "<C-Space>", -- set to `false` to disable one of the mappings
                         node_incremental = "<C-Space>",
@@ -142,6 +152,7 @@ return {
         "alexghergh/nvim-tmux-navigation",
         event = "VeryLazy",
         cond = function()
+            -- return false
             return os.getenv("TMUX") ~= nil
         end,
         config = function()
@@ -164,6 +175,7 @@ return {
         'stevearc/oil.nvim',
         lazy = false,
         -- event = "VeryLazy",
+        -- cond = false,
         -- opts = {},
         config = function()
             local oil = require("oil")
@@ -202,11 +214,34 @@ return {
     },
     {
         "iamcco/markdown-preview.nvim",
+        -- event = "VeryLazy",
+        -- cmd = { "MarkdownPreviewToggle" },
         ft = { "markdown", "quarto" },
+        -- cond = false,
+        -- init = function()
+        --     vim.fn["mkdp#util#install"]()
+        --     vim.g.mkdp_filetypes = { "markdown", "quarto" }
+        -- end,
         config = function()
             vim.fn["mkdp#util#install"]()
             vim.g.mkdp_filetypes = { "markdown", "quarto" }
         end,
     },
-    { "mbbill/undotree", event = "VeryLazy" },
+    {
+        "mbbill/undotree",
+        event = "VeryLazy",
+        -- cond = false,
+    },
+    {
+        'glacambre/firenvim',
+        -- cond = false,
+
+        -- Lazy load firenvim
+        -- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
+        lazy = not vim.g.started_by_firenvim,
+        build = function()
+            vim.fn["firenvim#install"](0)
+        end
+    },
+
 }

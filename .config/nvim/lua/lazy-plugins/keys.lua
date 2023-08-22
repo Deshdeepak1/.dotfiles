@@ -4,6 +4,7 @@ return {
     {
         "numToStr/Comment.nvim",
         -- event = "VeryLazy",
+        -- cond = false,
         keys = {
             {
                 "<leader>/",
@@ -30,6 +31,7 @@ return {
     },
     {
         "kylechui/nvim-surround",
+        -- cond = false,
         version = "*", -- Use for stability; omit to use `main` branch for the latest features
         event = "VeryLazy",
         config = function()
@@ -41,6 +43,7 @@ return {
     {
         "windwp/nvim-autopairs",
         event = "InsertEnter",
+        -- cond = false,
         opts = {
             check_ts = true,
             fast_wrap = {},
@@ -76,7 +79,9 @@ return {
     -- },
     {
         "ggandor/leap.nvim",
-        event = "VeryLazy",
+        -- cond = false,
+        -- event = "VeryLazy",
+        keys = { "s", "S" },
         -- lazy = false,
         config = function()
             require('leap').add_default_mappings()
@@ -84,7 +89,12 @@ return {
     },
     {
         "ThePrimeagen/harpoon",
-        event = "VeryLazy",
+        -- cond = false,
+        -- event = "VeryLazy",
+        keys = {
+            "<leader>A",
+            "<leader>m",
+        },
         config = function()
             local mark = require("harpoon.mark")
             local ui = require("harpoon.ui")
@@ -102,8 +112,10 @@ return {
     -- Which-key
     {
         "folke/which-key.nvim",
-        keys = { "<leader>" },
-        -- event = "VeryLazy",
+        -- cond = false,
+        -- keys = { "<leader>" },
+        event = "VeryLazy",
+        priority = 0,
         -- init = function()
         --   vim.o.timeout = true
         --   vim.o.timeoutlen = 300

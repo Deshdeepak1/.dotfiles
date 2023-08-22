@@ -2,7 +2,8 @@ return {
     {
         "neovim/nvim-lspconfig",
         -- event = "VeryLazy",
-        event = { "BufReadPre", "BufNewFile" },
+        -- cond = false,
+        -- event = { "BufReadPre", "BufNewFile" },
         -- lazy = false,
         ft = { "python", "lua" },
         dependencies = {
@@ -32,6 +33,7 @@ return {
                     "lua_ls",
                     "pylsp",
                     "pyright",
+                    "clangd",
                 },
             })
 
@@ -131,7 +133,10 @@ return {
                             },
                         }
                     }
-                }
+                },
+                clangd = {
+
+                },
 
             }
 

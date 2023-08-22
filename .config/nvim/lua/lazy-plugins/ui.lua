@@ -4,6 +4,7 @@ return {
         "RRethy/vim-illuminate",
         -- event = { "BufReadPost", "BufNewFile" },
         -- event = "CursorMoved",
+        -- cond = false,
         event = "VeryLazy",
     },
     -- {
@@ -15,6 +16,7 @@ return {
     {
         "NvChad/nvim-colorizer.lua",
         -- event = "VeryLazy",
+        -- cond = false,
         keys = {
             { "<leader>C", "<cmd>ColorizerToggle<cr>", desc = "ColorToggle" },
         },
@@ -23,8 +25,9 @@ return {
     {
         "lukas-reineke/indent-blankline.nvim",
         event = "VeryLazy",
-        -- event = "CursorMoved" ,
-        -- cond=false,
+        -- event = "CursorMoved",
+        -- cond = false,
+        -- dependencies = { "nvim-treesitter/nvim-treesitter" },
         config = function()
             require("indent_blankline").setup({
                 space_char_blankline = " ",
@@ -50,6 +53,7 @@ return {
         "catppuccin/nvim",
         lazy = false,
         -- event = "VeryLazy",
+        -- cond = false,
         name = "catppuccin",
         priority = 1000,
         opts = {
@@ -71,6 +75,7 @@ return {
         'akinsho/bufferline.nvim',
         version = "*",
         event = "VeryLazy",
+        -- cond = false,
         config = function()
             buffer_bg = '#232627'
             bufferline = require("bufferline")
@@ -124,6 +129,7 @@ return {
     {
         "freddiehaddad/feline.nvim",
         event = "VeryLazy",
+        -- cond = false,
         config = function()
             feline = require("feline")
             local one_monokai = {
