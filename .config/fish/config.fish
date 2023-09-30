@@ -161,3 +161,5 @@ function tempup --argument-names file name
 end
 
 venv_act $PWD
+
+alias battery='upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -e "percentage" -e "time to empty" | cut -d ":" -f 2  | xargs  bash -c \'echo $2 $0 $1\''
