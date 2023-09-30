@@ -1,4 +1,7 @@
+set window-title-page
 set window-title-basename true
+set statusbar-home-tilde true
+# set statusbar-page-percent true
 set selection-clipboard clipboard
 #
 # Startup options
