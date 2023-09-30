@@ -76,6 +76,7 @@ return {
         version = "*",
         event = "VeryLazy",
         -- cond = false,
+        cond = not vim.g.started_by_firenvim,
         config = function()
             buffer_bg = '#232627'
             bufferline = require("bufferline")

@@ -3,6 +3,7 @@ local keymap = vim.keymap.set
 
 -- keymap("", "<SPACE>", "<Nop>", opts)
 vim.g.mapleader = " "
+vim.g.maplocalleader = ","
 
 
 -- Save  Quit
@@ -46,7 +47,7 @@ keymap("n", "<M-k>", ":resize +2<CR>", opts)
 --keymap("n", "<S-TAB>", ":tabprevious<CR>", opts)
 
 -- Buffer
-keymap("n", "<leader>n", ":e<SPACE>", { desc = "Edit" })
+-- keymap("n", "<leader>n", ":e<SPACE>", { desc = "Edit" })
 keymap("n", "<leader>bb", ":b<SPACE>", { desc = "Buffers" })
 keymap("n", "<TAB>", ":bnext<CR>", opts)
 keymap("n", "<S-TAB>", ":bprevious<CR>", opts)
@@ -90,7 +91,7 @@ keymap("n", "<leader>ck", "<cmd>cnext<CR>zz", { desc = "Next" })
 keymap("n", ",h", ":-1read $HOME/.config/nvim/snippets/skeleton.html<CR>3jwf>a", opts)
 keymap("n", ",c", ":-1read $HOME/.config/nvim/snippets/skeleton.c<CR>3ja<TAB>", opts)
 keymap("n", ",cc", ":-1read $HOME/.config/nvim/snippets/skeleton.cpp<CR>4ja<TAB>", opts)
-keymap("n", ",cp", ":-1read $HOME/.config/nvim/snippets/skeleton_cp.cpp<CR>4ja<TAB>", opts)
+keymap("n", ",cp", ":-1read $HOME/.config/nvim/snippets/skeleton_cp.cpp<CR>5ja<TAB>", opts)
 keymap("n", ",p", ":-1read $HOME/.config/nvim/snippets/skeleton.py<CR>o<TAB>", opts)
 keymap("n", ",pa", ":-1read $HOME/.config/nvim/snippets/skeleton_aio.py<CR>4ja<TAB>", opts)
 

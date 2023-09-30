@@ -5,7 +5,7 @@ return {
         -- cond = false,
         -- event = { "BufReadPre", "BufNewFile" },
         -- lazy = false,
-        ft = { "python", "lua" },
+        ft = { "python", "lua", "cpp" },
         dependencies = {
             "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",

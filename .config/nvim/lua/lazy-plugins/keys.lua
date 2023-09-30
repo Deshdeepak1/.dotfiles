@@ -113,6 +113,7 @@ return {
     {
         "folke/which-key.nvim",
         -- cond = false,
+        cond = not vim.g.started_by_firenvim,
         -- keys = { "<leader>" },
         event = "VeryLazy",
         priority = 0,
@@ -153,6 +154,11 @@ return {
                 },
                 h = "Hunk",
                 c = "QuickFix",
+                n = {
+                    name = "Neorg",
+                    w = { ":Neorg workspace ", "Workspace" },
+                    n = { ":Neorg workspace notes<cr>", "Notes Workspace" },
+                }
             }, { mode = "n", prefix = "<leader>", silent = false })
             wk.register({ b = "Buffer" }, { mode = "n", prefix = "<leader>" })
             wk.register({
