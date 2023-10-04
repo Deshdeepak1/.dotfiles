@@ -209,9 +209,4 @@ return {
             })
         end,
     },
-    -- {
-    --     "mfussenegger/nvim-dap",
-    --     event = "VeryLazy",
-    --     -- config = true,
-    -- }
 }

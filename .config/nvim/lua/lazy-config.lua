@@ -33,7 +33,11 @@ lazy.setup({
     { "nvim-tree/nvim-web-devicons" },
     { "nvim-lua/plenary.nvim" },
 
-    { import = "lazy-plugins" },
+    { import = "lazy-plugins.keys" },
+    { import = "lazy-plugins.utils" },
+    { import = "lazy-plugins.git" },
+    { import = "lazy-plugins.ui" },
+    { import = "lazy-plugins.neorg" },
 }, lazy_opts)
 
 
