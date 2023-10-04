@@ -93,7 +93,8 @@ return {
             local capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
             local ignored_servers = {
-                "pylsp",
+                -- "pylsp",
+                "pyright",
             }
 
             local lsp_opts = {
@@ -111,6 +112,10 @@ return {
                             }
                         }
                     },
+                },
+
+                pylsp = {
+
                 },
 
                 lua_ls = {
@@ -134,6 +139,7 @@ return {
                         }
                     }
                 },
+
                 clangd = {
 
                 },
