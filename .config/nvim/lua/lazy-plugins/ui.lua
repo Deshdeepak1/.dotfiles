@@ -24,19 +24,25 @@ return {
     },
     {
         "lukas-reineke/indent-blankline.nvim",
+        main = "ibl",
         event = "VeryLazy",
         -- event = "CursorMoved",
         -- cond = false,
         -- dependencies = { "nvim-treesitter/nvim-treesitter" },
         config = function()
-            require("indent_blankline").setup({
-                space_char_blankline = " ",
-                show_current_context = true,
-                show_current_context_start = false,
-                use_treesitter = true,
-            })
             -- vim.cmd [[highlight IndentBlanklineContextChar guifg=#00FF00 gui=nocombine]]
-            vim.cmd [[highlight IndentBlanklineContextChar guifg=lightblue gui=nocombine]]
+            vim.cmd [[highlight IblScope guifg=lightblue gui=nocombine]]
+            require("ibl").setup({
+                indent = {
+                    char = "▏",
+                },
+                scope = {
+                    enabled = true,
+                    show_start = false,
+                    show_end = false,
+                    injected_languages = true,
+                },
+            })
         end
     },
 
@@ -67,6 +73,7 @@ return {
             vim.cmd([[highlight IlluminatedWordText guibg=#333333 gui=None]])
             vim.cmd([[highlight IlluminatedWordRead guibg=#333333 gui=None]])
             vim.cmd([[highlight IlluminatedWordWrite guibg=#333333 gui=None]])
+            vim.cmd([[highlight LineNr guifg=gray ]])
         end,
     },
 
