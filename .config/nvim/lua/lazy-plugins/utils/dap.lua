@@ -1,7 +1,9 @@
 return {
     {
         "mfussenegger/nvim-dap",
-        ft = { "python", },
+        cmd = { "DapContinue", "DapToggleBreakpoint" },
+        -- ft = { "python", },
+        keys = { "<F5>", "<F8>", "<F9>", "<F10>" },
         dependencies = {
             "rcarriga/nvim-dap-ui",
             "jay-babu/mason-nvim-dap.nvim",
@@ -27,25 +29,10 @@ return {
                 }
             })
             require("dap-python").setup("~/.local/share/nvim/mason/packages/debugpy/venv/bin/python")
-            vim.keymap.set("n", "<F5>", ":DapContinue<cr>", { silent = false })
-            vim.keymap.set("n", "<F8>", ":DapStepInto<cr>", { silent = false })
-            vim.keymap.set("n", "<F9>", ":DapStepOut<cr>", { silent = false })
-            vim.keymap.set("n", "<F1O>", ":DapStepOver<cr>", { silent = false })
-
-            require("which-key").register({
-                d = {
-                    name = "Dap",
-                    b = { ":DapToggleBreakpoint<cr>", "ToggleBreakpoint" },
-                    c = { ":DapContinue<cr>", "Continue" },
-                    s = { ":DapStepInto<cr>", "StepInto" },
-                    o = { ":DapStepOut<cr>", "StepOut" },
-                    n = { ":DapStepOver<cr>", "StepOver" },
-                    t = { ":DapTerminate<cr>", "Terminate" },
-                    u = { dapui.toggle, "ToggleUI" },
-                    e = { dapui.eval, "EvalLine" },
-                    l = { dap.run_last, "RunLast" },
-                },
-            }, { mode = "n", prefix = "<leader>", silent = false })
+            vim.keymap.set("n", "<F5>", ":DapContinue<cr>", { silent = false, desc = "DapContinue" })
+            vim.keymap.set("n", "<F8>", ":DapStepInto<cr>", { silent = false, desc = "DapStepInto" })
+            vim.keymap.set("n", "<F9>", ":DapStepOut<cr>", { silent = false, desc = "DapStepOut" })
+            vim.keymap.set("n", "<F1O>", ":DapStepOver<cr>", { silent = false, desc = "DapStepOver" })
         end,
     }
 }

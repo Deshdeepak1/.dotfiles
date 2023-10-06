@@ -49,6 +49,25 @@ return {
                 i = { ":Neorg index<cr>", "Index" },
                 r = { ":Neorg return<cr>", "Return" },
             },
+            d = {
+                name = "Dap",
+                b = { ":DapToggleBreakpoint<cr>", "ToggleBreakpoint" },
+                c = { ":DapContinue<cr>", "Continue" },
+                s = { ":DapStepInto<cr>", "StepInto" },
+                o = { ":DapStepOut<cr>", "StepOut" },
+                n = { ":DapStepOver<cr>", "StepOver" },
+                t = { ":DapTerminate<cr>", "Terminate" },
+                T = {
+                    function()
+                        require("dap").terminate()
+                        require("dapui").close()
+                    end, "Terminate"
+                },
+                u = { function() require("dapui").toggle() end, "ToggleUI" },
+                e = { function() require("dapui").eval() end, "EvalLine" },
+                l = { function() require("dap").run_last() end, "RunLast" },
+                r = { function() require("dap").restart() end, "Restart" },
+            },
         }, { mode = "n", prefix = "<leader>", silent = false })
         wk.register({ b = "Buffer" }, { mode = "n", prefix = "<leader>" })
         wk.register({
