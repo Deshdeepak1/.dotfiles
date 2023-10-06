@@ -56,12 +56,12 @@ return {
                 s = { ":DapStepInto<cr>", "StepInto" },
                 o = { ":DapStepOut<cr>", "StepOut" },
                 n = { ":DapStepOver<cr>", "StepOver" },
-                t = { ":DapTerminate<cr>", "Terminate" },
-                T = {
+                T = { ":DapTerminate<cr>", "Terminate" },
+                t = {
                     function()
                         require("dap").terminate()
                         require("dapui").close()
-                    end, "Terminate"
+                    end, "TerminateClose"
                 },
                 u = { function() require("dapui").toggle() end, "ToggleUI" },
                 e = { function() require("dapui").eval() end, "EvalLine" },
