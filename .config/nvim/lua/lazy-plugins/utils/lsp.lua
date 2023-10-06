@@ -67,6 +67,14 @@ return {
                     })
                 end
 
+                local workspace = client.config.root_dir
+                local poetry_lock_path = workspace .. "/" .. "poetry.lock"
+                if vim.fn.filereadable(poetry_lock_path) then
+                    local venv = vim.fn.trim(vim.fn.system "poetry env info -p")
+                    local python_path = venv .. "/" .. "bin/python"
+                    client.config.settings.python.pythonPath = python_path
+                end
+
                 -- Mappings.
                 -- See `:help vim.lsp.*` for documentation on any of the below functions
                 local keymap = function(mode, lhs, rhs, opts)
