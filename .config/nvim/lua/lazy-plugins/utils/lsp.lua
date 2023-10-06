@@ -5,7 +5,7 @@ return {
         -- cond = false,
         -- event = { "BufReadPre", "BufNewFile" },
         -- lazy = false,
-        ft = { "python", "lua", "cpp" },
+        ft = { "python", "lua", "cpp", "javascript", "ts" },
         dependencies = {
             "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",
@@ -34,6 +34,7 @@ return {
                     -- "pylsp",
                     "pyright",
                     "clangd",
+                    "tsserver",
                 },
             })
 
@@ -55,8 +56,15 @@ return {
                 -- if client.name == "pyright" then
                 --     vim.api.nvim_command('autocmd BufWritePost <buffer> silent !black %')
                 -- end
+                local lsp_format_augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = false })
                 if client.server_capabilities.documentFormattingProvider then
-                    vim.api.nvim_command('autocmd BufWritePre <buffer> lua vim.lsp.buf.format()')
+                    vim.api.nvim_create_autocmd("BufWritePre", {
+                        group = lsp_format_augroup,
+                        buffer = bufnr,
+                        callback = function()
+                            vim.lsp.buf.format({ buffer = bufnr })
+                        end
+                    })
                 end
 
                 -- Mappings.
@@ -147,6 +155,10 @@ return {
                 },
 
                 clangd = {
+
+                },
+
+                tsserver = {
 
                 },
 

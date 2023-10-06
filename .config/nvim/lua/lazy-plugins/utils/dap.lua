@@ -24,8 +24,10 @@ return {
             --     dapui.close()
             -- end
             require("mason-nvim-dap").setup({
+                handlers = {},
                 ensure_installed = {
                     "python",
+                    "codelldb",
                 }
             })
             require("dap-python").setup("~/.local/share/nvim/mason/packages/debugpy/venv/bin/python")

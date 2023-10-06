@@ -1,7 +1,7 @@
 return {
     "nvimtools/none-ls.nvim",
     -- event = "VeryLazy",
-    ft = { "python", },
+    ft = { "python", "javascript" },
     dependencies = { "jay-babu/mason-null-ls.nvim" },
     config = function()
         local null_ls = require("null-ls")
@@ -10,17 +10,30 @@ return {
                 -- "mypy",
                 -- "ruff",
                 "black",
+                "prettier",
             }
         })
+        local lsp_format_augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = false })
         null_ls.setup({
             sources = {
                 -- null_ls.builtins.diagnostics.mypy,
                 -- null_ls.builtins.diagnostics.ruff,
                 null_ls.builtins.formatting.black,
+                null_ls.builtins.formatting.prettier,
             },
-            on_attach = function(client, buffer)
+            on_attach = function(client, bufnr)
                 if client.server_capabilities.documentFormattingProvider then
-                    vim.api.nvim_command('autocmd BufWritePre <buffer> lua vim.lsp.buf.format()')
+                    vim.api.nvim_clear_autocmds({
+                        buffer = bufnr,
+                        group = lsp_format_augroup,
+                    })
+                    vim.api.nvim_create_autocmd("BufWritePre", {
+                        group = lsp_format_augroup,
+                        buffer = bufnr,
+                        callback = function()
+                            vim.lsp.buf.format({ buffer = bufnr })
+                        end
+                    })
                 end
             end,
         })
