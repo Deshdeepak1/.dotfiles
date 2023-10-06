@@ -46,7 +46,9 @@ return {
                 name = "Neorg",
                 w = { ":Neorg workspace ", "Workspace" },
                 n = { ":Neorg workspace notes<cr>", "Notes Workspace" },
-            }
+                i = { ":Neorg index<cr>", "Index" },
+                r = { ":Neorg return<cr>", "Return" },
+            },
         }, { mode = "n", prefix = "<leader>", silent = false })
         wk.register({ b = "Buffer" }, { mode = "n", prefix = "<leader>" })
         wk.register({

@@ -78,7 +78,7 @@ return {
             configs.setup({
                 ensure_installed = {
                     "c", "python", "lua", "cpp", "html", "fish", "bash", "css", "typescript", "javascript", "markdown",
-                    "markdown_inline", "query",
+                    "markdown_inline", "query", "norg", "norg_meta",
                 },
                 sync_install = false,
                 auto_install = false,
