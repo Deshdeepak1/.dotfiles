@@ -8,6 +8,7 @@ return {
             "rcarriga/nvim-dap-ui",
             "jay-babu/mason-nvim-dap.nvim",
             "mfussenegger/nvim-dap-python",
+            'theHamsta/nvim-dap-virtual-text',
         },
         config = function()
             local dap, dapui = require("dap"), require("dapui")
@@ -34,7 +35,24 @@ return {
             vim.keymap.set("n", "<F5>", ":DapContinue<cr>", { silent = false, desc = "DapContinue" })
             vim.keymap.set("n", "<F8>", ":DapStepInto<cr>", { silent = false, desc = "DapStepInto" })
             vim.keymap.set("n", "<F9>", ":DapStepOut<cr>", { silent = false, desc = "DapStepOut" })
-            vim.keymap.set("n", "<F1O>", ":DapStepOver<cr>", { silent = false, desc = "DapStepOver" })
+            vim.keymap.set("n", "<F7>", ":DapStepOver<cr>", { silent = false, desc = "DapStepOver" })
+            require("nvim-dap-virtual-text").setup({
+
+            })
+            local signs = {
+                Stopped = { "󰁕 ", "DiagnosticWarn", "DapStoppedLine" },
+                Breakpoint = " ",
+                BreakpointCondition = " ",
+                BreakpointRejected = { " ", "DiagnosticError" },
+                LogPoint = ".>",
+            }
+            for name, sign in pairs(signs) do
+                sign = type(sign) == "table" and sign or { sign }
+                vim.fn.sign_define(
+                    "Dap" .. name,
+                    { text = sign[1], texthl = sign[2] or "DiagnosticInfo", linehl = sign[3], numhl = sign[3] }
+                )
+            end
         end,
     }
 }
