@@ -39,7 +39,7 @@ return {
             })
 
             local opts = { noremap = true, silent = true }
-            vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = "Diagnostic" })
+            vim.keymap.set('n', '<leader>l', vim.diagnostic.open_float, { desc = "Diagnostic" })
             vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
             vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
             -- vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, opts)
@@ -67,7 +67,7 @@ return {
                     })
                 end
 
-                local workspace = client.config.root_dir
+                local workspace = client.config.root_dir or "./"
                 local poetry_lock_path = workspace .. "/" .. "poetry.lock"
                 if vim.fn.filereadable(poetry_lock_path) then
                     local venv = vim.fn.trim(vim.fn.system "poetry env info -p")
