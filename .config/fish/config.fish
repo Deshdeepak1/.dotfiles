@@ -1,6 +1,6 @@
 set fish_greeting
 
-fish_add_path -p ~/.local/scripts ~/.local/bin
+fish_add_path -p ~/.local/scripts ~/.local/bin ~/.config/nsxiv/scripts
 set fish_cursor_unknown block
 export EDITOR="nvim"
 export VISUAL="nvim"
@@ -57,6 +57,7 @@ alias octave="octave -q"
 alias dragon="dragon-drop"
 alias aria2cc="aria2c -c -s 16 -x 16 -k 1M -j 32  --file-allocation none"
 alias xsc="xclip -sel clipboard"
+alias nsxiv="nsxiv -ab"
 # export SHELL="sh"
 
 export FZF_DEFAULT_COMMAND="fd --exclude '.git/' --hidden --type f"

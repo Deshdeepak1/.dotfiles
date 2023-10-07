@@ -14,6 +14,7 @@ return {
             },
             skip_confirm_for_simple_edits = true,
             keymaps = {
+                ["Q"] = "actions.close",
                 ["<leader>t"] = "actions.open_terminal",
                 ["<leader>T"] = {
                     desc = "Toggle detail view",
