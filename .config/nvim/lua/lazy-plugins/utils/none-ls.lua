@@ -2,6 +2,7 @@ return {
     "nvimtools/none-ls.nvim",
     -- event = "VeryLazy",
     ft = { "python", "javascript" },
+    cmd = { "NullLsInfo" },
     dependencies = { "jay-babu/mason-null-ls.nvim" },
     config = function()
         local null_ls = require("null-ls")

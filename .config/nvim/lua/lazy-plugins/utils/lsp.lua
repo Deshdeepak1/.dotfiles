@@ -6,6 +6,7 @@ return {
         -- event = { "BufReadPre", "BufNewFile" },
         -- lazy = false,
         ft = { "python", "lua", "cpp", "javascript", "ts" },
+        cmd = { "LspInfo", "LspStart", "LspInstall", "LspRestart", "Mason" },
         dependencies = {
             "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",
@@ -35,6 +36,8 @@ return {
                     "pyright",
                     "clangd",
                     "tsserver",
+                    -- "jsonls"
+                    -- "jqls",
                 },
             })
 
@@ -180,7 +183,7 @@ return {
                             return
                         end
                     end
-                    local server_opts = vim.tbl_deep_extend("force", servers_opts[server_name], lsp_opts)
+                    local server_opts = vim.tbl_deep_extend("force", servers_opts[server_name] or {}, lsp_opts)
 
                     require("lspconfig")[server_name].setup(server_opts)
                 end
