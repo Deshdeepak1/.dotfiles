@@ -92,11 +92,6 @@ return {
                     -- enable = false,
                     disable = { "cpp", --[[ "lua",  ]] },
                 },
-                context_commentstring = {
-                    enable = true,
-                    -- enable = false,
-                    enable_autocmd = false,
-                },
                 incremental_selection = {
                     enable = true,
                     -- enable = false,
@@ -111,6 +106,13 @@ return {
                 autotag = autotag,
                 playground = playground,
             })
+
+            require('ts_context_commentstring').setup({
+                enable_autocmd = false,
+            })
+
+            vim.g.skip_ts_context_commentstring_module = true
+
             vim.opt.foldmethod = "expr"
             vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
         end

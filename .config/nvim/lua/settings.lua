@@ -39,7 +39,7 @@ local options = {
     -- signcolumn = "yes:2",
     -- shell = "sh",
     pumheight = 10,
-    conceallevel = 0,
+    conceallevel = 1,
     swapfile = false,
     fileencoding = "utf-8",
     completeopt = { "menuone", "noselect" },
@@ -91,3 +91,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
         vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 200, on_macro = true })
     end
 })
+-- Example for configuring Neovim to load user-installed installed Lua rocks:
+package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?/init.lua;"
+package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?.lua;"

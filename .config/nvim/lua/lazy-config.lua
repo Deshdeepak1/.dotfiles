@@ -26,7 +26,12 @@ end
 local lazy_opts = {
     defaults = { lazy = true },
     install = { colorscheme = { "catppuccin-frappe", "habamax" } },
-    ui = { border = "rounded", title = "Lazy" }
+    ui = { border = "rounded", title = "Lazy" },
+    change_detection = {
+        -- automatically check for config file changes and reload the ui
+        enabled = true,
+        notify = false, -- get a notification when changes are found
+    }
 }
 
 lazy.setup({

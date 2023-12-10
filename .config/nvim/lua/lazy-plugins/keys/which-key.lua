@@ -46,8 +46,6 @@ return {
                 name = "Neorg",
                 w = { ":Neorg workspace ", "Workspace" },
                 n = { ":Neorg workspace notes<cr>", "Notes Workspace" },
-                i = { ":Neorg index<cr>", "Index" },
-                r = { ":Neorg return<cr>", "Return" },
             },
             d = {
                 name = "Dap",
