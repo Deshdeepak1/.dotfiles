@@ -139,8 +139,8 @@ echo "User Setup started"
 ## Paru
 cd $HOME
 git clone https://aur.archlinux.org/paru-bin.git
-cd paru
-makepkg -si
+cd paru-bin
+makepkg -fsri
 cd $HOME
 
 ### Paru - Install packages
