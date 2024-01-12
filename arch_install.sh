@@ -68,13 +68,6 @@ echo "KEYMAP=us" > /etc/vconsole.conf
 
 mkinitcpio -P
 
-## User
-passwd
-read -p "Username: " username
-useradd -mG wheel,audio,video,storage,optical -s /bin/fish $username
-passwd $username
-
-
 ## Install packages
 pacman -S --noconfirm grub os-prober efibootmgr neovim git xterm amd-ucode upower python-pip \
     python-virtualenv python-poetry python-pipx networkmanager man-db man-pages texinfo sudo \
@@ -86,6 +79,12 @@ pacman -S --noconfirm grub os-prober efibootmgr neovim git xterm amd-ucode upowe
     rsync picom xdg-user-dirs libconfig libnotify dunst exa tmux bat ffmpeg mpv noto-fonts-emoji \
     fd fzf lazygit ranger ctags ripgrep luarocks feh nodejs xclip xdg-desktop-portal \
     polkit-gnome brightnessctl openssh sshfs miniserve rofi flameshot
+
+## User
+passwd
+read -p "Username: " username
+useradd -mG wheel,audio,video,storage,optical -s /bin/fish $username
+passwd $username
 
 ## nvim for vi / vim
 ln -s /usr/bin/nvim /usr/bin/vi
