@@ -7,6 +7,9 @@ echo "Arch Install Started"
 
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
 pacman --noconfirm -Sy archlinux-keyring
+pacman -S networkmamger
+systemctl start networkmanager
+nmtui
 loadkeys us
 timedatectl set-ntp true
 timedatectl
@@ -56,7 +59,7 @@ printf '\033c'
 echo "Arch setup in chroot Started"
 
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
-pacman --noconfirm -Sy archlinux-keyring
+pacman --noconfirm --disable-download-timeout -Sy archlinux-keyring
 
 ## Time and lang
 ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
@@ -69,7 +72,7 @@ echo "KEYMAP=us" > /etc/vconsole.conf
 mkinitcpio -P
 
 ## Install packages
-pacman -S --noconfirm grub os-prober efibootmgr neovim git xterm amd-ucode upower python-pip \
+pacman -Sy --disable-download-timeout --noconfirm grub os-prober efibootmgr neovim git xterm amd-ucode upower python-pip \
     python-virtualenv python-poetry python-pipx networkmanager man-db man-pages texinfo sudo \
     wget curl speedtest-cli ttf-mononoki-nerd awesome-terminal-fonts noto-fonts noto-fonts-emoji \
     noto-fonts-cjk btop zip unzip unrar p7zip fish lua lua51 xorg lf sx xh eza ripgrep jq sd fzf \
@@ -146,7 +149,7 @@ sudo -S pacman -U paru-bin*
 cd $HOME
 
 ### Paru - Install packages
-paru -S ayugram-desktop-bin i3lock-fancy-git brave-bin ueberzugpp bento4 dragon-drop simple-mtpfs paru-bin
+paru -S --disable-download-timeout ayugram-desktop-bin i3lock-fancy-git brave-bin ueberzugpp bento4 dragon-drop simple-mtpfs paru-bin
 
 git config --global user.email "rkdeshdeepak1@gmail.com"
 git config --global user.name "Deshdeepak"
