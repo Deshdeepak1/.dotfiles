@@ -55,6 +55,7 @@ printf '\033c'
 
 echo "Arch setup in chroot Started"
 
+shopt -s expand_aliases
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
 pacman --noconfirm -Sy archlinux-keyring
 
