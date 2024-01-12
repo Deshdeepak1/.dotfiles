@@ -55,7 +55,6 @@ printf '\033c'
 
 echo "Arch setup in chroot Started"
 
-shopt -s expand_aliases
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
 pacman --noconfirm -Sy archlinux-keyring
 
@@ -154,6 +153,7 @@ git config --global user.name "Deshdeepak"
 git config --global credential.helper cache/store
 
 # Dotfiles
+shopt -s expand_aliases
 alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 if [[ ! -d $HOME/.dotfiles ]]; then
     dotfiles init
