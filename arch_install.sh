@@ -85,6 +85,7 @@ passwd
 read -p "Username: " username
 useradd -mG wheel,audio,video,storage,optical -s /bin/fish $username
 passwd $username
+echo "%wheel ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
 ## nvim for vi / vim
 ln -s /usr/bin/nvim /usr/bin/vi
@@ -140,7 +141,8 @@ echo "User Setup started"
 cd $HOME
 git clone https://aur.archlinux.org/paru-bin.git
 cd paru-bin
-makepkg -fsri
+makepkg -fsr
+sudo -S pacman -U paru-bin*
 cd $HOME
 
 ### Paru - Install packages
