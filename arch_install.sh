@@ -43,7 +43,7 @@ fi
 pacstrap -K /mnt base base-devel linux linux-headers linux-firmware
 genfstab -U /mnt >> /mnt/etc/fstab
 
-ai3_path=/mnt/arch_install2.sh
+ai2_path=/mnt/arch_install2.sh
 sed '2,/^#part2$/d' `basename $0` > $ai2_path
 chmod +x $ai2_path
 arch-chroot /mnt ./arch_install2.sh
