@@ -152,13 +152,13 @@ git config --global user.name "Deshdeepak"
 git config --global credential.helper cache/store
 
 # Dotfiles
+alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 if [[ ! -d $HOME/.dotfiles ]]; then
-    alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
     dotfiles init
     dotfiles remote add origin https://github.com/deshdeepak1/.dotfiles
-    dotfiles pull --set-upstream origin master
     dotfiles config --local status.showUntrackedFiles no
 fi
+dotfiles pull --set-upstream origin master
 
 echo "Installation Completed"
 
