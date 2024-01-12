@@ -145,7 +145,7 @@ cd $HOME
 git clone https://aur.archlinux.org/paru-bin.git
 cd paru-bin
 makepkg -fsr
-sudo -S pacman -U paru-bin*
+sudo -S pacman -U paru-bin-*pkg.tar.zst
 cd $HOME
 
 ### Paru - Install packages
@@ -157,6 +157,7 @@ git config --global credential.helper cache/store
 
 # Dotfiles
 shopt -s expand_aliases
+rm $HOME/.dotfiles -rf
 alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 if [[ ! -d $HOME/.dotfiles ]]; then
     dotfiles init
