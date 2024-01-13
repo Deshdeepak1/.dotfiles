@@ -83,6 +83,8 @@ pacman -Sy --disable-download-timeout --noconfirm grub os-prober efibootmgr neov
     fd fzf lazygit ranger ctags ripgrep luarocks feh nodejs xclip xdg-desktop-portal \
     polkit-gnome brightnessctl openssh sshfs miniserve rofi flameshot
 
+luarocks --local --lua-version=5.1 install magick
+
 ## User
 passwd
 read -p "Username: " username
@@ -147,9 +149,10 @@ cd paru-bin
 makepkg -fsr
 sudo -S pacman -U paru-bin-*pkg.tar.zst
 cd $HOME
+rm paru-bin -rf
 
 ### Paru - Install packages
-paru -S --disable-download-timeout ayugram-desktop-bin i3lock-fancy-git brave-bin ueberzugpp bento4 dragon-drop simple-mtpfs paru-bin
+paru -S --disable-download-timeout forkgram-bin i3lock-fancy-git brave-bin ueberzugpp bento4 dragon-drop simple-mtpfs paru-bin
 
 git config --global user.email "rkdeshdeepak1@gmail.com"
 git config --global user.name "Deshdeepak"
@@ -159,12 +162,14 @@ git config --global credential.helper cache/store
 shopt -s expand_aliases
 rm $HOME/.dotfiles -rf
 alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
-if [[ ! -d $HOME/.dotfiles ]]; then
-    dotfiles init
-    dotfiles remote add origin https://github.com/deshdeepak1/.dotfiles
-    dotfiles config --local status.showUntrackedFiles no
-fi
-dotfiles pull --set-upstream origin master
+dotfiles init
+dotfiles remote add origin https://github.com/deshdeepak1/.dotfiles
+dotfiles config --local status.showUntrackedFiles no
+dotfiles config --local credential.helper cache/store
+dotfiles fetch --set-upstream origin master
+dotfiles reset --hard FETCH_HEAD
+dotfiles remote set-url origin git@github.com:Deshdeepak1/.dotfiles.git
+
 
 echo "Installation Completed"
 
