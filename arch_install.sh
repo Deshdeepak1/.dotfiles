@@ -72,16 +72,16 @@ echo "KEYMAP=us" > /etc/vconsole.conf
 mkinitcpio -P
 
 ## Install packages
-pacman -Sy --disable-download-timeout --noconfirm grub os-prober efibootmgr neovim git xterm amd-ucode upower python-pip \
-    python-virtualenv python-poetry python-pipx networkmanager man-db man-pages texinfo sudo \
+pacman -Sy --disable-download-timeout --noconfirm grub os-prober efibootmgr neovim git xterm \
+    python-pip python-virtualenv python-poetry python-pipx man-db man-pages texinfo sudo \
     wget curl speedtest-cli ttf-mononoki-nerd awesome-terminal-fonts noto-fonts noto-fonts-emoji \
     noto-fonts-cjk btop zip unzip unrar p7zip fish lua lua51 xorg lf sx xh eza ripgrep jq sd fzf \
     ytfzf trash-cli imagemagick qtile python-pywlroots nsxiv alacritty bluez bluez-utils pipewire \
     pipewire-pulse pipewire-audio pipewire-jack pipewire-alsa wireplumber alsa-utils pulsemixer \
     ncdu zathura zathura-pdf-mupdf arc-icon-theme arc-gtk-theme ffmpeg aria2 ntfs-3g qutebrowser \
     rsync picom xdg-user-dirs libconfig libnotify dunst exa tmux bat ffmpeg mpv noto-fonts-emoji \
-    fd fzf lazygit ranger ctags ripgrep luarocks feh nodejs xclip xdg-desktop-portal \
-    polkit-gnome brightnessctl openssh sshfs miniserve rofi flameshot
+    fd fzf lazygit ranger ctags ripgrep luarocks feh nodejs xclip xdg-desktop-portal flameshot \
+    polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmamger brightnessctl
 
 luarocks --local --lua-version=5.1 install magick
 
@@ -95,6 +95,10 @@ echo "%wheel ALL=(ALL:ALL) ALL" >> /etc/sudoers
 ## nvim for vi / vim
 ln -s /usr/bin/nvim /usr/bin/vi
 ln -s /usr/bin/nvim /usr/bin/vim
+
+# touchpad
+curl -L "https://github.com/Deshdeepak1/.dotfiles/raw/master/.config/30-touchpad.conf" \
+    -o /etc/X11/xorg.conf.d/30-touchpad.conf
 
 ## Network
 read -p "Hostname: " hostname
