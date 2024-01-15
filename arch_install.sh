@@ -72,7 +72,7 @@ echo "KEYMAP=us" > /etc/vconsole.conf
 mkinitcpio -P
 
 ## Install packages
-pacman -Sy --disable-download-timeout --noconfirm grub os-prober efibootmgr neovim git xterm \
+pacman -Syy --disable-download-timeout --noconfirm grub os-prober efibootmgr neovim git xterm \
     python-pip python-virtualenv python-poetry python-pipx man-db man-pages texinfo sudo \
     wget curl speedtest-cli ttf-mononoki-nerd awesome-terminal-fonts noto-fonts noto-fonts-emoji \
     noto-fonts-cjk btop zip unzip unrar p7zip fish lua lua51 xorg lf sx xh eza ripgrep jq sd fzf \
@@ -81,7 +81,9 @@ pacman -Sy --disable-download-timeout --noconfirm grub os-prober efibootmgr neov
     ncdu zathura zathura-pdf-mupdf arc-icon-theme arc-gtk-theme ffmpeg aria2 ntfs-3g qutebrowser \
     rsync picom xdg-user-dirs libconfig libnotify dunst exa tmux bat ffmpeg mpv noto-fonts-emoji \
     fd fzf lazygit ranger ctags ripgrep luarocks feh nodejs xclip xdg-desktop-portal flameshot \
-    polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmamger brightnessctl
+    polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmamger brightnessctl npm
+
+pacman -Fyy
 
 luarocks --local --lua-version=5.1 install magick
 
@@ -124,11 +126,9 @@ sed -i /etc/default/grub  \
 sed -i /etc/mkinitcpio.conf -e "s/^HOOKS=(\(.*\) systemd \(.*\))/HOOKS=(\1 udev \2)/g"
 
 agety_prompt_file=/etc/systemd/system/getty@tty1.service.d/skip-prompt.conf
-cat << EOF > $agety_prompt_file
-[Service]
-ExecStart=
-ExecStart=-/usr/bin/agetty --skip-login --nonewline --noissue --autologin deshdeepak --noclear %I $TERM
-EOF
+mkdir -p $(dirname $agety_prompt_file)
+curl -L "https://github.com/Deshdeepak1/.dotfiles/raw/master/.config/getty@tty1.service.d/skip-prompt.conf" \
+    -o $agety_prompt_file
 
 grub-mkconfig -o /boot/grub/grub.cfg
 
@@ -156,7 +156,8 @@ cd $HOME
 rm paru-bin -rf
 
 ### Paru - Install packages
-paru -S --disable-download-timeout forkgram-bin i3lock-fancy-git brave-bin ueberzugpp bento4 dragon-drop simple-mtpfs paru-bin
+paru -S --disable-download-timeout forkgram-bin i3lock-fancy-git brave-bin \
+    ueberzugpp bento4 dragon-drop simple-mtpfs paru-bin mongodb-compass
 
 git config --global user.email "rkdeshdeepak1@gmail.com"
 git config --global user.name "Deshdeepak"
