@@ -5,8 +5,8 @@ return {
     -- cond = false,
     cond = not vim.g.started_by_firenvim,
     config = function()
-        buffer_bg = '#232627'
-        bufferline = require("bufferline")
+        local buffer_bg = '#232627'
+        local bufferline = require("bufferline")
         bufferline.setup({
             options = {
                 themable = true,

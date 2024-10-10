@@ -1,12 +1,13 @@
 return {
     {
         "nvim-neorg/neorg",
+        cond = false,
         cmd = "Neorg",
         ft = "norg",
-        build = ":Neorg sync-parsers",
         dependencies = {
             "laher/neorg-exec",
             "nvim-neorg/neorg-telescope",
+            "luarocks.nvim",
         },
         keys = {
             {
@@ -87,6 +88,8 @@ return {
                 desc = "Toggle Concealer",
                 silent = true
             },
+            { "<leader>nn", ":Neorg workspace notes<cr>", desc = "Notes Workspace", silent = false },
+            { "<leader>nw", ":Neorg workspace ", desc = "Workspace", silent = false },
 
         },
         config = function()
@@ -100,6 +103,7 @@ return {
                             icons = {
                                 code_block = {
                                     conceal = true,
+                                    -- highlight = "CursorLine",
                                 },
                             },
                         },
@@ -137,16 +141,29 @@ return {
                             highlights = {
                                 tags = {
                                     ranged_verbatim = {
-                                        code_block = "guibg=#111111",
+                                        -- code_block = "guibg=#111111",
+                                        code_block = "guibg=#1c1c1c",
+                                        -- code_block = "+CursorLine",
                                     },
                                 },
                             },
+                            -- dim = {
+                            --     tags = {
+                            --         ranged_verbatim = {
+                            --             code_block = {
+                            --                 affect = "background",
+                            --                 percentage = -100,
+                            --                 reference = "normal",
+                            --             }
+                            --         }
+                            --     },
+                            -- },
                         },
                     },
-                    ["core.integrations.treesitter"] = {},
-                    ["core.integrations.telescope"] = {
-
-                    },
+                    -- ["core.integrations.treesitter"] = {},
+                    -- ["core.integrations.telescope"] = {
+                    --
+                    -- },
                     ["external.exec"] = { -- Exec code blocks
                         config = {
                             lang_cmds = {

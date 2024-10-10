@@ -4,8 +4,8 @@ local options = {
     relativenumber = true,
     numberwidth = 2,
 
-    tabstop = 4,
     shiftwidth = 4,
+    tabstop = 4,
     softtabstop = 4,
     expandtab = true,
     smarttab = true,
@@ -17,7 +17,7 @@ local options = {
     ruler = true,
     -- nohlsearch = true,
     -- hlsearch = true,
-    hlsearch = false,
+    -- hlsearch = false,
     -- hidden = true,
     -- noerrorbells = true,
     -- nowrap = true,
@@ -39,10 +39,14 @@ local options = {
     -- signcolumn = "yes:2",
     -- shell = "sh",
     pumheight = 10,
-    conceallevel = 1,
+    conceallevel = 2,
+    -- concealcursor = "nc",
+    concealcursor = "c",
     swapfile = false,
     fileencoding = "utf-8",
     completeopt = { "menuone", "noselect" },
+    showmode = false,
+    exrc = true,
 
     -- Whitespaces
     -- listchars = "tab:<->,trail:-,nbsp:␣,space:·,precedes:«",
@@ -81,7 +85,10 @@ for k, v in pairs(options) do
     vim.opt[k] = v
 end
 -- vim.opt.formatoptions:remove("o")
-vim.opt.formatoptions:remove("cro")
+-- print(vim.inspect(vim.opt.formatoptions))
+-- vim.opt.formatoptions:remove("cro")
+-- vim.opt.formatoptions:remove("t")
+-- print(vim.inspect(vim.opt.formatoptions))
 vim.opt.whichwrap:append "l,h,<,>,[,]"
 vim.opt.shortmess:append "c"
 --vim.opt.clipboard:append "unnamedplus"
@@ -90,6 +97,9 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     callback = function()
         vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 200, on_macro = true })
     end
+})
+vim.api.nvim_create_autocmd("FileType", {
+    command = "set formatoptions-=cro",
 })
 -- Example for configuring Neovim to load user-installed installed Lua rocks:
 package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?/init.lua;"

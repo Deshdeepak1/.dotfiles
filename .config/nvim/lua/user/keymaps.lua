@@ -3,7 +3,9 @@ local keymap = vim.keymap.set
 
 -- keymap("", "<SPACE>", "<Nop>", opts)
 vim.g.mapleader = " "
-vim.g.maplocalleader = ","
+vim.g.maplocalleader = "," -- TODO: Change as in conflict
+
+-- C-w-v C-w-s C-6 pws pWs -- TODO:: Use these
 
 
 -- Save  Quit
@@ -12,15 +14,20 @@ keymap("n", "<leader>q", ":bdelete<CR>", { desc = "CloseBuffer" })
 -- keymap("n", "<leader>x", ":bdelete<CR>", opts)
 keymap("n", "<leader>qq", ":quit<CR>", { desc = "Quit" })
 keymap("n", "<leader>Q", ":quitall!<CR>", { desc = "QuitAll" })
-keymap("n", "<leader>w", ":update<CR>", { desc = "Save" })
-keymap("n", "<leader>S", ":luafile %<CR>", { desc = "Source" })
+-- keymap("n", "<leader>w", ":update<CR>", { desc = "Save" })
+keymap("n", "<leader>s", ":luafile %<CR>", { desc = "Source" })
 keymap("n", "<leader>wq", ":wq<CR>", { desc = "Save&Quit" })
 -- keymap("n", "<leader>s", ":saveas<SPACE>", { desc = "SaveAs" })
 keymap("n", "<leader>W", ":write<SPACE>", { desc = "SaveTo" })
 
+-- wrap toggle
+keymap("n", "<leader>w", function() vim.wo.wrap = not vim.wo.wrap end, { desc = "Save" })
+
 -- Remap ESC
 keymap("i", "jk", "<ESC>", opts)
 keymap("i", "kj", "<ESC>", opts)
+-- keymap("i", "jk", function() print("Hello Dark") end)
+keymap("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Center Screen
 keymap("n", "<C-d>", "<C-d>zz")
@@ -32,7 +39,7 @@ keymap("n", "N", "Nzzzv")
 -- Splits
 keymap("n", "<leader>H", ":split<SPACE>", { desc = "Split" })
 keymap("n", "<leader>v", ":vsplit<SPACE>", { desc = "VSplit" })
-keymap("n", "<C-h>", "<c-w>h", opts)
+keymap("n", "<C-h>", "<c-w>h", opts) -- TODO: switch to default
 keymap("n", "<C-j>", "<c-w>j", opts)
 keymap("n", "<C-k>", "<c-w>k", opts)
 keymap("n", "<C-l>", "<c-w>l", opts)
@@ -55,7 +62,8 @@ keymap("n", "<S-TAB>", ":bprevious<CR>", opts)
 -- Sed
 keymap("n", "<M-s>", ":%s///gI<Left><Left><Left><Left>", opts)
 keymap("v", "<M-s>", ":s///gI<Left><Left><Left><Left>", opts)
-keymap("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "RepCurWord" })
+-- keymap("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "RepCurWord" })
+keymap("n", "<C-s>", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "RepCurWord" })
 
 
 -- Better Indentation
@@ -73,7 +81,7 @@ keymap("v", "<", "<gv", opts) -- C-D
 keymap("x", "<leader>p", [["_dP]], { desc = "PrevPaste" })
 keymap("n", "cp", '"+', opts)
 keymap({ "n", "v" }, "<leader>y", '"+y', { desc = "C2C" })
-keymap("n", "<leader>Y", '"+Y', { desc = "C2C2End" })
+keymap("n", "<leader>Y", '"+Y', { desc = "C2C2End", remap = true })
 
 -- Move Lines up and down
 keymap("n", "J", "mzJ`z")
@@ -85,8 +93,9 @@ keymap("n", "zj", ':<C-u>call append(line("."),   repeat([""], v:count1))<CR>', 
 keymap("n", "zk", ':<C-u>call append(line(".")-1,   repeat([""], v:count1))<CR>', { desc = "New Line above" })
 
 -- Quick Fix List
-keymap("n", "<leader>cj", "<cmd>cprev<CR>zz", { desc = "Prev" })
+keymap("n", "<leader>cj", "<cmd>cprev<CR>zz", { desc = "Prev" }) -- TODO: switch to c-j, c-k
 keymap("n", "<leader>ck", "<cmd>cnext<CR>zz", { desc = "Next" })
+
 -- My Snippets
 keymap("n", ",h", ":-1read $HOME/.config/nvim/snippets/skeleton.html<CR>3jwf>a", opts)
 keymap("n", ",c", ":-1read $HOME/.config/nvim/snippets/skeleton.c<CR>3ja<TAB>", opts)
@@ -102,5 +111,8 @@ vim.cmd [[ autocmd filetype nroff nnoremap <F5> :!groff -ms -UT pdf "%" > $(base
 -- Netrw
 keymap("n", "<leader>E", ":20Lexplore!<CR>", { desc = "Netrw" })
 -- :20Lexplore! -- Open on right side
+
+keymap("n", "gx", '<cmd>silent !xdg-open "<cfile>"<CR>', { desc = "Open" })
+keymap("n", "<leader>x", '<cmd>silent !nsxiv-url "<cfile>"<CR>', { desc = "Nsxiv" })
 
 -- keymap("n", "<leader>H", ":help<SPACE>", opts)

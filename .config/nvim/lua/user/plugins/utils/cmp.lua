@@ -1,5 +1,17 @@
 return {
     {
+        "folke/lazydev.nvim",
+        ft = "lua", -- only load on lua files
+        opts = {
+            library = {
+                -- See the configuration section for more details
+                -- Load luvit types when the `vim.uv` word is found
+                { path = "luvit-meta/library", words = { "vim%.uv" } },
+            },
+        },
+    },
+    { "Bilal2453/luvit-meta", lazy = true },
+    {
         "hrsh7th/nvim-cmp",
         -- cond = false,
         event = "InsertEnter",
@@ -23,6 +35,8 @@ return {
             local cmp = require("cmp")
             local luasnip = require('luasnip')
             require("luasnip.loaders.from_vscode").lazy_load()
+            require('luasnip').filetype_extend("javascript", { "javascriptreact" })
+            require('luasnip').filetype_extend("javascript", { "html" })
             local check_backspace = function()
                 local col = vim.fn.col "." - 1
                 return col == 0 or vim.fn.getline("."):sub(col, col):match "%s"
@@ -75,6 +89,7 @@ return {
                     end, { 'i', 's' }),
                 }),
                 sources = cmp.config.sources({
+                    {name = "lazydev", group_index = 0},
                     { name = 'nvim_lsp' },
                     -- { name = 'nvim_lsp_signature_help' },
                     -- { name = "nvim_lua" },

@@ -35,7 +35,8 @@ return {
                 },
             },
             runner_ui = {
-                interface = "split",
+                -- interface = "split",
+                interface = "popup",
                 selector_show_nu = false,
                 selector_show_rnu = false,
                 show_nu = true,
@@ -88,6 +89,7 @@ return {
             save_current_file = true,
             save_all_files = false,
             compile_directory = ".",
+            -- compile_directory = "$(HOME)/.cache/competitest/",
             compile_command = {
                 c = { exec = "gcc", args = { "-Wall", "$(FNAME)", "-o", "$(FNOEXT)" } },
                 cpp = { exec = "g++", args = { "-Wall", "$(FNAME)", "-o", "$(FNOEXT)" } },
@@ -119,15 +121,15 @@ return {
             template_file = {
                 cpp = "~/.config/nvim/snippets/skeleton_cp.cpp",
             },
-            evaluate_template_modifiers = false,
+            evaluate_template_modifiers = true,
             date_format = "%c",
             received_files_extension = "cpp",
             received_problems_path = "$(CWD)/$(JUDGE)/$(PROBLEM)/$(PROBLEM).$(FEXT)",
             received_problems_prompt_path = false,
-            received_contests_directory = "$(CWD)",
+            received_contests_directory = "$(CWD)/$(JUDGE)/$(CONTEST)/$(PROBLEM)/",
             received_contests_problems_path = "$(PROBLEM).$(FEXT)",
-            received_contests_prompt_directory = true,
-            received_contests_prompt_extension = true,
+            received_contests_prompt_directory = false,
+            received_contests_prompt_extension = false,
             open_received_problems = true,
             open_received_contests = true,
         }

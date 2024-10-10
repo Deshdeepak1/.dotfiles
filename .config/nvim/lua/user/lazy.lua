@@ -14,9 +14,10 @@ local ensure_lazy = function()
     end
     return false
 end
-vim.opt.rtp:prepend(lazypath)
 
-local lazy_bootstrap = ensure_lazy()
+ensure_lazy()
+
+vim.opt.rtp:prepend(lazypath)
 
 local lazy_st_ok, lazy = pcall(require, "lazy")
 if not lazy_st_ok then
@@ -35,14 +36,20 @@ local lazy_opts = {
 }
 
 lazy.setup({
+    {
+        "vhyrro/luarocks.nvim",
+        priority = 1000,
+        config = true,
+    },
     { "nvim-tree/nvim-web-devicons" },
     { "nvim-lua/plenary.nvim" },
 
-    { import = "lazy-plugins.keys" },
-    { import = "lazy-plugins.utils" },
-    { import = "lazy-plugins.git" },
-    { import = "lazy-plugins.ui" },
-    { import = "lazy-plugins.neorg" },
+    { import = "user.plugins.keys" },
+    { import = "user.plugins.utils" },
+    { import = "user.plugins.git" },
+    { import = "user.plugins.ui" },
+    { import = "user.plugins.notes" },
+    { import = "user.plugins.cp" },
 }, lazy_opts)
 
 

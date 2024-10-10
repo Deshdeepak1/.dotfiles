@@ -1,7 +1,7 @@
 return {
     "nvimtools/none-ls.nvim",
     -- event = "VeryLazy",
-    ft = { "python", "javascript" },
+    ft = { "python", "html", "css", "javascript", "typescript", },
     cmd = { "NullLsInfo" },
     dependencies = { "jay-babu/mason-null-ls.nvim" },
     config = function()
@@ -9,18 +9,26 @@ return {
         require("mason-null-ls").setup({
             ensure_installed = {
                 -- "mypy",
-                -- "ruff",
-                "black",
-                "prettier",
+                -- "isort",
+                -- "black",
+                "prettierd",
+                "ktlint",
             }
         })
+
         local lsp_format_augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = false })
         null_ls.setup({
             sources = {
                 -- null_ls.builtins.diagnostics.mypy,
-                -- null_ls.builtins.diagnostics.ruff,
-                null_ls.builtins.formatting.black,
-                null_ls.builtins.formatting.prettier,
+                null_ls.builtins.diagnostics.ktlint,
+
+                -- null_ls.builtins.formatting.isort,
+                -- null_ls.builtins.formatting.black,
+                null_ls.builtins.formatting.prettierd.with({
+                    disabled_filetypes = { "markdown", "yaml" },
+                }),
+                null_ls.builtins.formatting.ktlint,
+
             },
             on_attach = function(client, bufnr)
                 if client.server_capabilities.documentFormattingProvider then

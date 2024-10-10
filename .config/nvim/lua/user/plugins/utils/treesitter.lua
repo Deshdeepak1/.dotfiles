@@ -3,17 +3,17 @@ return {
         "nvim-treesitter/nvim-treesitter",
         -- cond = false,
         -- lazy = false,
+        -- event = { "BufReadPost", "BufNewFile" },
         build = ":TSUpdate",
         dependencies = {
             "JoosepAlviste/nvim-ts-context-commentstring",
             "nvim-treesitter/nvim-treesitter-textobjects",
-            "windwp/nvim-ts-autotag",
             "nvim-treesitter/playground",
         },
         config = function()
             local configs = require("nvim-treesitter.configs")
 
-            local textobjects = {
+            local textobjects = { -- TODO: habituate using this
                 select = {
                     enable = true,
                     -- enable = false,
@@ -71,26 +71,30 @@ return {
                 },
             }
 
-            local autotag = {
-                enable = true,
-                -- enable = false,
-            }
             configs.setup({
                 ensure_installed = {
-                    "c", "python", "lua", "cpp", "html", "fish", "bash", "css", "typescript", "javascript", "markdown",
-                    "markdown_inline", "query", "norg", "norg_meta",
+                    "c", "lua", "vim", "vimdoc", "query",
+                    "regex",
+                    "csv", "yaml", "json",
+                    --[[ "toml", ]]
+                    -- "ssh_config", --[[ "tmux", ]]
+                    "cpp", "python", "kotlin",
+                    "fish", "bash",
+                    "html", "css", "javascript", "typescript",
+                    "markdown", "markdown_inline", "norg", "norg_meta",
+                    "git_config", "git_rebase", "gitcommit", "gitattributes", "gitignore"
                 },
                 sync_install = false,
                 auto_install = false,
                 highlight = {
                     enable = true,
                     -- enable = false,
-                    -- additional_vim_regex_highlighting = true,
+                    additional_vim_regex_highlighting = {"org"},
                 },
                 indent = {
                     enable = true,
                     -- enable = false,
-                    disable = { "cpp", --[[ "lua",  ]] },
+                    disable = { --[[ "cpp", ]] --[[ "lua",  ]] },
                 },
                 incremental_selection = {
                     enable = true,
@@ -98,12 +102,16 @@ return {
                     keymaps = {
                         init_selection = "<C-Space>", -- set to `false` to disable one of the mappings
                         node_incremental = "<C-Space>",
-                        scope_incremental = --[[  "grc" ]] false,
-                        node_decremental = "<bs>",
+                        -- scope_incremental = --[[  "grc" ]] false,
+                        scope_incremental = "<C-M-Space>",
+                        node_decremental = "<BS>",
+                        -- init_selection = "<Leader>ss", -- set to `false` to disable one of the mappings
+                        -- node_incremental = "<Leader>si",
+                        -- scope_incremental = "<Leader>sc",
+                        -- node_decremental = "<Leader>sd",
                     },
                 },
                 textobjects = textobjects,
-                autotag = autotag,
                 playground = playground,
             })
 
@@ -113,7 +121,7 @@ return {
 
             vim.g.skip_ts_context_commentstring_module = true
 
-            vim.opt.foldmethod = "expr"
+            vim.opt.foldmethod = vim.fn.filereadable(".nvim.lua") and vim.opt.foldmethod or "expr"
             vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
         end
     },
