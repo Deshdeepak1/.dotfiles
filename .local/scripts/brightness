@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# Increment, decrement, or mute the volume using Pipewire and send a notification
+brightness=$( xrandr --verbose | grep  Brightness | sed "s/.*Brightness: //")
+
+case $1 in
+    up)
+        brightness=$(echo "$brightness + 0.05" | bc)
+        xrandr --output eDP-1 --brightness ${brightness}
+        # Set the volume on (if it was muted)
+        ;;
+    down)
+        brightness=$(echo "$brightness - 0.05" | bc)
+        xrandr --output eDP-1 --brightness ${brightness}
+        ;;
+esac
+
+
+
+send_notification() {
+    percentage=$(printf "%.0f" $(echo "$brightness * 100" | bc))
+    HLCOLOR="#cccccc"
+    ICON="brightness-display-symbolic"
+    # ICON="display-brightness-symbolic"
+    # if [ "$1" = "up" ]; then TEXT="$percentage"; else TEXT="${VOLUME}%"; fi
+    TEXT=$percentage
+    # if [ "$1" = "mute" ]; then HLCOLOR="#cccccc"; else HLCOLOR=""; fi
+
+    dunstify -a "Brightness" -r 10002 -h int:value:"$percentage" -h string:hlcolor:"$HLCOLOR" -i "${ICON}" "Brigthness: " "$TEXT" -t 2000
+}
+
+case $1 in
+    *)
+        send_notification;;
+esac

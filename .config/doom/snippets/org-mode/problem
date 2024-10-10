@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: CodingProblem
+# uuid: CodingProblem
+# key: <p
+# condition: t
+# --
+
+** ${1:Title}
+*** Links
+[[https://codeforces.com][Codeforces]]
+*** Problem
+$0
+*** Ideas
+1. First
+*** Code

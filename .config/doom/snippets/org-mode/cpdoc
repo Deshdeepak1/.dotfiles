@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: CPDoc
+# uuid:
+# key: cpdoc
+# condition: t
+# --
+
+* Introduction
+* Problems
+* Links

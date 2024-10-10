@@ -1,0 +1,101 @@
+#!/usr/bin/python
+import asyncio
+import argparse
+import json
+import shlex
+from typing import Any
+
+import jc
+import myhelper
+from dunstify import dunstify
+
+
+async def get_battery():
+    cmd = "upower -i /org/freedesktop/UPower/devices/battery_BAT0"
+    _, battery_output_text, _ = await myhelper.get_rcode_out_err_exec(shlex.split(cmd))
+    battery_outputs: list[dict] = jc.parse("upower", battery_output_text)
+    if not battery_outputs:
+        raise ValueError("NOT FOUND")
+    battery_output: dict[str, Any] = battery_outputs[0]
+    detail = battery_output.get("detail")
+    if not detail:
+        raise ValueError("DETAIL NOT FOUND")
+    state = detail.get("state", "discharging")
+    percentage = int(detail.get("percentage", 0))
+    time_to_full = detail.get("time_to_full")
+    time_to_full_unit = detail.get("time_to_full_unit")
+    time_to_empty = detail.get("time_to_empty")
+    time_to_empty_unit = detail.get("time_to_empty_unit")
+    time = time_to_empty or time_to_full or ""
+    time_unit = time_to_empty_unit or time_to_full_unit or ""
+    time_text = f"{time} {time_unit}"
+    bat_icon = detail.get("icon_name", "")
+    return state, percentage, time_text, bat_icon
+
+
+async def show_battery(*args, show: bool = True):
+    try:
+        state, percentage, time_text, bat_icon = await get_battery()
+    except ValueError as e:
+        await dunstify("Battery:", str(e), urgency="critical")
+        return
+    else:
+        # text = f"{percentage} {state} {time_text}"
+        hlcolor = "#deb887"
+        if "discharg" in state:
+            if percentage < 15:
+                urgency = "critical"
+                show = True
+                hlcolor = "#ff0000"
+            elif percentage < 80:
+                urgency = "normal"
+            else:
+                hlcolor = "#00ffff"
+                urgency = "low"
+
+        elif "charg" in state:
+            hlcolor = "#f0f0f0"
+            if "full" in state:
+                show = True
+                time_text = "full charged"
+                hlcolor = "#0ff0aa"
+            urgency = "low"
+        else:
+            urgency = "normal"
+
+        text = f"{percentage}% : {time_text}"
+        if show:
+            await dunstify(
+                "Battery:",
+                text,
+                icon=bat_icon,
+                urgency=urgency,
+                replace=10001,
+                hints=[
+                    ("int", "value", str(percentage)),
+                    ("string", "hlcolor", hlcolor),
+                ],
+            )
+        return state, percentage, time_text, bat_icon, urgency
+
+
+async def async_main():
+    parser = argparse.ArgumentParser(description="Get notification of battery status")
+    parser.add_argument(
+        "-o",
+        "--only-critical",
+        help="Show notification only if critical",
+        action="store_false",
+        dest="show",
+    )
+    args = parser.parse_args()
+    battery_info = await show_battery(show=args.show)
+    print(json.dumps(battery_info))
+
+
+def main():
+    asyncio.run(async_main())
+
+
+if __name__ == "__main__":
+    main()
