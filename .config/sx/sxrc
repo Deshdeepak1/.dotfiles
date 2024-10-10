@@ -1,5 +1,9 @@
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-[[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
 xrandr --output eDP-1 --brightness 0.5
 picom &
+greenclip daemon &
+xss-lock -- i3lock-fancy -n &
+dunst &
+flameshot &
+emacs --daemon &
 exec qtile start

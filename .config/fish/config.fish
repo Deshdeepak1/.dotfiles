@@ -1,9 +1,11 @@
 set fish_greeting
 
-fish_add_path -p ~/.local/scripts ~/.local/bin ~/.config/nsxiv/scripts
+set -x PATH ~/.ghcup/bin ~/.config/emacs/bin ~/.local/scripts ~/.local/bin ~/.config/nsxiv/scripts $PATH
+set -xg PYTHONPATH ~/.local/mypyprogs $PYTHONPATH
 set fish_cursor_unknown block
 export EDITOR="nvim"
 export VISUAL="nvim"
+export TERMINAL="alacritty"
 
 if status is-login
     if test -z "$DISPLAY" -a "$XDG_VTNR" = 1
@@ -42,7 +44,7 @@ abbr    fparu   "paru -Slq | fzf -m --preview 'cat (paru -Si {1} | psub) (paru -
 abbr av ". venv/bin/activate.fish"
 abbr ah ". ~/hvenv/bin/activate.fish"
 # abbr    fdur    "find . -iname \"*.mp4\" -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+ | xargs -I \"{}\" python -c \"t = {} ; h = t//3600; m = (t % 3600)// 60; s = t % 60; ms =(s * 1000) % 1000;  print('%d hours %d minutes %d seconds %d miliseconds' %(h, m, s, ms))\""
-abbr p "sudo pacman -Syyu"
+abbr p "sudo pacman -Syu"
 abbr v "$EDITOR"
 abbr n "$EDITOR"
 
@@ -55,7 +57,8 @@ alias tbc="nc termbin.com 9999 | xclip -selection c"
 alias jqc="jq -C | cat"
 alias octave="octave -q"
 alias dragon="dragon-drop"
-alias aria2cc="aria2c -c -s 16 -x 16 -k 1M -j 32  --file-allocation none"
+alias aria2cc="aria2c -c -s 16 -x 16 -k 1M -j 32  --file-allocation falloc"
+alias yta="yt-dlp --downloader aria2c --downloader-args '-c -s 32 -x 16 -k 1M -j 32  --file-allocation falloc'"
 alias xsc="xclip -sel clipboard"
 alias nsxiv="nsxiv -ab"
 # export SHELL="sh"
@@ -107,18 +110,75 @@ function backup --argument filename
     cp $filename $filename.bak
 end
 
-function fdur
-    # find $argv -iname "*.mp4" -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+ | xargs -I "{}" python -c "t = {} ; h = t//3600; m = (t % 3600)// 60; s = t % 60; ms =(s * 1000) % 1000;  print('%d hours %d minutes %d seconds %d miliseconds' %(h, m, s, ms))"
-    set t (find $argv \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" -o -iname "*.mov" -o -iname "*.m4v" \) -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+)
+# function fdur
+#     # find $argv -iname "*.mp4" -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+ | xargs -I "{}" python -c "t = {} ; h = t//3600; m = (t % 3600)// 60; s = t % 60; ms =(s * 1000) % 1000;  print('%d hours %d minutes %d seconds %d miliseconds' %(h, m, s, ms))"
+#     set t (find $argv \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" -o -iname "*.mov" -o -iname "*.m4v" \) -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+)
+#     if test -z "$t"
+#         set t 0
+#     end
+#     set t (math "$t")
+#     set h (math -s0 "$t/3600")
+#     set m (math -s0 "($t%3600)/60")
+#     set s (math  "$t%60")
+#     set ms (math -s0 "($s*1000)%1000")
+#     printf "%d h %d m %d s %d ms\n" $h $m $s $ms 2>/dev/null
+# end
+
+# function lsfdur
+#     for dir in (/usr/bin/ls)
+#         set_color blue
+#         printf "$dir"
+#         printf "\t"
+#         set_color green
+#         fdur "$dir"
+#         set_color normal
+#     end
+# end
+
+# function lsfdur_nocolor
+#     for dir in (/usr/bin/ls)
+#         printf "$dir"
+#         printf "\t"
+#         fdur "$dir"
+#     end
+# end
+
+function exif_get_dur
+    set t (exiftool $argv -ext mp4 -ext mkv -ext avi -ext mov -ext m4v -r -n  -q -p '#[TAIL]${Duration; if ($_ =~ /(\\d+):(\\d+):(.*)/) { $_ =  ($1 * 3600) + ($2 * 60) + $3 } ; our $total += $_; my $rem = $total;  my $h = int($rem/3600)  ;  $rem -= $h * 3600; my $m = int($rem / 60 ); $rem -= $m * 60 ; my $s = sprintf("%.3f", $rem) ; $_ = $h . ":" . $m . ":" . $s; }')
     if test -z "$t"
-        set t 0
+        set t 00:00:00
     end
-    set t (math "$t")
-    set h (math -s0 "$t/3600")
-    set m (math -s0 "($t%3600)/60")
-    set s (math  "$t%60")
-    set ms (math -s0 "($s*1000)%1000")
-    printf "%d h %d m %d s %d ms\n" $h $m $s $ms 2>/dev/null
+    echo $t
+end
+
+function fdur
+    if test -z "$argv"
+        set argv "."
+    end
+    exif_get_dur $argv
+end
+
+function fdurp --argument-names file
+    set t (exif_get_dur $file)
+    set_color blue
+    printf "$file\t"
+    set_color green
+    printf "$t\n"
+    set_color normal
+end
+
+function fdurp_nocolor --argument-names file
+    set t (exif_get_dur $file)
+    printf "$file\t$t\n"
+end
+
+
+function lsfdur
+    /usr/bin/ls | xargs -P (nproc) -I {} fish -c 'fdurp "{}"'
+end
+
+function lsfdur_nocolor
+    /usr/bin/ls | xargs -P (nproc) -I {} fish -c 'fdurp_nocolor "{}"'
 end
 
 function lsdur
@@ -163,4 +223,29 @@ end
 
 venv_act $PWD
 
-alias battery='upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -e "percentage" -e "time to empty" | cut -d ":" -f 2  | xargs  bash -c \'echo $2 $0 $1\''
+alias battery='upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -e "percentage" -e "time to " -e "state" | cut -d ":" -f 2 | sed "s/^ *//" | xargs  bash -c \'echo $3 $0 $1 $2\''
+
+
+function sdk
+    bash -c "source '$HOME/.sdkman/bin/sdkman-init.sh'; sdk $argv[1..]"
+end
+
+function is_empty_dir
+    test -d "$argv"
+    or return 1 # not a directory, so not an empty directory
+    # count counts how many arguments it received
+    # if this glob doesn't match, it won't get arguments
+    # and so it will return 1
+    # because we *want* an empty directory, turn that around.
+    # the `{.*,*}` ensures it matches hidden files as well.
+    not count $argv/{.*,*} >/dev/null
+end
+
+if not is_empty_dir ~/.sdkman/candidates/
+    # fish_add_path (find $HOME/.sdkman/candidates/*/current/bin -maxdepth 0)
+end
+
+# export MODULAR_HOME="/home/deshdeepak/.modular"
+# fish_add_path ~/.modular/pkg/packages.modular.com_mojo/bin/
+
+zoxide init fish | source

@@ -43,7 +43,7 @@ if [[ $swapanswer = y ]] ; then
 fi
 
 ## Install
-pacstrap -K /mnt base base-devel linux linux-headers linux-firmware
+pacstrap -K /mnt base base-devel linux linux-lts linux-headers linux-firmware
 genfstab -U /mnt >> /mnt/etc/fstab
 
 ai2_path=/mnt/arch_install2.sh
@@ -73,7 +73,7 @@ mkinitcpio -P
 
 ## Install packages
 pacman -Syy --disable-download-timeout --noconfirm grub os-prober efibootmgr neovim git xterm \
-    python-pip python-virtualenv python-poetry python-pipx man-db man-pages texinfo sudo \
+    python-pip python-virtualenv python-pipx man-db man-pages texinfo sudo \
     wget curl speedtest-cli ttf-mononoki-nerd awesome-terminal-fonts noto-fonts noto-fonts-emoji \
     noto-fonts-cjk btop zip unzip unrar p7zip fish lua lua51 xorg lf sx xh eza ripgrep jq sd fzf \
     ytfzf trash-cli imagemagick qtile python-pywlroots nsxiv alacritty bluez bluez-utils pipewire \
@@ -81,7 +81,13 @@ pacman -Syy --disable-download-timeout --noconfirm grub os-prober efibootmgr neo
     ncdu zathura zathura-pdf-mupdf arc-icon-theme arc-gtk-theme ffmpeg aria2 ntfs-3g qutebrowser \
     rsync picom xdg-user-dirs libconfig libnotify dunst exa tmux bat ffmpeg mpv noto-fonts-emoji \
     fd fzf lazygit ranger ctags ripgrep luarocks feh nodejs xclip xdg-desktop-portal flameshot \
-    polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmamger brightnessctl npm
+    polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmamger brightnessctl npm \
+    proxychains-ng parallel parallel-docs mesa-utils xdotool jc socat zoxide keyd
+
+# GPU
+pacman -Syy --disable-download-timeout --noconfirm nvidia-open-dkms # dkms - if more than one kernel is installed
+pacman -Syy --disable-download-timeout --noconfirm nvidia-prime nvidia-utils nvidia-settings inxi opencl-nvidia nvtop
+# If you run into trouble with CUDA not being available, run nvidia-modprobe first.
 
 pacman -Fyy
 
@@ -97,6 +103,7 @@ echo "%wheel ALL=(ALL:ALL) ALL" >> /etc/sudoers
 ## nvim for vi / vim
 ln -s /usr/bin/nvim /usr/bin/vi
 ln -s /usr/bin/nvim /usr/bin/vim
+ln -s /usr/bin/rofi /usr/bin/dmenu
 
 # touchpad
 curl -L "https://github.com/Deshdeepak1/.dotfiles/raw/master/.config/30-touchpad.conf" \
@@ -109,6 +116,7 @@ echo "127.0.0.1       localhost" >> /etc/hosts
 echo "::1             localhost" >> /etc/hosts
 echo "127.0.1.1       $hostname.localdomain $hostname" >> /etc/hosts
 systemctl enable NetworkManager systemd-networkd bluetooth
+sed -i  "s/^socks4.*/socks4 127.0.0.1 1080/g" /etc/proxychains.conf
 
 ## Boot Loader
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
@@ -155,13 +163,21 @@ sudo -S pacman -U paru-bin-*pkg.tar.zst
 cd $HOME
 rm paru-bin -rf
 
-### Paru - Install packages
+### Paru - Install necessary packages
 paru -S --disable-download-timeout forkgram-bin i3lock-fancy-git brave-bin \
-    ueberzugpp bento4 dragon-drop simple-mtpfs paru-bin mongodb-compass
+    ueberzugpp bento4 dragon-drop simple-mtpfs paru-bin pup-bin
+
+## Paru - Install other packages
+paru -S --disable-download-timeout mongodb-compass android-studio mitmproxy \
+    rofi-greenclip rofimoji rofi-calc
+
+### poetry
+pipx install poetry
+poetry self add poetry-core poetry-plugin-export poetry-plugin-up
 
 git config --global user.email "rkdeshdeepak1@gmail.com"
 git config --global user.name "Deshdeepak"
-git config --global credential.helper cache/store
+git config --global credential.helper store
 
 # Dotfiles
 shopt -s expand_aliases
@@ -181,3 +197,6 @@ echo "Installation Completed"
 exit
 
 # Todo: Fan/ Cpu Scaling/ Battery ,  nvidia/amd graphics , nvim resetup, Android Studio setup, qr from link
+# textlive-basic, texlive-fontsrecommended, texlive-latexrecommended, texlive-latex pandoc, entr
+
+# when gpg error due to some package missing, manually install using pacman -U

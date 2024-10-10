@@ -1,3 +1,4 @@
+set database sqlite
 set window-title-page
 set window-title-basename true
 set statusbar-home-tilde true

@@ -139,3 +139,5 @@
     margin:     0px 0.3em 0em 0em ;
     text-color: @drac-grn;
 }
+/* @theme "/usr/share/rofi/themes/Adapta-Nokto.rasi" */
+/* @theme "catppuccin-frappe.rasi" */

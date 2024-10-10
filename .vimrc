@@ -1,1 +1,4 @@
-source /home/deshdeepak/.config/nvim/init.vim
+imap jk <ESC>
+imap kj <ESC>
+set number
+set relativenumber
