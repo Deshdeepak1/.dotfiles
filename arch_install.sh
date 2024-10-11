@@ -7,17 +7,19 @@ echo "Arch Install Started"
 
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
 pacman --noconfirm -Sy archlinux-keyring
-pacman -S networkmamger
-systemctl start networkmanager
+pacman --noconfirm -S networkmanager
+systemctl start NetworkManager
 nmtui
 loadkeys us
 timedatectl set-ntp true
 timedatectl
+reflector --country India --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 
 ## Drives and partitions
 lsblk
 read -p "Enter the drive: " drive
-cfdisk $drive
+cgdisk $drive
+
 read -p "Enter the linux partition: " partition
 mkfs.ext4 $partition
 mount $partition /mnt
@@ -25,6 +27,10 @@ mount $partition /mnt
 read -p "Separate home partition? [y/n]" homeanswer
 if [[ $homeanswer = y ]] ; then
     read -p "Enter home partition: " homepartition
+    read -p "Format home partition? [y/n]" formathome
+    if [[ $formathome = y ]] ; then
+        mkfs.ext4 $homepartition
+    fi
     mount --mkdir $homepartition /mnt/home
 fi
 
@@ -69,11 +75,10 @@ locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 echo "KEYMAP=us" > /etc/vconsole.conf
 
-mkinitcpio -P
 
 ## Install packages
-pacman -Syy --disable-download-timeout --noconfirm grub os-prober efibootmgr neovim git xterm \
-    python-pip python-virtualenv python-pipx man-db man-pages texinfo sudo \
+pacman --noconfirm -Syy --disable-download-timeout grub os-prober efibootmgr neovim git xterm \
+    python-pip python-virtualenv python-pipx lazygit man-db man-pages texinfo sudo gptfdisk \
     wget curl speedtest-cli ttf-mononoki-nerd awesome-terminal-fonts noto-fonts noto-fonts-emoji \
     noto-fonts-cjk btop zip unzip unrar p7zip fish lua lua51 xorg lf sx xh eza ripgrep jq sd fzf \
     ytfzf trash-cli imagemagick qtile python-pywlroots nsxiv alacritty bluez bluez-utils pipewire \
@@ -81,17 +86,26 @@ pacman -Syy --disable-download-timeout --noconfirm grub os-prober efibootmgr neo
     ncdu zathura zathura-pdf-mupdf arc-icon-theme arc-gtk-theme ffmpeg aria2 ntfs-3g qutebrowser \
     rsync picom xdg-user-dirs libconfig libnotify dunst exa tmux bat ffmpeg mpv noto-fonts-emoji \
     fd fzf lazygit ranger ctags ripgrep luarocks feh nodejs xclip xdg-desktop-portal flameshot \
-    polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmamger brightnessctl npm \
-    proxychains-ng parallel parallel-docs mesa-utils xdotool jc socat zoxide keyd
+    polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmanager brightnessctl npm \
+    proxychains-ng parallel parallel-docs mesa-utils xdotool jc socat zoxide keyd reflector \
+    rofi-calc
 
 # GPU
-pacman -Syy --disable-download-timeout --noconfirm nvidia-open-dkms # dkms - if more than one kernel is installed
-pacman -Syy --disable-download-timeout --noconfirm nvidia-prime nvidia-utils nvidia-settings inxi opencl-nvidia nvtop
+pacman --noconfirm -Syy --disable-download-timeout nvidia-open-dkms # dkms - if more than one kernel is installed
+pacman --noconfirm -Syy --disable-download-timeout nvidia-prime nvidia-utils nvidia-settings inxi opencl-nvidia nvtop
 # If you run into trouble with CUDA not being available, run nvidia-modprobe first.
 
-pacman -Fyy
+pacman --noconfirm -Fyy
 
-luarocks --local --lua-version=5.1 install magick
+# Initramfs
+cat > /etc/mkinitcpio.conf <<EOF
+MODULES=()
+BINARIES=()
+FILES=()
+HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck)
+EOF
+
+mkinitcpio -P
 
 ## User
 passwd
@@ -115,10 +129,21 @@ echo $hostname > /etc/hostname
 echo "127.0.0.1       localhost" >> /etc/hosts
 echo "::1             localhost" >> /etc/hosts
 echo "127.0.1.1       $hostname.localdomain $hostname" >> /etc/hosts
-systemctl enable NetworkManager systemd-networkd bluetooth
 sed -i  "s/^socks4.*/socks4 127.0.0.1 1080/g" /etc/proxychains.conf
 
+cat > /etc/xdg/reflector/reflector.conf <<EOF
+--protocol https
+--country India
+--age 12
+--sort rate
+--save /etc/pacman.d/mirrorlist
+EOF
+
+# Enable Services
+systemctl enable NetworkManager bluetooth sshd reflector.timer fstrim.timer
+
 ## Boot Loader
+os-prober
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 
 ### Silent Boot
@@ -131,7 +156,6 @@ sed -i /etc/default/grub  \
     -e 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX=""/g' \
     -e 's/GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet loglevel=3 acpi_backlight=video"/g'
 
-sed -i /etc/mkinitcpio.conf -e "s/^HOOKS=(\(.*\) systemd \(.*\))/HOOKS=(\1 udev \2)/g"
 
 agety_prompt_file=/etc/systemd/system/getty@tty1.service.d/skip-prompt.conf
 mkdir -p $(dirname $agety_prompt_file)
@@ -145,7 +169,7 @@ ai3_path=/home/$username/arch_install3.sh
 sed '2,/^#part3$/d' arch_install2.sh > $ai3_path
 chown $username:$username $ai3_path
 chmod +x $ai3_path
-su -c $ai3_path -s /bin/sh $username
+su -c $ai3_path -s /bin/bash $username
 rm $ai3_path
 exit
 
@@ -164,12 +188,17 @@ cd $HOME
 rm paru-bin -rf
 
 ### Paru - Install necessary packages
-paru -S --disable-download-timeout forkgram-bin i3lock-fancy-git brave-bin \
-    ueberzugpp bento4 dragon-drop simple-mtpfs paru-bin pup-bin
+paru --noconfirm --sudoflags "-S" --sudoloop -S --disable-download-timeout \
+    auto-cpufreq materialgram-bin paru-bin pup-bin rofi-greenclip \
+    i3lock-fancy-git brave-bin ueberzugpp bento4 dragon-drop simple-mtpfs \
 
 ## Paru - Install other packages
-paru -S --disable-download-timeout mongodb-compass android-studio mitmproxy \
-    rofi-greenclip rofimoji rofi-calc
+paru --noconfirm --sudoflags "-S" --sudoloop -S --disable-download-timeout \
+    mongodb-compass android-studio mitmproxy rofimoji
+
+sudo -S systemctl enable auto-cpufreq
+luarocks --local --lua-version=5.1 install magick
+bat cache --build
 
 ### poetry
 pipx install poetry
@@ -191,6 +220,8 @@ dotfiles fetch --set-upstream origin master
 dotfiles reset --hard FETCH_HEAD
 dotfiles remote set-url origin git@github.com:Deshdeepak1/.dotfiles.git
 
+# wallpapers
+git clone https://github.com/deshdeepak1/wallpapers
 
 echo "Installation Completed"
 

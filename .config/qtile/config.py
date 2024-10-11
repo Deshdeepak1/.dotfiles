@@ -29,7 +29,6 @@ import random
 from datetime import datetime
 import json
 
-import requests
 from dunstify import dunstify
 from libqtile import bar, hook, layout, qtile, widget
 from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen
@@ -274,31 +273,6 @@ keys.extend(
 )
 
 
-def check_grades():
-    JSESSIONID = "73E85F86DD0C520D9271FC315C3A8E66"
-    login_res = requests.post(
-        "https://erp.iiitd.edu.in/login.action",
-        params="appUser.userId=mt23115&appUser.passwd=1324657980aA%40&captchaRequired=No",
-        headers={"Cookie": f"JSESSIONID={JSESSIONID}"},
-    )
-    CLUser = login_res.cookies["CLUser"]
-    JSESSIONID = login_res.cookies["JSESSIONID"]
-    course_res = requests.post(
-        "https://erp.iiitd.edu.in/spGetRegisteredCoursesInLevel.action?level.id=443678729",
-        headers={"Cookie": f"JSESSIONID={JSESSIONID}; CLUser={CLUser}"},
-    )
-    courses = course_res.json()
-    with open("/home/deshdeepak/courses.json", "w") as f:
-        f.write(json.dumps(courses, indent=2))
-
-    for course in courses:
-        course_data = course[0]
-        grades = course_data["forcedGrade"]
-        if "code" in grades:
-            qtile.cmd_spawn("dunstify 'Results Declared'")
-            break
-
-    qtile.call_later(120, check_grades)
 
 
 def check_battery():
@@ -313,7 +287,6 @@ def study_reminder():
 
 @hook.subscribe.startup_once
 def autostart():
-    # check_grades()
     # home = os.path.expanduser("~/.config/qtile/autostart.sh")
     # subprocess.Popen([home])
     # notify_send("hi")
@@ -363,10 +336,9 @@ extension_defaults = widget_defaults.copy()
 
 
 def choose_wallpaper():
-    wallpapers = os.listdir(os.path.expanduser("~/wallpapers/"))
-    other_files = [".git", "README.md"]
-    for other_file in other_files:
-        wallpapers.remove(other_file)
+    wallpapers = set(os.listdir(os.path.expanduser("~/wallpapers/")))
+    other_files = {".git", "README.md"}
+    wallpapers = tuple(wallpapers - other_files)
     wallpaper = f"~/wallpapers/{random.choice(wallpapers)}"
     return wallpaper
 
