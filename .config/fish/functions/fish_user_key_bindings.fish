@@ -5,3 +5,4 @@ function fish_user_key_bindings
     bind -M insert \cb fzf_bcd_widget
     bind -M insert \cp 'pwd|xsc'
 end
+

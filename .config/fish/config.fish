@@ -16,7 +16,7 @@ abbr v "$EDITOR"
 abbr n "$EDITOR"
 
 # Aliases
-alias ls="exa --icons --group-directories-first"
+alias ls="eza --icons --group-directories-first"
 alias cat="bat"
 alias jqc="jq -C | cat"
 
