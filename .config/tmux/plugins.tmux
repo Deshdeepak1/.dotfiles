@@ -6,8 +6,7 @@ if-shell "test ! -d $TMUX_PLUGIN_MANAGER_PATH/tpm" {
 
 # List of plugins
 set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g escape-time 10 # Fix windows terminal pushing escape sequences
+#set -g @plugin 'tmux-plugins/tmux-sensible'
 
 set -g @plugin 'tmux-plugins/tmux-battery'
 

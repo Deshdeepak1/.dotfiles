@@ -7,6 +7,7 @@ if-shell "test $TERM == alacritty" {
     set-option -ga terminal-features ",alacritty:usstyle:RGB"
 }
 
+set -g escape-time 50 # Fix windows terminal pushing escape sequences
 
 set -g set-clipboard on
 set -g history-limit 100000
