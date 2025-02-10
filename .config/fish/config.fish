@@ -1,18 +1,19 @@
 set fish_greeting
-
-set -x PATH ~/.ghcup/bin ~/.config/emacs/bin ~/.local/scripts ~/.local/bin ~/.config/nsxiv/scripts $PATH
-set -xg PYTHONPATH ~/.local/mypyprogs $PYTHONPATH
 set fish_cursor_unknown block
+
+set -x PATH ~/.screenlayout/  ~/.ghcup/bin ~/.config/emacs/bin ~/.local/scripts ~/.local/bin ~/.config/nsxiv/scripts $PATH
+set -xg PYTHONPATH ~/.local/mypyprogs $PYTHONPATH
+
+
 export EDITOR="nvim"
 export VISUAL="nvim"
-export TERMINAL="alacritty"
+export TERMINAL="kitty"
 
 if status is-login
     if test -z "$DISPLAY" -a "$XDG_VTNR" = 1
-        sx 2> /dev/null
+        sx sh ~/.config/X11/xinitrc 2> /dev/null
     end
 end
-
 
 if status is-interactive
     if ! test -n "$TMUX"
@@ -20,6 +21,12 @@ if status is-interactive
         PF_INFO="ascii title os host kernel uptime pkgs memory wm" pfetch
         #neofetch
     end
+end
+
+
+function reload
+    source ~/.config/fish/config.fish
+    echo "Config reloaded"
 end
 
 # Git
@@ -35,6 +42,7 @@ alias dotfiles="git --git-dir=$HOME/.dotfiles"
 #dotfiles config status.showUntrackedFiles no
 #dotfiles config --local credential.helper cache/store
 #git --git-dir=$HOME/.dotfiles --work-tree=$HOME config --local core.worktree $HOME
+abbr dotcommit 'dotfiles commit -m "Update $(date)"'
 abbr dv "GIT_DIR=~/.dotfiles $EDITOR"
 
 # Abbreviations
@@ -50,18 +58,17 @@ abbr n "$EDITOR"
 
 
 # Aliases
-alias ls="exa --icons --group-directories-first"
+alias ls="eza --hyperlink --icons --group-directories-first"
 alias cat="bat"
 alias tb="nc termbin.com 9999"
 alias tbc="nc termbin.com 9999 | xclip -selection c"
 alias jqc="jq -C | cat"
 alias octave="octave -q"
 alias dragon="dragon-drop"
-alias aria2cc="aria2c -c -s 16 -x 16 -k 1M -j 32  --file-allocation falloc"
-alias yta="yt-dlp --downloader aria2c --downloader-args '-c -s 32 -x 16 -k 1M -j 32  --file-allocation falloc'"
+alias aria2cc="aria2c -c -s 16 -x 16 -k 1M -j 32  --file-allocation none"
+alias yta="yt-dlp --downloader aria2c --downloader-args '-c -s 32 -x 16 -k 1M -j 32  --file-allocation none'"
 alias xsc="xclip -sel clipboard"
 alias nsxiv="nsxiv -ab"
-# export SHELL="sh"
 
 export FZF_DEFAULT_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_CTRL_T_COMMAND="fd --exclude '.git/' --hidden --type f"
