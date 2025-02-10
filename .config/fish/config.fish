@@ -1,7 +1,6 @@
 set fish_greeting
 set fish_cursor_unknown block
 
-
 set -x PATH  ~/.local/scripts ~/.local/bin $PATH
 
 export EDITOR="nvim"
@@ -9,7 +8,36 @@ export VISUAL="nvim"
 
 # Dot files management
 alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+abbr dotcommit 'dotfiles commit -m "Update $(date)"'
 abbr dv "GIT_DIR=~/.dotfiles $EDITOR"
+
+function reload
+    source ~/.config/fish/config.fish
+    echo "Config reloaded"
+end
+
+function check_italics
+    echo -e "\e[3mThis is italic text\e[0m"
+    echo -e "\e[3;34mThis is blue italic text\e[0m"
+    echo -e "\e[1;3;31mThis is red bold italic text\e[0m"
+end
+
+function check_undercurl
+    echo -e "\e[4:3mThis text has an undercurl\e[0m"
+    echo -e "\e[4:3;38;5;196mRed text with Red Undercurl\e[0m"
+    echo -e "\e[38;5;82m\e[4:3m\e[58;5;196mGreen Text with Red Undercurl\e[0m"
+end
+
+function check_strikethrough
+    echo -e "\e[9mThis text has a strikethrough\e[0m"
+    echo -e "\e[9;38;5;196mRed text with Red strikethrough\e[0m"
+end
+
+function check_special_text_features
+    check_italics
+    check_undercurl
+    check_strikethrough
+end
 
 # Abbreviations
 abbr v "$EDITOR"
