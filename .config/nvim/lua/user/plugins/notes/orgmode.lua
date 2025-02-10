@@ -1,7 +1,7 @@
 return {
     'nvim-orgmode/orgmode',
     event = 'VeryLazy',
-    -- cond = false,
+    cond = false,
     -- lazy = false,
     ft = { 'org' },
     config = function()

@@ -32,15 +32,11 @@ local lazy_opts = {
         -- automatically check for config file changes and reload the ui
         enabled = true,
         notify = false, -- get a notification when changes are found
-    }
+    },
+    hererocks = true,
 }
 
 lazy.setup({
-    {
-        "vhyrro/luarocks.nvim",
-        priority = 1000,
-        config = true,
-    },
     { "nvim-tree/nvim-web-devicons" },
     { "nvim-lua/plenary.nvim" },
 

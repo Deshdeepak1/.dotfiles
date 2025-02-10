@@ -5,7 +5,7 @@ return {
         -- cond = false,
         -- event = { "BufReadPre", "BufNewFile" },
         -- lazy = false,
-        ft = { "python", "lua", "cpp", "html", "css", "javascript", "typescript", "kotlin", },
+        ft = { "python", "lua", "cpp", "html", "css", "javascript", "typescript", "kotlin", "glsl" },
         cmd = { "LspInfo", "LspStart", "LspInstall", "LspRestart", "Mason" },
         dependencies = {
             "williamboman/mason.nvim",
@@ -27,20 +27,21 @@ return {
             local mason_lspconfig = require("mason-lspconfig")
             mason_lspconfig.setup({
                 ensure_installed = { -- TODO: html,css,js
-                    "lua_ls",
+                    -- "lua_ls",
                     -- "pylsp",
                     -- "ruff",
                     "ruff_lsp",
                     "pyright",
                     "clangd",
-                    "neocmake",
+                    -- "neocmake",
                     "ts_ls",
                     "cssls",
                     "tailwindcss",
                     -- "jsonls"
                     -- "jqls",
-                    "kotlin_language_server",
+                    -- "kotlin_language_server",
                     -- "hls",
+                    "glsl_analyzer"
                 },
             })
 
@@ -241,6 +242,9 @@ return {
 
                 },
 
+                glsl_analyzer = {
+
+                },
 
                 
 

@@ -7,7 +7,6 @@ return {
         dependencies = {
             "laher/neorg-exec",
             "nvim-neorg/neorg-telescope",
-            "luarocks.nvim",
         },
         keys = {
             {

@@ -9,24 +9,17 @@ vim.g.maplocalleader = "," -- TODO: Change as in conflict
 
 
 -- Save  Quit
--- keymap("n", "<leader>q", ":close<CR>", { desc = "CloseBuffer" })
 keymap("n", "<leader>q", ":bdelete<CR>", { desc = "CloseBuffer" })
 -- keymap("n", "<leader>x", ":bdelete<CR>", opts)
-keymap("n", "<leader>qq", ":quit<CR>", { desc = "Quit" })
 keymap("n", "<leader>Q", ":quitall!<CR>", { desc = "QuitAll" })
--- keymap("n", "<leader>w", ":update<CR>", { desc = "Save" })
 keymap("n", "<leader>s", ":luafile %<CR>", { desc = "Source" })
-keymap("n", "<leader>wq", ":wq<CR>", { desc = "Save&Quit" })
--- keymap("n", "<leader>s", ":saveas<SPACE>", { desc = "SaveAs" })
-keymap("n", "<leader>W", ":write<SPACE>", { desc = "SaveTo" })
 
 -- wrap toggle
-keymap("n", "<leader>w", function() vim.wo.wrap = not vim.wo.wrap end, { desc = "Save" })
+keymap("n", "<leader>w", function() vim.wo.wrap = not vim.wo.wrap end, { desc = "WrapToggle" })
 
 -- Remap ESC
 keymap("i", "jk", "<ESC>", opts)
 keymap("i", "kj", "<ESC>", opts)
--- keymap("i", "jk", function() print("Hello Dark") end)
 keymap("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Center Screen
@@ -67,8 +60,8 @@ keymap("n", "<C-s>", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { d
 
 
 -- Better Indentation
-keymap("v", ">", ">gv", opts) -- C-T
-keymap("v", "<", "<gv", opts) -- C-D
+keymap("v", ">", ">gv", opts)
+keymap("v", "<", "<gv", opts)
 
 -- Arrows off
 -- keymap("n", "<Up>", "<Nop>", opts)
@@ -80,8 +73,8 @@ keymap("v", "<", "<gv", opts) -- C-D
 -- keymap("v", "p", '"_dP', opts)
 keymap("x", "<leader>p", [["_dP]], { desc = "PrevPaste" })
 keymap("n", "cp", '"+', opts)
-keymap({ "n", "v" }, "<leader>y", '"+y', { desc = "C2C" })
-keymap("n", "<leader>Y", '"+Y', { desc = "C2C2End", remap = true })
+keymap({ "n", "v" }, "<leader>y", '"+y', { desc = "Copy2Clipboard" })
+keymap("n", "<leader>Y", '"+Y', { desc = "Copy2Clipboard2End", remap = true })
 
 -- Move Lines up and down
 keymap("n", "J", "mzJ`z")

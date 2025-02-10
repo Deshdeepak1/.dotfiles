@@ -23,6 +23,7 @@ local options = {
     -- nowrap = true,
     -- wrap = true,
     wrap = false,
+    linebreak = true,
     foldenable = false,
     undodir = expand("~/.local/share/nvim/undo"),
     undofile = true,
@@ -68,7 +69,7 @@ local options = {
 
     -- CHAR LIMIT:
     --highlight ColorColumn ctermbg=gray
-    --filetype detect
+    -- filetype detect
     --if &filetype=='python'
     --set cc=79
     --endif
@@ -101,6 +102,10 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 vim.api.nvim_create_autocmd("FileType", {
     command = "set formatoptions-=cro",
 })
--- Example for configuring Neovim to load user-installed installed Lua rocks:
-package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?/init.lua;"
-package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?.lua;"
+
+vim.api.nvim_create_augroup("filetype_glsl", { clear = true })
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  group = "filetype_glsl",
+  pattern = { "*.vs", "*.fs" },
+  command = "set filetype=glsl",
+})

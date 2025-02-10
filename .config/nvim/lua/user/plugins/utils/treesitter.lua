@@ -73,15 +73,15 @@ return {
 
             configs.setup({
                 ensure_installed = {
-                    "c", "lua", "vim", "vimdoc", "query",
+                    "c", "cpp", "glsl", "lua", "vim", "vimdoc",
                     "regex",
                     "csv", "yaml", "json",
                     --[[ "toml", ]]
                     -- "ssh_config", --[[ "tmux", ]]
-                    "cpp", "python", "kotlin",
+                    "python", "kotlin",
                     "fish", "bash",
                     "html", "css", "javascript", "typescript",
-                    "markdown", "markdown_inline", "norg", "norg_meta",
+                    "markdown", "markdown_inline", "norg", "org",
                     "git_config", "git_rebase", "gitcommit", "gitattributes", "gitignore"
                 },
                 sync_install = false,
