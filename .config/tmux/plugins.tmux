@@ -38,7 +38,9 @@ set -g @pomodoro_prompt_pomodoro "#[fg=#808080]🕤 ? "
 set -g @pomodoro_disable_breaks 'off'          # Turn off breaks
 set -g @pomodoro_menu_position "R"             # The location of the menu relative to the screen
 set -g @pomodoro_sound 'off'                   # Sound for desktop notifications (Run `ls /System/Library/Sounds` for a list of sounds to use on Mac)
-set -g @pomodoro_notifications 'on'           # Enable desktop notifications from your terminal
+if-shell "test -z $SSH_TTY" {
+    set -g @pomodoro_notifications 'on'           # Enable desktop notifications from your terminal
+}
 set -g @pomodoro_granularity 'on'             # Enables MM:SS (ex: 00:10) format instead of the default (ex: 1m)
 
 ## Theme

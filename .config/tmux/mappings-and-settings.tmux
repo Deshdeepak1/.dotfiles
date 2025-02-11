@@ -5,10 +5,14 @@
 set -g default-terminal "$TERM"
 
 if-shell "test -z $TERMUX_VERSION" {
-    set -ga terminal-features ",$TERM:usstyle:RGB"
+    set -ga terminal-features ",$TERM:usstyle"
 }
+set -ga terminal-features ",$TERM:RGB"
 
-set -sg escape-time 50 # Fix windows terminal pushing escape sequences
+
+if-shell "test -n $WIN_TERMINAl" {
+    set -sg escape-time 500 # Fix windows terminal pushing escape sequences
+}
 
 set -g set-clipboard on
 set -g history-limit 100000
