@@ -1,3 +1,2 @@
-require("user.settings")
-require("user.keymaps")
-require("user.lazy") -- TODO: schemastore, todo binds,diag binds, spell, markdown+obsidian
+require("config")
+-- require("lazy") -- TODO: schemastore, todo binds,diag binds, spell, markdown+obsidian
