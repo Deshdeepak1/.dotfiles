@@ -1,22 +1,24 @@
+colorscheme elflord
+
 """ General Settings
 set number
 set relativenumber
 set numberwidth=2
 
-set shiftwidth=4
+set shiftwidth=0 " Takes from tabstop
 set tabstop=4
 set softtabstop=4
 set expandtab
 set smarttab
+set smartindent
+set preserveindent
+set copyindent
 
 set mouse=a
-set mousemoveevent
-set smartindent
-" set cindent
 set ruler
 set nowrap
 set linebreak
-set foldenable
+set nofoldenable
 set undodir=~/.local/share/nvim/undo
 set undofile
 set incsearch
@@ -26,42 +28,51 @@ set updatetime=100
 set timeout
 set timeoutlen=300
 set cursorline
-set signcolumn=yes:1
 set pumheight=10
 set conceallevel=2
 set concealcursor=c
+set virtualedit=block
 set noswapfile
 set fileencoding=utf-8
 set completeopt=menuone,noselect
-set showmode
+set noshowmode
 set exrc
-set listchars=tab:<->,trail:-,nbsp:\u2423,space:\u00B7
+
+" Whitespaces
+set listchars=tab:<->,trail:-,nbsp:\u2423,space:·
 set list
 
 " Autocompletion
 set wildmode=longest,list,full
 
-" Splitting behavior
+" Fix splitting
 set splitright
 set splitbelow
 
-" Backup
+" Backup settings
 set nobackup
+set nowritebackup
 set backupdir=~/.local/share/nvim/backup
 
-" Key Mappings
-let mapleader=" "
-let maplocalleader=","  " TODO: Change as in conflict
+" Whichwrap settings
+set whichwrap+=l,h,<,>,[,]
+set shortmess+=c
 
-" Save & Quit
+" Leader Key
+let mapleader=" "
+
+" Key Mappings
 nnoremap <leader>q :bdelete<CR>
 nnoremap <leader>Q :quitall!<CR>
-nnoremap <leader>s :source %<CR>
+nnoremap <leader>S :source %<CR>
 
-" Wrap toggle
+" Wrap Toggle
 nnoremap <leader>w :set wrap!<CR>
 
-" Remap ESC
+" Spell Toggle
+nnoremap <leader>s :set spell!<CR>
+
+" Escape Remap
 inoremap jk <ESC>
 inoremap kj <ESC>
 nnoremap <Esc> :nohlsearch<CR>
@@ -72,22 +83,18 @@ nnoremap <C-u> <C-u>zz
 nnoremap n nzzzv
 nnoremap N Nzzzv
 
-" Splits Navigation
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
+" Resize Splits
 nnoremap <M-h> :vertical resize -2<CR>
 nnoremap <M-l> :vertical resize +2<CR>
 nnoremap <M-j> :resize -2<CR>
 nnoremap <M-k> :resize +2<CR>
 
 " Buffer Navigation
-nnoremap <leader>bb :b<SPACE>
+nnoremap <leader>bb :b <SPACE>
 nnoremap <TAB> :bnext<CR>
 nnoremap <S-TAB> :bprevious<CR>
 
-" Sed-like Substitute
+" Sed-like Substitutions
 nnoremap <M-s> :%s///gI<Left><Left><Left><Left>
 vnoremap <M-s> :s///gI<Left><Left><Left><Left>
 nnoremap <C-s> :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
@@ -96,25 +103,32 @@ nnoremap <C-s> :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
 vnoremap > >gv
 vnoremap < <gv
 
-" Paste behavior
+" Paste Behavior
 xnoremap <leader>p "_dP
 nnoremap cp "+
 nnoremap <leader>y "+y
 vnoremap <leader>y "+y
 nnoremap <leader>Y "+Y
 
-" Join lines without cursor movement
+" Join Lines Without Cursor Movement
 nnoremap J mzJ`z
 
-" Move Lines
+" Move Lines Up and Down
 vnoremap J :move '>+1<CR>gv=gv
 vnoremap K :move '<-2<CR>gv=gv
 
 " New Lines
-nnoremap zj :<C-u>call append(line("."), repeat([""], v:count1))<CR>
-nnoremap zk :<C-u>call append(line(".")-1, repeat([""], v:count1))<CR>
+nnoremap zj :call append(line("."), repeat([""], v:count1))<CR>
+nnoremap zk :call append(line(".")-1, repeat([""], v:count1))<CR>
 
-" Quick Fix Navigation
+" Quickfix List
 nnoremap <leader>cj :cprev<CR>zz
 nnoremap <leader>ck :cnext<CR>zz
+
+" Netrw
+nnoremap <leader>E :20Lexplore!<CR>
+
+" Open URL
+nnoremap gx :silent !xdg-open "<cfile>"<CR>
+nnoremap <leader>x :silent !nsxiv-url "<cfile>"<CR>
 

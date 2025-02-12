@@ -2,19 +2,22 @@ local opts = { noremap = true }
 local keymap = vim.keymap.set
 
 vim.g.mapleader = " "
-vim.g.maplocalleader = "," -- TODO: Change as in conflict
-
--- C-w-v C-w-s C-6 pws pWs -- TODO:: Use these
-
 
 -- Save  Quit
 keymap("n", "<leader>q", ":bdelete<CR>", { desc = "CloseBuffer" })
 -- keymap("n", "<leader>x", ":bdelete<CR>", opts)
 keymap("n", "<leader>Q", ":quitall!<CR>", { desc = "QuitAll" })
-keymap("n", "<leader>s", ":luafile %<CR>", { desc = "Source" })
+keymap("n", "<leader>S", ":luafile %<CR>", { desc = "Source" })
 
 -- wrap toggle
-keymap("n", "<leader>w", function() vim.wo.wrap = not vim.wo.wrap end, { desc = "WrapToggle" })
+keymap("n", "<leader>w", function()
+    vim.bo.wrap = not vim.bo.wrap
+end, { desc = "WrapToggle" })
+
+-- spell toggle
+keymap("n", "<leader>s", function()
+    vim.wo.spell = not vim.wo.spell
+end, { desc = "SpellToggle" })
 
 -- Remap ESC
 keymap("i", "jk", "<ESC>", opts)
@@ -27,12 +30,7 @@ keymap("n", "<C-u>", "<C-u>zz")
 keymap("n", "n", "nzzzv")
 keymap("n", "N", "Nzzzv")
 
-
--- Splits
-keymap("n", "<C-h>", "<c-w>h", opts) -- TODO: switch to default
-keymap("n", "<C-j>", "<c-w>j", opts)
-keymap("n", "<C-k>", "<c-w>k", opts)
-keymap("n", "<C-l>", "<c-w>l", opts)
+-- Resize Splits
 keymap("n", "<M-h>", ":vertical resize -2<CR>", opts)
 keymap("n", "<M-l>", ":vertical resize +2<CR>", opts)
 keymap("n", "<M-j>", ":resize -2<CR>", opts)
@@ -43,21 +41,15 @@ keymap("n", "<leader>bb", ":b<SPACE>", { desc = "Buffers" })
 keymap("n", "<TAB>", ":bnext<CR>", opts)
 keymap("n", "<S-TAB>", ":bprevious<CR>", opts)
 
--- Sed
+-- Sed like subsitutions
 keymap("n", "<M-s>", ":%s///gI<Left><Left><Left><Left>", opts)
 keymap("v", "<M-s>", ":s///gI<Left><Left><Left><Left>", opts)
 keymap("n", "<C-s>", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "RepCurWord" })
-
 
 -- Better Indentation
 keymap("v", ">", ">gv", opts)
 keymap("v", "<", "<gv", opts)
 
--- Arrows off
--- keymap("n", "<Up>", "<Nop>", opts)
--- keymap("n", "<Down>", "<Nop>", opts)
--- keymap("n", "<Left>", "<Nop>", opts)
--- keymap("n", "<Right>", "<Nop>", opts)
 
 -- Change paste behaviour
 -- keymap("v", "p", '"_dP', opts)
@@ -66,6 +58,7 @@ keymap("n", "cp", '"+', opts)
 keymap({ "n", "v" }, "<leader>y", '"+y', { desc = "Copy2Clipboard" })
 keymap("n", "<leader>Y", '"+Y', { desc = "Copy2Clipboard2End", remap = true })
 
+-- Join lines without cursor movement
 keymap("n", "J", "mzJ`z")
 
 -- Move Lines up and down
@@ -89,13 +82,8 @@ keymap("n", "<leader>ck", "<cmd>cnext<CR>zz", { desc = "Next" })
 -- keymap("n", ",p", ":-1read $HOME/.config/nvim/snippets/skeleton.py<CR>o<TAB>", opts)
 -- keymap("n", ",pa", ":-1read $HOME/.config/nvim/snippets/skeleton_aio.py<CR>4ja<TAB>", opts)
 
-vim.cmd [[ autocmd filetype cpp nnoremap <F5> :!g++ "%"  && ./a.out < input.txt > output.txt<CR> ]]
-vim.cmd [[ autocmd filetype nroff nnoremap <F5> :!groff -ms -UT pdf "%" > $(basename "%" .ms).pdf<CR> ]]
-
-
 -- Netrw
-keymap("n", "<leader>E", ":20Lexplore!<CR>", { desc = "Netrw" })
--- :20Lexplore! -- Open on right side
+keymap("n", "<leader>E", ":20Lexplore!<CR>", { desc = "Netrw" }) -- Open on right side
 
 keymap("n", "gx", '<cmd>silent !xdg-open "<cfile>"<CR>', { desc = "Open" })
 keymap("n", "<leader>x", '<cmd>silent !nsxiv-url "<cfile>"<CR>', { desc = "Nsxiv" })

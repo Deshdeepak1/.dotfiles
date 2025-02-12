@@ -1,27 +1,22 @@
 local expand = vim.fn.expand
+
 local options = {
     number = true,
     relativenumber = true,
     numberwidth = 2,
 
-    shiftwidth = 4,
+    shiftwidth = 0, -- Takes from tabstop
     tabstop = 4,
     softtabstop = 4,
     expandtab = true,
     smarttab = true,
+    smartindent = true,
+    preserveindent = true,
+    copyindent = true,
 
     mouse = "a",
     mousemoveevent = true,
-    smartindent = true,
-    -- cindent = true,
     ruler = true,
-    -- nohlsearch = true,
-    -- hlsearch = true,
-    -- hlsearch = false,
-    -- hidden = true,
-    -- noerrorbells = true,
-    -- nowrap = true,
-    -- wrap = true,
     wrap = false,
     linebreak = true,
     foldenable = false,
@@ -35,14 +30,10 @@ local options = {
     timeoutlen = 300,
     cursorline = true,
     signcolumn = "yes:1",
-    -- signcolumn = "auto:3",
-    -- signcolumn = "auto:3-4",
-    -- signcolumn = "yes:2",
-    -- shell = "sh",
     pumheight = 10,
     conceallevel = 2,
-    -- concealcursor = "nc",
     concealcursor = "c",
+    virtualedit = "block",
     swapfile = false,
     fileencoding = "utf-8",
     completeopt = { "menuone", "noselect" },
@@ -50,62 +41,26 @@ local options = {
     exrc = true,
 
     -- Whitespaces
-    -- listchars = "tab:<->,trail:-,nbsp:␣,space:·,precedes:«",
     listchars = "tab:<->,trail:-,nbsp:␣,space:·",
-    -- ,eol:↲,extends:»
     list = true,
 
 
     -- Autocompletion
-    -- wildmode = "longest,list",
-    -- wildmode = "longest:list,full",
     wildmode = "longest,list,full",
-    -- wildoptions = "",
 
     -- Fix splitting
     splitright = true,
     splitbelow = true,
 
-
-    -- CHAR LIMIT:
-    --highlight ColorColumn ctermbg=gray
-    -- filetype detect
-    --if &filetype=='python'
-    --set cc=79
-    --endif
-    --autocmd BufNewFile,BufRead *.py set cc=79
-
-    -- Remove trailing whitespace
-    --autocmd BufWritePre * %s/\s\+$//e
-
     -- BACKUPDIR:
     backup = false,
+    writebackup = false,
     backupdir = expand("~/.local/share/nvim/backup"),
 }
+
 for k, v in pairs(options) do
     vim.opt[k] = v
 end
--- vim.opt.formatoptions:remove("o")
--- print(vim.inspect(vim.opt.formatoptions))
--- vim.opt.formatoptions:remove("cro")
--- vim.opt.formatoptions:remove("t")
--- print(vim.inspect(vim.opt.formatoptions))
+
 vim.opt.whichwrap:append "l,h,<,>,[,]"
 vim.opt.shortmess:append "c"
---vim.opt.clipboard:append "unnamedplus"
-vim.highlight.on_yank { higroup = 'IncSearch', timeout = 200, on_macro = true }
-vim.api.nvim_create_autocmd("TextYankPost", {
-    callback = function()
-        vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 200, on_macro = true })
-    end
-})
-vim.api.nvim_create_autocmd("FileType", {
-    command = "set formatoptions-=cro",
-})
-
-vim.api.nvim_create_augroup("filetype_glsl", { clear = true })
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  group = "filetype_glsl",
-  pattern = { "*.vs", "*.fs" },
-  command = "set filetype=glsl",
-})
