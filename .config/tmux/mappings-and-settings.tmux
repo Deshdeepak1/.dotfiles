@@ -1,17 +1,17 @@
-# vim: set ft=tmux
+# vim: set ft=tmux :
 
 # Terminal
 
 set -g default-terminal "$TERM"
 
-if-shell "test -z $TERMUX_VERSION" {
+if-shell 'test -z "$TERMUX_VERSION"' {
     set -ga terminal-features ",$TERM:usstyle"
 }
 set -ga terminal-features ",$TERM:RGB"
 
 
-if-shell "test -n $WIN_TERMINAl" {
-    set -sg escape-time 500 # Fix windows terminal pushing escape sequences
+if-shell 'test "$WIN_TERMINAL" = "ms-terminal"' {
+    set -sg escape-time 100 # Fix windows terminal pushing escape sequences
 }
 
 set -g set-clipboard on

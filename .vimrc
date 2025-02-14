@@ -1,6 +1,7 @@
-colorscheme elflord
-
 """ General Settings
+scriptencoding utf-8
+set encoding=utf-8
+set nocompatible
 set number
 set relativenumber
 set numberwidth=2
@@ -19,11 +20,10 @@ set ruler
 set nowrap
 set linebreak
 set nofoldenable
-set undodir=~/.local/share/nvim/undo
+set undodir=~/.local/share/vim/undo
 set undofile
 set incsearch
 set scrolloff=8
-set termguicolors
 set updatetime=100
 set timeout
 set timeoutlen=300
@@ -39,7 +39,7 @@ set noshowmode
 set exrc
 
 " Whitespaces
-set listchars=tab:<->,trail:-,nbsp:\u2423,space:·
+set listchars=tab:»·,trail:·,space:·
 set list
 
 " Autocompletion
@@ -52,7 +52,7 @@ set splitbelow
 " Backup settings
 set nobackup
 set nowritebackup
-set backupdir=~/.local/share/nvim/backup
+set backupdir=~/.local/share/vim/backup
 
 " Whichwrap settings
 set whichwrap+=l,h,<,>,[,]
@@ -61,7 +61,7 @@ set shortmess+=c
 " Leader Key
 let mapleader=" "
 
-" Key Mappings
+""" Key Mappings
 nnoremap <leader>q :bdelete<CR>
 nnoremap <leader>Q :quitall!<CR>
 nnoremap <leader>S :source %<CR>
@@ -75,7 +75,7 @@ nnoremap <leader>s :set spell!<CR>
 " Escape Remap
 inoremap jk <ESC>
 inoremap kj <ESC>
-nnoremap <Esc> :nohlsearch<CR>
+nnoremap <silent> <ESC><ESC> :nohlsearch<CR>
 
 " Center Screen
 nnoremap <C-d> <C-d>zz
@@ -132,3 +132,10 @@ nnoremap <leader>E :20Lexplore!<CR>
 nnoremap gx :silent !xdg-open "<cfile>"<CR>
 nnoremap <leader>x :silent !nsxiv-url "<cfile>"<CR>
 
+
+""" Colorscheme
+try
+    colorscheme catppuccin_mocha
+    set termguicolors
+catch
+endtry

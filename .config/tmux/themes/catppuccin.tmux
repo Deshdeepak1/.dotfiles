@@ -1,4 +1,4 @@
-# vim: set ft=tmux
+# vim: set ft=tmux :
 
 set -g @catppuccin_flavor "mocha"
 set -g @catppuccin_window_status_style "rounded"
@@ -19,7 +19,7 @@ set -g status-right ""
 set -ag status-right "#{E:@catppuccin_status_application}"
 set -agF status-right "#{E:@catppuccin_status_pomodoro_plus}"
 
-if-shell "test -z $TERMUX_VERSION" {
+if-shell 'test -z "$TERMUX_VERSION"' {
     set -agF status-right "#{E:@catppuccin_status_battery}"
 }
 
