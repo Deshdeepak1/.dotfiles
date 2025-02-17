@@ -24,7 +24,7 @@ async def dunstify(
             cmd_args.extend(["-h", ":".join(hint)])
     if actions:
         cmd_args.extend(["-a", ",".join(actions)])
-    if timeout:
+    if timeout is not None:
         cmd_args.extend(["-t", str(timeout)])
     if icon:
         cmd_args.extend(["-i", icon])

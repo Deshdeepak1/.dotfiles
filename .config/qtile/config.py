@@ -29,7 +29,6 @@ import random
 from datetime import datetime
 import json
 
-from dunstify import dunstify
 from libqtile import bar, hook, layout, qtile, widget
 from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen
 from libqtile.lazy import lazy
@@ -57,7 +56,7 @@ colors_dict = colors.catppuccin
 # a = [1, 2, 3, 4, 5, 6, 7, 8, 9] + [1, 2, 3, 4, 5, 6, 7, 8, 9] + [1, 2, 3, 4, 5, 6, 7, 8, 9] + [1, 2, 3, 4, 5, 6, 7, 8, 9] + [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
-terminal = guess_terminal()
+terminal = os.environ.get("TERMINAL") or guess_terminal()
 
 keys = [
     # A list of available commands that can be bound to keys can be found
@@ -67,7 +66,6 @@ keys = [
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
     Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
     Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
-    # Key([mod], "space", lazy.layout.next(), desc="Move window focus to other window"),
     # Move windows between left/right columns or move up/down in current stack.
     # Moving out of range in Columns layout will create new column.
     Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to left"),
@@ -92,8 +90,6 @@ keys = [
     #     desc="Toggle between split and unsplit sides of stack",
     # ),
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
-    # Toggle between different layouts as defined below
-    # Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "space", lazy.next_layout(), desc="Next layout"),
     Key([mod, "shift"], "space", lazy.prev_layout(), desc="Prev layout"),
     Key([mod], "q", lazy.window.kill(), desc="Kill focused window"),
@@ -104,6 +100,9 @@ keys = [
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     # Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
+    # Switch focus of monitors
+    Key([mod], "period", lazy.next_screen(), desc="Move focus to next monitor"),
+    Key([mod], "comma", lazy.prev_screen(), desc="Move focus to prev monitor"),
     # My programs
     Key([mod, "shift"], "Return", lazy.spawn(f"{terminal} -e tmux"), desc="Open tmux"),
     ## Launchers
@@ -148,6 +147,7 @@ keys = [
     Key([mod, alt], "e", lazy.spawn("rofimoji"), desc="Emoji Menu"),
     Key([mod, "shift"], "w", lazy.spawn("networkmanager_dmenu"), desc="Wifi Menu"),
     Key([mod, "control"], "b", lazy.spawn("battery-notify"), desc="Battery"),
+    Key([mod, "control"], "p", lazy.spawn("pnr"), desc="PNR"),
     ## Applications
     Key([mod], "b", lazy.spawn("brave"), desc="Brave"),
     Key([mod, "shift"], "b", lazy.spawn("brave --incognito"), desc="Launch brave(incognito)"),
@@ -273,8 +273,6 @@ keys.extend(
 )
 
 
-
-
 def check_battery():
     qtile.cmd_spawn("battery-notify -o")
     qtile.call_later(120, check_battery)
@@ -334,13 +332,27 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
+wallpapers = tuple(set(os.listdir(os.path.expanduser("~/wallpapers/"))) - {".git", "README.md"})
+
 
 def choose_wallpaper():
-    wallpapers = set(os.listdir(os.path.expanduser("~/wallpapers/")))
-    other_files = {".git", "README.md"}
-    wallpapers = tuple(wallpapers - other_files)
     wallpaper = f"~/wallpapers/{random.choice(wallpapers)}"
     return wallpaper
+
+
+arch_logo = widget.Image(
+    filename="~/.config/qtile/arch.png",
+    mouse_callbacks={"Button1": lazy.spawn("rofi -modi drun -show drun -show-icons -display-drun 'Launch' ")},
+)
+qtile_logo = widget.Image(filename="~/.config/qtile/logo.png")
+chord = widget.Chord(
+    chords_colors={
+        "launch": ("#ff0000", "#ffffff"),
+    },
+    name_transform=lambda name: name.upper(),
+)
+memory_usage = widget.Memory()
+clock = widget.Clock(format="%a %d %b, %H:%M")
 
 
 screens = [
@@ -349,56 +361,38 @@ screens = [
         wallpaper_mode="stretch",
         top=bar.Bar(
             [
-                widget.Image(
-                    filename="~/.config/qtile/arch.png",
-                    mouse_callbacks={"Button1": lazy.spawn("rofi -modi drun -show drun -show-icons -display-drun 'Launch' ")},
-                ),
-                widget.GroupBox(
-                    # active="ffffff",
-                    highlight_method="block",
-                    disable_drag=True,
-                    # foreground=colors["maroon"],
-                ),
-                # widget.Prompt(),
+                arch_logo,
+                widget.GroupBox(disable_drag=True),
                 widget.WindowName(),
-                # widget.TaskList(),
-                # widget.WidgetBox(
-                #     widgets=[
-                #         # widget.Memory(measure_mem="G"),
-                #         # widget.TextBox(f"{lazy.function(show_battery)}"),
-                #         # widget.Notify(),
-                #         # widget.TextBox("w"),
-                #     ],
-                #     text_open="➡️",
-                #     text_closed="⬅️",
-                # ),
-                widget.Chord(
-                    chords_colors={
-                        "launch": ("#ff0000", "#ffffff"),
-                    },
-                    name_transform=lambda name: name.upper(),
-                ),
-                # widget.TextBox("default config", name="default"),
-                # widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
-                # NB Systray is incompatible with Wayland, consider using StatusNotifier instead
-                # widget.StatusNotifier(),
+                chord,
                 widget.Systray(),
-                widget.Clock(format="%a %d %b, %H:%M"),
+                memory_usage,
+                clock,
                 widget.CurrentLayoutIcon(),
-                # widget.QuickExit(),
-                widget.Image(
-                    filename="~/.config/qtile/logo.png",
-                    # mouse_callbacks={"Button2": openx},
-                ),
+                qtile_logo,
             ],
             24,
-            # background="#000000",
             background="#00000090",
-            # background=[colors_dict["red"], colors_dict["blue"]],
             margin=[2, 20, 2, 20],
-            # border_width=[2, 2, 2, 2],  # Draw top and bottom borders
-            # border_color=[colors_dict["mauve"]] * 4,
-            # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
+        ),
+    ),
+    Screen(
+        wallpaper=choose_wallpaper(),
+        wallpaper_mode="stretch",
+        top=bar.Bar(
+            [
+                arch_logo,
+                widget.GroupBox(disable_drag=True),
+                widget.WindowName(),
+                chord,
+                memory_usage,
+                clock,
+                widget.CurrentLayoutIcon(),
+                qtile_logo,
+            ],
+            24,
+            background="#00000090",
+            margin=[2, 20, 2, 20],
         ),
     ),
 ]
@@ -430,6 +424,7 @@ floating_layout = layout.Floating(
         Match(wm_class="ssh-askpass"),  # ssh-askpass
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
+        Match(wm_class="opengl"),  # opengl
     ]
 )
 auto_fullscreen = True

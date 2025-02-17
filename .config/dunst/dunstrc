@@ -27,7 +27,7 @@
     width = (0,1000)
 
     # The maximum height of a single notification, excluding the frame.
-    height = 300
+    # height = 300
 
     # Position the notification in the top right corner
     origin = top-right
@@ -208,7 +208,7 @@
     enable_recursive_icon_lookup = true
 
     # Set icon theme (only used for recursive icon lookup)
-    icon_theme = Arc, Adwaita
+    icon_theme = "Arc, Adwaita, hicolor"
     # You can also set multiple icon themes, with the leftmost one being used first.
     # icon_theme = "Adwaita, breeze"
 
@@ -225,7 +225,7 @@
     max_icon_size = 32
 
     # Paths to default icons (only neccesary when not using recursive icon lookup)
-    icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+    #icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/0
 
     ### History ###
 

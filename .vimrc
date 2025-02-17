@@ -8,7 +8,7 @@ set numberwidth=2
 
 set shiftwidth=0 " Takes from tabstop
 set tabstop=4
-set softtabstop=4
+set softtabstop=-1 " Takes from shiftwidth
 set expandtab
 set smarttab
 set smartindent
@@ -37,12 +37,15 @@ set fileencoding=utf-8
 set completeopt=menuone,noselect
 set noshowmode
 set exrc
+set showcmd
 
 " Whitespaces
 set listchars=tab:»·,trail:·,space:·
 set list
 
-" Autocompletion
+" Autocompletion :find
+set path+=**
+set wildmenu
 set wildmode=longest,list,full
 
 " Fix splitting
@@ -90,7 +93,6 @@ nnoremap <M-j> :resize -2<CR>
 nnoremap <M-k> :resize +2<CR>
 
 " Buffer Navigation
-nnoremap <leader>bb :b <SPACE>
 nnoremap <TAB> :bnext<CR>
 nnoremap <S-TAB> :bprevious<CR>
 
@@ -137,5 +139,7 @@ nnoremap <leader>x :silent !nsxiv-url "<cfile>"<CR>
 try
     colorscheme catppuccin_mocha
     set termguicolors
+    syntax on
 catch
+    syntax on
 endtry

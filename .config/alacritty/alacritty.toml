@@ -1,3 +1,4 @@
+[general]
 import = [
   "~/.config/alacritty/themes/breeze.toml",
   # "~/.config/alacritty/themes/catppuccin/catppuccin-frappe.toml",
@@ -5,35 +6,81 @@ import = [
   # "~/.config/alacritty/themes/catppuccin/catppuccin-macchiato.toml",
   # "~/.config/alacritty/themes/catppuccin/catppuccin-mocha.toml",
 ]
+working_directory = "None"
+live_config_reload = true
+ipc_socket = true
 
-[cursor]
-unfocused_hollow = true
+[env]
+# TERMINAL_NAME = "Alacritty"
 
-[cursor.style]
-shape = "Block"
+[window]
+position = "None" # No affect on wayland
+dynamic_padding = true
+opacity = 0.84
+decorations = "Full"
+blur = false
+startup_mode = "Windowed"
+title = "Alacritty"
+decorations_theme_variant = "None"
+resize_increments = false
+option_as_alt = "None"
+level = "Normal"
+
+[window.class]
+instance = "Alacritty"
+general = "Alacritty"
+
+[window.dimensions]
+columns = 140
+lines = 30
+
+[window.padding]
+x = 1
+y = 1
+
+[scrolling]
+history = 100000
+multiplier = 3
 
 [font]
 size = 8.5
-
-[font.bold]
-family = "Mononoki Nerd Font Mono"
-style = "Bold"
-
-[font.bold_italic]
-family = "Mononoki Nerd Font Mono"
-style = "Bold Italic"
-
-[font.italic]
-family = "Mononoki Nerd Font Mono"
-style = "Italic"
+builtin_box_drawing = true
 
 [font.normal]
 family = "Mononoki Nerd Font Mono"
 style = "Regular"
 
+[font.bold]
+family = "Mononoki Nerd Font Mono"
+style = "Bold"
+
+[font.italic]
+family = "Mononoki Nerd Font Mono"
+style = "Italic"
+
+[font.bold_italic]
+family = "Mononoki Nerd Font Mono"
+style = "Bold Italic"
+
 [font.offset]
 x = 0
 y = 0
+
+[font.glyph_offset]
+x = 0
+y = 0
+
+[cursor]
+vi_mode_style = "None"
+unfocused_hollow = true
+
+[cursor.style]
+shape = "Block"
+blinking = "Off"
+
+[mouse]
+hide_when_typing = false
+
 
 [[keyboard.bindings]]
 action = "ClearLogNotice"
@@ -128,13 +175,3 @@ action = "ToggleFullscreen"
 key = "F11"
 mods = "None"
 
-[window]
-opacity = 0.84
-
-[window.dimensions]
-columns = 140
-lines = 30
-
-[window.padding]
-x = 1
-y = 1

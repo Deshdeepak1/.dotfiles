@@ -49,7 +49,7 @@ if [[ $swapanswer = y ]] ; then
 fi
 
 ## Install
-pacstrap -K /mnt base base-devel linux linux-lts linux-headers linux-firmware
+pacstrap -K /mnt base base-devel linux linux-headers linux-firmware
 genfstab -U /mnt >> /mnt/etc/fstab
 
 ai2_path=/mnt/arch_install2.sh
@@ -80,18 +80,20 @@ echo "KEYMAP=us" > /etc/vconsole.conf
 pacman --noconfirm -Syy --disable-download-timeout grub os-prober efibootmgr neovim git xterm \
     python-pip python-virtualenv python-pipx lazygit man-db man-pages texinfo sudo gptfdisk \
     wget curl speedtest-cli ttf-mononoki-nerd awesome-terminal-fonts noto-fonts noto-fonts-emoji \
-    noto-fonts-cjk btop zip unzip unrar p7zip fish lua lua51 xorg lf sx xh eza ripgrep jq sd fzf \
+    noto-fonts-cjk btop zip unzip unrar p7zip fish lua lua51 xorg sx lf xh eza ripgrep jq sd fzf \
     ytfzf trash-cli imagemagick qtile python-pywlroots nsxiv alacritty bluez bluez-utils pipewire \
     pipewire-pulse pipewire-audio pipewire-jack pipewire-alsa wireplumber alsa-utils pulsemixer \
-    ncdu zathura zathura-pdf-mupdf arc-icon-theme arc-gtk-theme ffmpeg aria2 ntfs-3g qutebrowser \
+    ncdu zathura zathura-pdf-poppler arc-icon-theme arc-gtk-theme ffmpeg aria2 ntfs-3g qutebrowser \
     rsync picom xdg-user-dirs libconfig libnotify dunst exa tmux bat ffmpeg mpv noto-fonts-emoji \
     fd fzf lazygit ranger ctags ripgrep luarocks feh nodejs xclip xdg-desktop-portal flameshot \
     polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmanager brightnessctl npm \
-    proxychains-ng parallel parallel-docs mesa-utils xdotool jc socat zoxide keyd reflector \
-    rofi-calc
+    proxychains-ng parallel parallel-docs  xdotool jc socat zoxide keyd reflector rofi-calc \
+    mitmproxy gnome-keyring xss-lock bc mesa mesa-utils usbutils ffmpegthumbnailer poppler \
+    ueberzugpp
 
 # GPU
-pacman --noconfirm -Syy --disable-download-timeout nvidia-open-dkms # dkms - if more than one kernel is installed
+# pacman --noconfirm -Syy --disable-download-timeout xf86-video-amdgpu
+pacman --noconfirm -Syy --disable-download-timeout nvidia-open # dkms - if more than one kernel is installed
 pacman --noconfirm -Syy --disable-download-timeout nvidia-prime nvidia-utils nvidia-settings inxi opencl-nvidia nvtop
 # If you run into trouble with CUDA not being available, run nvidia-modprobe first.
 
@@ -120,6 +122,7 @@ ln -s /usr/bin/nvim /usr/bin/vim
 ln -s /usr/bin/rofi /usr/bin/dmenu
 
 # touchpad
+# setup xorg
 curl -L "https://github.com/Deshdeepak1/.dotfiles/raw/master/.config/30-touchpad.conf" \
     -o /etc/X11/xorg.conf.d/30-touchpad.conf
 
@@ -189,19 +192,19 @@ rm paru-bin -rf
 
 ### Paru - Install necessary packages
 paru --noconfirm --sudoflags "-S" --sudoloop -S --disable-download-timeout \
-    auto-cpufreq materialgram-bin paru-bin pup-bin rofi-greenclip \
-    i3lock-fancy-git brave-bin ueberzugpp bento4 dragon-drop simple-mtpfs \
+    materialgram-bin paru-bin pup-bin rofi-greenclip brave-bin \
+    bento4 dragon-drop simple-mtpfs i3lock-fancy
 
 ## Paru - Install other packages
 paru --noconfirm --sudoflags "-S" --sudoloop -S --disable-download-timeout \
-    mongodb-compass android-studio mitmproxy rofimoji
+    mongodb-compass android-studio rofimoji envycontrol
 
 sudo -S systemctl enable auto-cpufreq
-luarocks --local --lua-version=5.1 install magick
+# luarocks --local --lua-version=5.1 install magick
 bat cache --build
 
 ### poetry
-pipx install poetry
+pipx install poetry yt-dlp
 poetry self add poetry-core poetry-plugin-export poetry-plugin-up
 
 git config --global user.email "rkdeshdeepak1@gmail.com"
@@ -215,7 +218,7 @@ alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 dotfiles init
 dotfiles remote add origin https://github.com/deshdeepak1/.dotfiles
 dotfiles config --local status.showUntrackedFiles no
-dotfiles config --local credential.helper cache/store
+dotfiles config --local credential.helper store
 dotfiles fetch --set-upstream origin master
 dotfiles reset --hard FETCH_HEAD
 dotfiles remote set-url origin git@github.com:Deshdeepak1/.dotfiles.git
@@ -227,7 +230,12 @@ echo "Installation Completed"
 
 exit
 
+# csvlens, glow, jless
 # Todo: Fan/ Cpu Scaling/ Battery ,  nvidia/amd graphics , nvim resetup, Android Studio setup, qr from link
-# textlive-basic, texlive-fontsrecommended, texlive-latexrecommended, texlive-latex pandoc, entr
+# textlive-basic, texlive-fontsrecommended, texlive-latexrecommended, texlive-latex pandoc, entr, texlive-xetex
 
 # when gpg error due to some package missing, manually install using pacman -U
+# multi-monitor, Silent boot
+
+#"ControllerMode = bredr" in /etc/bluetooth/main.conf.
+# systemctl --user restart wireplumber.service

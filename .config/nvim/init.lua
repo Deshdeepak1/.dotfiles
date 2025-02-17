@@ -1,2 +1,3 @@
 require("config")
--- require("lazy") -- TODO: schemastore, todo binds,diag binds, spell, markdown+obsidian
+require("lazy-config")
+-- TODO: schemastore, todo binds,diag binds, spell, markdown+obsidian

@@ -24,6 +24,7 @@ set -g prefix `
 bind ` send-prefix
 set -g prefix2 C-b
 
+bind -N "Source tmux.conf" R source-file ~/.config/tmux/tmux.conf \; display-message "source-file done"
 
 # Start windows and panes at 1, not 0
 set -g base-index 1
