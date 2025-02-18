@@ -27,7 +27,7 @@ end
 local lazy_opts = {
   defaults = { lazy = true },
   install = { missing = true, colorscheme = { "catppuccin-frappe", "habamax" } },
-  checker = { enabled = false`` },
+  checker = { enabled = false },
   ui = { border = "rounded", title = "Lazy" },
   change_detection = {
     -- automatically check for config file changes and reload the ui
