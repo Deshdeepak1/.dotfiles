@@ -18,7 +18,7 @@ return {
         }
       end,
       integrations = {
-      }
+      },
     },
     init = function()
       -- https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/palettes/mocha.lua

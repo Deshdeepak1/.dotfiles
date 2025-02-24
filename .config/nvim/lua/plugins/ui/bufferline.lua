@@ -3,7 +3,7 @@ return {
     version = "*",
     event = "VeryLazy",
     -- cond = false,
-    cond = not vim.g.started_by_firenvim,
+    -- cond = not vim.g.started_by_firenvim,
     config = function()
         local buffer_bg = '#232627'
         local bufferline = require("bufferline")
@@ -27,23 +27,25 @@ return {
                     reveal = { 'close' }
                 },
             },
-            highlights = {
-                fill = {
-                    bg = buffer_bg,
-                },
-                separator_selected = {
-                    fg = buffer_bg,
-                    -- bg = 'black',
-                },
-                separator = {
-                    fg = buffer_bg,
-                    -- bg = 'black',
-                },
-                separator_visible = {
-                    fg = buffer_bg,
-                    -- bg = 'black',
-                },
-            }
+            highlights = require("catppuccin.groups.integrations.bufferline").get(),
+
+            -- highlights = {
+            --     fill = {
+            --         bg = buffer_bg,
+            --     },
+            --     separator_selected = {
+            --         fg = buffer_bg,
+            --         -- bg = 'black',
+            --     },
+            --     separator = {
+            --         fg = buffer_bg,
+            --         -- bg = 'black',
+            --     },
+            --     separator_visible = {
+            --         fg = buffer_bg,
+            --         -- bg = 'black',
+            --     },
+            -- }
         })
         for i = 1, 9 do
             vim.keymap.set('n', ('<A-%s>'):format(i),

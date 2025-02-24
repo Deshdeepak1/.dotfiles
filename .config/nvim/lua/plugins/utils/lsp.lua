@@ -281,10 +281,11 @@ return {
       end
 
       local default_diagnostic_config = {
-        underline = false,
+        underline = true,
+        -- underline = false,
         -- disable virtual text
-        -- virtual_text = true, -- TODO: Signs for low level
-        virtual_text = false,
+        virtual_text = true, -- TODO: Signs for low level
+        -- virtual_text = false,
         -- show signs
         -- signs = {
         --  active = signs,
