@@ -46,7 +46,7 @@ set list
 " Autocompletion :find
 set path+=**
 set wildmenu
-set wildmode=longest,list,full
+set wildmode=full
 
 " Fix splitting
 set splitright
@@ -69,11 +69,31 @@ nnoremap <leader>q :bdelete<CR>
 nnoremap <leader>Q :quitall!<CR>
 nnoremap <leader>S :source %<CR>
 
+" Number Toggle
+nnoremap <leader>tl :set number!<CR>
+
+" Relative Number Toggle
+nnoremap <leader>tL :set relativenumber!<CR>
+
 " Wrap Toggle
-nnoremap <leader>w :set wrap!<CR>
+nnoremap <leader>tw :set wrap!<CR>
 
 " Spell Toggle
-nnoremap <leader>s :set spell!<CR>
+nnoremap <leader>ts :set spell!<CR>
+
+" Conceallevel Toggle
+function! ToggleConcealLevel()
+  if &conceallevel == 0
+    let &conceallevel = 2
+  else
+    let &conceallevel = 0
+  endif
+  echo "ConcealLevel=" . &conceallevel
+endfunction
+
+nnoremap <leader>tc :call ToggleConcealLevel()<CR>
+
+
 
 " Escape Remap
 inoremap jk <ESC>
@@ -93,8 +113,11 @@ nnoremap <M-j> :resize -2<CR>
 nnoremap <M-k> :resize +2<CR>
 
 " Buffer Navigation
+nnoremap <leader>bb :e #<CR>
 nnoremap <TAB> :bnext<CR>
+nnoremap ]b :bnext<CR>
 nnoremap <S-TAB> :bprevious<CR>
+nnoremap [b :bprevious<CR>
 
 " Sed-like Substitutions
 nnoremap <M-s> :%s///gI<Left><Left><Left><Left>
@@ -124,8 +147,8 @@ nnoremap zj :call append(line("."), repeat([""], v:count1))<CR>
 nnoremap zk :call append(line(".")-1, repeat([""], v:count1))<CR>
 
 " Quickfix List
-nnoremap <leader>cj :cprev<CR>zz
-nnoremap <leader>ck :cnext<CR>zz
+nnoremap <C-k> :cprev<CR>zz
+nnoremap <C-j> :cnext<CR>zz
 
 " Netrw
 nnoremap <leader>E :20Lexplore!<CR>

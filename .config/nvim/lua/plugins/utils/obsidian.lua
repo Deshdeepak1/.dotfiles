@@ -1,5 +1,6 @@
 return {
   "benatouba/obsidian.nvim",
+  cond = false,
   version = "*",  -- recommended, use latest release instead of latest commit
   -- cond = false,
   lazy = true,

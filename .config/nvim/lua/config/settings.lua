@@ -49,7 +49,7 @@ local options = {
   -- Autocompletion :find
   wildmenu = true,
   path = ".,,**",
-  wildmode = "longest,list,full",
+  wildmode = "full",
 
   -- Fix splitting
   splitright = true,

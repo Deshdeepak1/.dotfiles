@@ -26,7 +26,7 @@ send_notification() {
     TEXT=$percentage
     # if [ "$1" = "mute" ]; then HLCOLOR="#cccccc"; else HLCOLOR=""; fi
 
-    dunstify -a "Brightness" -r 10002 -h int:value:"$percentage" -h string:hlcolor:"$HLCOLOR" -i "${ICON}" "Brigthness: " "$TEXT" -t 2000
+    notify-send -a "Brightness" -r 10002 -h int:value:"$percentage" -h string:hlcolor:"$HLCOLOR" -i "${ICON}" "Brigthness: " "$TEXT" -t 2000
 }
 
 case $1 in

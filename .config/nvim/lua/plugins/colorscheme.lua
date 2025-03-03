@@ -4,6 +4,7 @@ return {
     lazy = false,
     name = "catppuccin",
     priority = 1000,
+    -- cond = false,
     opts = {
       transparent_background = true,
       custom_highlights = function(colors)

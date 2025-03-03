@@ -1,6 +1,7 @@
 return {
     'akinsho/bufferline.nvim',
     version = "*",
+    -- cond = false,
     event = "VeryLazy",
     -- cond = false,
     -- cond = not vim.g.started_by_firenvim,

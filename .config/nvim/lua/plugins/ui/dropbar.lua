@@ -1,5 +1,6 @@
 return {
   'Bekaboo/dropbar.nvim',
+  cond = false,
   event = { "BufReadPost", "BufNewFile" },
   -- cond = false,
   -- lazy = false,

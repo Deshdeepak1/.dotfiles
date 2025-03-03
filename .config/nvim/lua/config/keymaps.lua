@@ -10,17 +10,43 @@ keymap("n", "<leader>q", ":bdelete<CR>", { desc = "CloseBuffer" })
 keymap("n", "<leader>Q", ":quitall!<CR>", { desc = "QuitAll" })
 keymap("n", "<leader>S", ":luafile %<CR>", { desc = "Source" })
 
+-- Toggles
+
+-- number toggle
+keymap("n", "<leader>tl", function()
+  vim.o.number = not vim.o.number
+  vim.notify("Number="..tostring(vim.o.number))
+end, { desc = "NumberToggle" })
+
+-- relative number toggle
+keymap("n", "<leader>tL", function()
+  vim.o.relativenumber = not vim.o.relativenumber
+  vim.notify("RelativeNumber="..tostring(vim.o.relativenumber))
+end, { desc = "RelativeNumberToggle" })
+
 -- wrap toggle
-keymap("n", "<leader>w", function()
+keymap("n", "<leader>tw", function()
   vim.o.wrap = not vim.o.wrap
+  vim.notify("Wrap="..tostring(vim.o.wrap))
 end, { desc = "WrapToggle" })
 
 -- spell toggle
-keymap("n", "<leader>s", function()
+keymap("n", "<leader>ts", function()
   vim.o.spell = not vim.o.spell
+  vim.notify("Spell="..tostring(vim.o.spell))
 end, { desc = "SpellToggle" })
 -- TODO: learn spell
 -- z= , :spellr, zg
+
+-- conceallevel toggle
+keymap("n", "<leader>tc", function()
+  if vim.o.conceallevel == 0 then
+    vim.o.conceallevel = 2
+  else
+    vim.o.conceallevel = 0
+  end
+  vim.notify("Concellevel="..tostring(vim.o.conceallevel))
+end, { desc = "ConvealLevelToggle" })
 
 -- TODO: learn :norm, gv,marks
 
@@ -42,8 +68,11 @@ keymap("n", "<M-j>", ":resize -2<CR>", opts)
 keymap("n", "<M-k>", ":resize +2<CR>", opts)
 
 -- Buffer
+keymap("n", "<leader>bb", ":e #<CR>", { desc = "LastOpenedBuffer" })
 keymap("n", "<TAB>", ":bnext<CR>", opts)
+keymap("n", "]b", ":bnext<CR>", opts)
 keymap("n", "<S-TAB>", ":bprevious<CR>", opts)
+keymap("n", "[b", ":bprevious<CR>", opts)
 
 -- Sed like subsitutions
 keymap("n", "<M-s>", ":%s///gI<Left><Left><Left><Left>", opts)
@@ -72,11 +101,11 @@ keymap("v", "K", ":move '<-2<CR>gv=gv", opts) -- ddkP for 1 line up
 
 -- New Lines
 keymap("n", "zj", ':<C-u>call append(line("."),   repeat([""], v:count1))<CR>', { desc = "New Line below" })
-keymap("n", "zk", ':<C-u>call append(line(".")-2,   repeat([""], v:count1))<CR>', { desc = "New Line above" })
+keymap("n", "zk", ':<C-u>call append(line(".")-1,   repeat([""], v:count1))<CR>', { desc = "New Line above" })
 
 -- Quick Fix List
-keymap("n", "<leader>cj", "<cmd>cprev<CR>zz", { desc = "Prev" }) -- TODO: switch to c-j, c-k
-keymap("n", "<leader>ck", "<cmd>cnext<CR>zz", { desc = "Next" })
+keymap("n", "<C-k>", "<cmd>cprev<CR>zz", { desc = "Prev" })
+keymap("n", "<C-j>", "<cmd>cnext<CR>zz", { desc = "Next" })
 
 
 -- TODO: Learn CTags

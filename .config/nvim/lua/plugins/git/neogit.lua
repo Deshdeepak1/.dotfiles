@@ -3,9 +3,10 @@ return {
     "NeogitOrg/neogit",
     event = "VeryLazy",
     cond = function()
-        local is_git = vim.fn.system("git rev-parse --is-inside-work-tree")
-        return vim.v.shell_error == 0
+      local is_git = vim.fn.system("git rev-parse --is-inside-work-tree")
+      return vim.v.shell_error == 0
     end,
+    -- cond = false,
     dependencies = {
       "nvim-lua/plenary.nvim",         -- required
       "sindrets/diffview.nvim",        -- optional - Diff integration

@@ -1,10 +1,11 @@
 return {
   {
-    'echasnovski/mini.nvim',
+    "echasnovski/mini.nvim",
+    -- cond = false,
     event = "VeryLazy",
     config = function()
-      local splitjoin = require('mini.splitjoin')  -- TODO: Learn gS
+      local splitjoin = require("mini.splitjoin") -- TODO: Learn gS
       splitjoin.setup()
-    end
+    end,
   },
 }

@@ -1,6 +1,7 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
+    -- cond = false,
     event = { "BufReadPost", "BufNewFile" },
     build = ":TSUpdate",
     dependencies = {
@@ -53,34 +54,54 @@ return {
         enable = true,
         -- enable = false,
         disable = {},
-        updatetime = 25,         -- Debounced time for highlighting nodes in the playground from source code
+        updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
         persist_queries = false, -- Whether the query persists across vim sessions
         keybindings = {
-          toggle_query_editor = 'o',
-          toggle_hl_groups = 'i',
-          toggle_injected_languages = 't',
-          toggle_anonymous_nodes = 'a',
-          toggle_language_display = 'I',
-          focus_language = 'f',
-          unfocus_language = 'F',
-          update = 'R',
-          goto_node = '<cr>',
-          show_help = '?',
+          toggle_query_editor = "o",
+          toggle_hl_groups = "i",
+          toggle_injected_languages = "t",
+          toggle_anonymous_nodes = "a",
+          toggle_language_display = "I",
+          focus_language = "f",
+          unfocus_language = "F",
+          update = "R",
+          goto_node = "<cr>",
+          show_help = "?",
         },
       }
 
+      ---@diagnostic disable-next-line: missing-fields
       configs.setup({
         ensure_installed = {
-          "c", "cpp", "glsl", "lua", "vim", "vimdoc",
-          "csv", "yaml", "json",
+          "c",
+          "cpp",
+          "glsl",
+          "lua",
+          "vim",
+          "vimdoc",
+          "csv",
+          "yaml",
+          "json",
           --[[ "toml", ]]
           -- "ssh_config", --[[ "tmux", ]]
-          "python", "kotlin",
-          "fish", "bash",
-          "html", "css", "javascript", "typescript",
-          "markdown", "markdown_inline", "norg", "org",
-          "git_config", "git_rebase", "gitcommit", "gitattributes", "gitignore"
+          "python",
+          "kotlin",
+          "fish",
+          "bash",
+          "html",
+          "css",
+          "javascript",
+          "typescript",
+          "markdown",
+          "markdown_inline",
+          "norg", --[[ "org", ]]
+          "git_config",
+          "git_rebase",
+          "gitcommit",
+          "gitattributes",
+          "gitignore",
         },
+        ignore_install = {},
         sync_install = false,
         auto_install = false,
         highlight = {
@@ -93,7 +114,8 @@ return {
         indent = {
           enable = true,
           -- enable = false,
-          disable = { --[[ "cpp", ]] --[[ "lua",  ]] },
+          disable = { --[[ "cpp", ]] --[[ "lua",  ]]
+          },
         },
         incremental_selection = { -- TODO: Learn
           enable = true,
@@ -124,6 +146,6 @@ return {
       -- vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
       -- vim.wo.foldmethod = 'expr'
       -- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-    end
+    end,
   },
 }

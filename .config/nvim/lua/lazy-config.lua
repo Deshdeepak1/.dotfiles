@@ -31,19 +31,11 @@ local lazy_opts = {
   ui = { border = "rounded", title = "Lazy" },
   change_detection = {
     -- automatically check for config file changes and reload the ui
-    enabled = true,
+    enabled = false,
     notify = false, -- get a notification when changes are found
   },
 }
 
 lazy.setup({
   { import = "plugins" },
-
-
-  -- { import = "lazy.plugins.keys" },
-  -- { import = "lazy.plugins.utils" },
-  -- { import = "lazy.plugins.git" },
-  -- { import = "lazy.plugins.ui" },
-  -- { import = "lazy.plugins.notes" },
-  -- { import = "lazy.plugins.cp" },
 }, lazy_opts)

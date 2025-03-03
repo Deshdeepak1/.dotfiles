@@ -12,7 +12,7 @@ async def dunstify(
     icon: str | None = None,
     replace: int | None = None,
 ):
-    cmd_args = ["dunstify", summary]
+    cmd_args = ["notify-send", summary]
     if body:
         cmd_args.append(body)
     if appname:

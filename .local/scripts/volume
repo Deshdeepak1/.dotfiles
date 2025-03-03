@@ -25,7 +25,7 @@ send_notification() {
     if [ "$1" = "mute" ]; then TEXT="Muted"; else TEXT="${VOLUME}%"; fi
     if [ "$1" = "mute" ]; then HLCOLOR="#cccccc"; else HLCOLOR=""; fi
 
-    dunstify -a "Volume" -r 9993 -h int:value:"$VOLUME" -h string:hlcolor:"$HLCOLOR" -i "audio-volume-${ICON}-symbolic" "Volume: " "$TEXT" -t 2000
+    notify-send -a "Volume" -r 9993 -h int:value:"$VOLUME" -h string:hlcolor:"$HLCOLOR" -i "audio-volume-${ICON}-symbolic" "Volume: " "$TEXT" -t 2000
 }
 
 case $1 in
