@@ -47,6 +47,7 @@ return {
           "marksman",
           "basedpyright",
           "ruff",
+          "clangd",
         },
 
         ---@type boolean
@@ -144,9 +145,10 @@ return {
             client.server_capabilities.hoverProvider = false
           end
 
-          if client.name == "tsserver" then
-            client.server_capabilities.documentFormattingProvider = false
-          end
+          client.server_capabilities.documentFormattingProvider = false
+          -- if client.name == "tsserver" then
+          --   client.server_capabilities.documentFormattingProvider = false
+          -- end
           -- if client.supports_method('textDocument/formatting') then
           --   local lsp_format_augroup = vim.api.nvim_create_augroup("LspFormatting", { clear = false })
           --   vim.api.nvim_create_autocmd("BufWritePre", {
@@ -191,12 +193,16 @@ return {
       keymap("n", "gI", vim.lsp.buf.implementation, { desc = "Implementation" })
       keymap("n", "<leader>la", vim.lsp.buf.code_action, { desc = "CodeAction" })
       keymap("n", "<leader>lk", vim.lsp.buf.signature_help, { desc = "SigHelp" })
-      keymap("n", "<leader>ld", vim.lsp.buf.type_definition, { desc = "TypeDef" })
+      keymap("n", "<leader>lt", vim.lsp.buf.type_definition, { desc = "TypeDef" })
       keymap("n", "<leader>lF", vim.lsp.buf.format, { desc = "Format" })
 
-      keymap("n", "<leader>ti", function()
+      keymap("n", "<leader>th", function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-        vim.notify("InlayHints=" .. tostring(vim.lsp.inlay_hint.is_enabled()))
+        vim.notify(
+          "InlayHints=" .. tostring(vim.lsp.inlay_hint.is_enabled()),
+          vim.log.levels.INFO,
+          { id = "inlayhints" }
+        )
       end, { desc = "InlayHintsToggle" })
 
       local signs = {

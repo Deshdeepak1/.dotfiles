@@ -1,5 +1,6 @@
 return {
   "stevearc/conform.nvim",
+  -- cond = false,
   event = { "BufWritePre" },
   cmd = { "ConformInfo" },
   keys = {
@@ -17,7 +18,7 @@ return {
       "<leader>tf",
       function()
         vim.g.disable_autoformat = not vim.g.disable_autoformat
-        vim.notify("AutoFormat=" .. tostring(not vim.g.disable_autoformat))
+        vim.notify("AutoFormat=" .. tostring(not vim.g.disable_autoformat), vim.log.levels.INFO, { id = "autoformat" })
       end,
       mode = "n",
       desc = "AutoFormatToggle",
@@ -27,7 +28,11 @@ return {
       "<leader>tF",
       function()
         vim.b.disable_autoformat = not vim.b.disable_autoformat
-        vim.notify("BufAutoFormat=" .. tostring(not vim.b.disable_autoformat))
+        vim.notify(
+          "BufAutoFormat=" .. tostring(not vim.b.disable_autoformat),
+          vim.log.levels.INFO,
+          { id = "bufautoformat" }
+        )
       end,
       mode = "n",
       desc = "BufAutoFormatToogle",
@@ -41,11 +46,14 @@ return {
     formatters_by_ft = {
       lua = { "stylua" },
       python = { "ruff_format", "ruff_organize_imports" },
+      -- cpp = false,
+      -- c = false,
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
     },
     -- Set default options
     default_format_opts = {
-      lsp_format = "fallback",
+      -- lsp_format = "fallback",
+      lsp_format = "never",
     },
     -- Set up format-on-save
     format_on_save = function(bufnr)

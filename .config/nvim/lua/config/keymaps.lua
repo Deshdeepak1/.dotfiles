@@ -15,25 +15,25 @@ keymap("n", "<leader>S", ":luafile %<CR>", { desc = "Source" })
 -- number toggle
 keymap("n", "<leader>tl", function()
   vim.o.number = not vim.o.number
-  vim.notify("Number="..tostring(vim.o.number))
+  vim.notify("Number=" .. tostring(vim.o.number), vim.log.levels.INFO, { id = "number" })
 end, { desc = "NumberToggle" })
 
 -- relative number toggle
 keymap("n", "<leader>tL", function()
   vim.o.relativenumber = not vim.o.relativenumber
-  vim.notify("RelativeNumber="..tostring(vim.o.relativenumber))
+  vim.notify("RelativeNumber=" .. tostring(vim.o.relativenumber), vim.log.levels.INFO, { id = "relativenumber" })
 end, { desc = "RelativeNumberToggle" })
 
 -- wrap toggle
 keymap("n", "<leader>tw", function()
   vim.o.wrap = not vim.o.wrap
-  vim.notify("Wrap="..tostring(vim.o.wrap))
+  vim.notify("Wrap=" .. tostring(vim.o.wrap), vim.log.levels.INFO, { id = "wrap" })
 end, { desc = "WrapToggle" })
 
 -- spell toggle
 keymap("n", "<leader>ts", function()
   vim.o.spell = not vim.o.spell
-  vim.notify("Spell="..tostring(vim.o.spell))
+  vim.notify("Spell=" .. tostring(vim.o.spell), vim.log.levels.INFO, { id = "spell" })
 end, { desc = "SpellToggle" })
 -- TODO: learn spell
 -- z= , :spellr, zg
@@ -45,7 +45,7 @@ keymap("n", "<leader>tc", function()
   else
     vim.o.conceallevel = 0
   end
-  vim.notify("Concellevel="..tostring(vim.o.conceallevel))
+  vim.notify("Concellevel=" .. tostring(vim.o.conceallevel), vim.log.levels.INFO, { id = "conceallevel" })
 end, { desc = "ConvealLevelToggle" })
 
 -- TODO: learn :norm, gv,marks
@@ -84,7 +84,6 @@ keymap("v", "<C-s>", [[:s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { de
 keymap("v", ">", ">gv", opts)
 keymap("v", "<", "<gv", opts)
 
-
 -- Change paste behaviour
 -- keymap("v", "p", '"_dP', opts)
 keymap("x", "<leader>p", [["_dP]], { desc = "PrevPaste" })
@@ -107,11 +106,9 @@ keymap("n", "zk", ':<C-u>call append(line(".")-1,   repeat([""], v:count1))<CR>'
 keymap("n", "<C-k>", "<cmd>cprev<CR>zz", { desc = "Prev" })
 keymap("n", "<C-j>", "<cmd>cnext<CR>zz", { desc = "Next" })
 
-
 -- TODO: Learn CTags
 -- ctags: !ctags -R .
 -- C-]  jump to tag, C-t Jump back , gC-] ambiguous tags
-
 
 -- TODO: Learn Autocompletion
 -- Learn C-n Completion next, C-p prev,  C-xC-f compelte filename, C-xC-] ctags completion

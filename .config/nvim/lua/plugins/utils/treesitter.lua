@@ -144,8 +144,8 @@ return {
 
       -- vim.opt.foldmethod = vim.fn.filereadable(".nvim.lua") and vim.opt.foldmethod or "expr"
       -- vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-      -- vim.wo.foldmethod = 'expr'
-      -- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+      vim.wo.foldmethod = "expr"
+      vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
     end,
   },
 }

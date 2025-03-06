@@ -31,6 +31,7 @@ local options = {
   timeoutlen = 300,
   cursorline = true,
   signcolumn = "yes:1",
+  -- foldcolumn = "auto:1",
   pumheight = 10,
   conceallevel = 2,
   concealcursor = "c",
@@ -44,7 +45,6 @@ local options = {
   -- Whitespaces
   listchars = "tab:<->,trail:-,nbsp:␣,space:·",
   list = true,
-
 
   -- Autocompletion :find
   wildmenu = true,
@@ -65,8 +65,7 @@ for k, v in pairs(options) do
   vim.opt[k] = v
 end
 
-vim.opt.whichwrap:append "l,h,<,>,[,]"
-vim.opt.shortmess:append "c"
-
+vim.opt.whichwrap:append("l,h,<,>,[,]")
+vim.opt.shortmess:append("c")
 
 vim.cmd([[colorscheme habamax]])

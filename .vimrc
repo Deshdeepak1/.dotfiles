@@ -27,6 +27,7 @@ set scrolloff=8
 set updatetime=100
 set timeout
 set timeoutlen=300
+set laststatus=2
 set cursorline
 set pumheight=10
 set conceallevel=2
@@ -156,6 +157,7 @@ nnoremap <leader>E :20Lexplore!<CR>
 " Open URL
 nnoremap gx :silent !xdg-open "<cfile>"<CR>
 nnoremap <leader>x :silent !nsxiv-url "<cfile>"<CR>
+
 
 
 """ Colorscheme
