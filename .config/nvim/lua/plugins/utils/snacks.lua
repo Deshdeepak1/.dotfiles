@@ -118,7 +118,7 @@ return {
     { "<leader>f:", function() Snacks.picker.commands() end, desc = "Commands" },
     { "<leader>fH", function() Snacks.picker.command_history() end, desc = "Command History" },
     { "<leader>fi", function() Snacks.picker.icons() end, desc = "Icons" },
-    { "<leader>fp", function() Snacks.picker.projects() end, desc = "Projects" },
+    { "<leader>fp", function() Snacks.picker.projects({  dev = { "~/labs/repo/" },}) end, desc = "Projects" },
     { "<leader>fn", function() Snacks.picker.notifications() end, desc = "Notification History" },
     { "<leader>fj", function() Snacks.picker.jumps() end, desc = "Jumps" },
     { "<leader>fq", function() Snacks.picker.qflist() end, desc = "Quickfix List" },
