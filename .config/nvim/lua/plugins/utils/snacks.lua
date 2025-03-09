@@ -39,6 +39,20 @@ return {
         key = function(item)
           return { { "[", hl = "special" }, { item.key, hl = "key" }, { "]", hl = "special" } }
         end,
+        file = function(item, ctx)
+          local fname = vim.fn.fnamemodify(item.file, ":~:.")
+          fname = ctx.width and #fname > ctx.width and vim.fn.pathshorten(fname) or fname
+          if #fname > ctx.width then
+            local dir = vim.fn.fnamemodify(fname, ":h")
+            local file = vim.fn.fnamemodify(fname, ":t")
+            if dir and file then
+              file = file:sub(-(ctx.width - #dir - 2))
+              fname = dir .. "/…" .. file
+            end
+          end
+          local dir, file = fname:match("^(.*)/(.+)$")
+          return dir and { { dir .. "/", hl = "dir" }, { file, hl = "file" } } or { { fname, hl = "file" } }
+        end,
       },
       sections = {
         { section = "header" },
@@ -54,13 +68,13 @@ return {
     explorer = { enabled = false },
     indent = {
       enabled = true,
-      indent = { enabled = true, only_scope = true, only_current = true },
+      indent = { char = "▏", enabled = true, only_scope = false, only_current = false },
       animate = { enabled = false },
-      scope = { enabled = true, only_current = true },
+      scope = { char = "▏", enabled = true, only_current = true },
       chunk = { enabled = false },
       ---@diagnostic disable-next-line: unused-local
       filter = function(buf)
-        return vim.env.USER ~= "deshdeep"
+        return vim.env.USER ~= "deshdeep" and vim.bo[buf].buftype ~= "help"
       end,
     },
     input = { enabled = false },
@@ -183,5 +197,6 @@ return {
         end
       end,
     })
+    vim.cmd([[highlight SnacksIndent guifg=#313245]])
   end,
 }
