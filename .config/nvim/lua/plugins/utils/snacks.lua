@@ -17,6 +17,7 @@ local function format_filename(item, picker)
   end
 
   if picker.opts.icons.files.enabled ~= false then
+    ---@diagnostic disable-next-line: redundant-parameter
     local icon, hl = Snacks.util.icon(name, cat, {
       fallback = picker.opts.icons.files,
     })
@@ -156,6 +157,7 @@ return {
       },
     },
     explorer = { enabled = false },
+    image = { enabled = true },
     indent = {
       enabled = true,
       indent = { char = "▏", enabled = true, only_scope = false, only_current = false },
@@ -299,6 +301,5 @@ return {
         end
       end,
     })
-    vim.cmd([[highlight SnacksIndent guifg=#313245]])
   end,
 }
