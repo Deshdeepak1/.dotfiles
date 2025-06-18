@@ -19,7 +19,7 @@ set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @resurrect-capture-pane-contents 'off' # allow tmux-ressurect to capture pane contents
 set -g @continuum-save-interval '5' # enable tmux-continuum save functionality 
-set -g @continuum-restore 'on' # enable tmux-continuum restore functionality
+# set -g @continuum-restore 'on' # enable tmux-continuum restore functionality
 
 # Pomodoro plugin
 set -g @plugin 'olimorris/tmux-pomodoro-plus'

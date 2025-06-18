@@ -15,14 +15,14 @@ if-shell 'test "$WIN_TERMINAL" = "ms-terminal"' {
 }
 
 set -g set-clipboard on
-set -g history-limit 100000
+set -g history-limit 9999999
 set -g set-titles on
 set -g set-titles-string "tmux #S:#I #W"
 
 set -g mouse on
 set -g prefix `
 bind ` send-prefix
-set -g prefix2 C-b
+# set -g prefix2 C-b
 
 bind -N "Source tmux.conf" R source-file ~/.config/tmux/tmux.conf \; display-message "source-file done"
 

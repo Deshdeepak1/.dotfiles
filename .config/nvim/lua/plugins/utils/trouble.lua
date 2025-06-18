@@ -1,9 +1,11 @@
+---@module "lazy"
+---@type LazySpec
 return {
   "folke/trouble.nvim",
   -- cond = false,
   -- optional = true,
   -- lazy = false,
-  event = "VeryLazy",
+  -- event = "VeryLazy",
   cmd = "Trouble",
   keys = {
     {

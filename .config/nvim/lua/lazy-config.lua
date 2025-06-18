@@ -20,10 +20,9 @@ ensure_lazy()
 vim.opt.rtp:prepend(lazypath)
 
 local lazy_st_ok, lazy = pcall(require, "lazy")
-if not lazy_st_ok then
-  return
-end
+if not lazy_st_ok then return end
 
+--- @type LazyConfig
 local lazy_opts = {
   defaults = { lazy = true },
   install = { missing = true, colorscheme = { "catppuccin-frappe", "habamax" } },

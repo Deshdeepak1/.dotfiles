@@ -3,7 +3,14 @@ local expand = vim.fn.expand
 local options = {
   number = true,
   relativenumber = true,
+
+  -- Left column
   numberwidth = 2,
+  -- signcolumn = "auto:1-3",
+  signcolumn = "yes:2",
+  -- foldcolumn = "auto:1",
+  -- foldcolumn = "5",
+  -- statuscolumn = "",
 
   shiftwidth = 0, -- Takes from tabstop
   tabstop = 4,
@@ -20,7 +27,9 @@ local options = {
   ruler = true,
   wrap = false,
   linebreak = true,
-  foldenable = false,
+  foldenable = true,
+  foldlevelstart = 99,
+  foldexpr = "v:lua.vim.treesitter.foldexpr()",
   undodir = expand("~/.local/share/nvim/undo"),
   undofile = true,
   incsearch = true,
@@ -30,8 +39,6 @@ local options = {
   timeout = true,
   timeoutlen = 300,
   cursorline = true,
-  signcolumn = "yes:1",
-  -- foldcolumn = "auto:1",
   pumheight = 10,
   conceallevel = 2,
   concealcursor = "c",
@@ -41,6 +48,7 @@ local options = {
   completeopt = { "menuone", "noselect" },
   showmode = false,
   exrc = true,
+  winborder = "rounded",
 
   -- Whitespaces
   listchars = "tab:<->,trail:-,nbsp:␣,space:·",
@@ -67,5 +75,7 @@ end
 
 vim.opt.whichwrap:append("l,h,<,>,[,]")
 vim.opt.shortmess:append("c")
+
+if vim.fn.filereadable(".nvim.lua") == 0 then vim.opt.foldmethod = "expr" end
 
 vim.cmd([[colorscheme habamax]])

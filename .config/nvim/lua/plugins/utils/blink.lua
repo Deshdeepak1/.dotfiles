@@ -1,12 +1,15 @@
+---@module "lazy"
+---@type LazySpec
 return {
-  'saghen/blink.cmp',
+  "saghen/blink.cmp",
   -- cond = false,
+  -- enabled = false,
   event = { "InsertEnter", "CmdLineEnter" },
   -- optional: provides snippets for the snippet source
-  dependencies = 'rafamadriz/friendly-snippets',
+  dependencies = { "rafamadriz/friendly-snippets" },
 
   -- use a release tag to download pre-built binaries
-  version = '*',
+  version = "1.*",
   -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
   -- build = 'cargo build --release',
   -- If you use nix, you can build from source using latest nightly rust with:
@@ -25,8 +28,8 @@ return {
     -- C-k: Toggle signature help
     --
     -- See the full "keymap" documentation for information on defining your own keymap.
-    keymap = { preset = 'default' },
-    cmdline = { enabled = false },
+    keymap = { preset = "default" },
+    cmdline = { enabled = true },
 
     appearance = {
       -- Sets the fallback highlight groups to nvim-cmp's highlight groups
@@ -35,13 +38,13 @@ return {
       use_nvim_cmp_as_default = true,
       -- Set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
       -- Adjusts spacing to ensure icons are aligned
-      nerd_font_variant = 'mono'
+      nerd_font_variant = "mono",
     },
 
     -- Default list of enabled providers defined so that you can extend it
     -- elsewhere in your config, without redefining it, due to `opts_extend`
     sources = {
-      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+      default = { "lazydev", "lsp", "path", "snippets", "buffer" },
       providers = {
         lazydev = {
           name = "LazyDev",
@@ -49,7 +52,7 @@ return {
           -- make lazydev completions top priority (see `:h blink.cmp`)
           score_offset = 100,
         },
-      }
+      },
     },
 
     -- Blink.cmp uses a Rust fuzzy matcher by default for typo resistance and significantly better performance
@@ -60,13 +63,14 @@ return {
     fuzzy = { implementation = "prefer_rust_with_warning" },
 
     completion = {
-    --   menu = { border = 'single' },
-      documentation = { window = { border = 'rounded' } },
+      --   menu = { border = 'single' },
+      documentation = { window = { border = "rounded" } },
+      -- ghost_text = { enabled = true },
     },
     signature = {
-      enabled = true,
+      enabled = false,
       -- window = { border = "rounded" }
     },
   },
-  opts_extend = { "sources.default" }
+  opts_extend = { "sources.default" },
 }

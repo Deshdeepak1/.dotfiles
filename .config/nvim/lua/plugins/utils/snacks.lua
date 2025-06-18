@@ -1,10 +1,10 @@
+local uv = vim.uv or vim.loop
+
 ---@param item snacks.picker.Item
 local function format_filename(item, picker)
   ---@type snacks.picker.Highlight[]
   local ret = {}
-  if not item.file then
-    return ret
-  end
+  if not item.file then return ret end
   local path = Snacks.picker.util.path(item) or item.file
   -- path = Snacks.picker.util.truncpath(path, picker.opts.formatters.file.truncate or 40, { cwd = picker:cwd() })
   path = vim.fn.fnamemodify(path, ":~:.")
@@ -21,9 +21,7 @@ local function format_filename(item, picker)
     local icon, hl = Snacks.util.icon(name, cat, {
       fallback = picker.opts.icons.files,
     })
-    if item.dir and item.open then
-      icon = picker.opts.icons.files.dir_open
-    end
+    if item.dir and item.open then icon = picker.opts.icons.files.dir_open end
     icon = Snacks.picker.util.align(icon, picker.opts.formatters.file.icon_width or 2)
     ret[#ret + 1] = { icon, hl, virtual = true }
   end
@@ -32,9 +30,7 @@ local function format_filename(item, picker)
   local function is(prop)
     local it = item
     while it do
-      if it[prop] then
-        return true
-      end
+      if it[prop] then return true end
       it = it.parent
     end
   end
@@ -89,11 +85,13 @@ local function format_filename(item, picker)
   return ret
 end
 
+---@module "lazy"
+---@type LazySpec
 return {
   "folke/snacks.nvim",
   -- cond = false,
   cond = not vim.g.started_by_firenvim,
-  -- priority = 1000,
+  priority = 1000,
   lazy = false,
   -- event = "VeryLazy",
   ---@module 'snacks'
@@ -127,9 +125,7 @@ return {
         },
       },
       formats = {
-        key = function(item)
-          return { { "[", hl = "special" }, { item.key, hl = "key" }, { "]", hl = "special" } }
-        end,
+        key = function(item) return { { "[", hl = "special" }, { item.key, hl = "key" }, { "]", hl = "special" } } end,
         file = function(item, ctx)
           local fname = vim.fn.fnamemodify(item.file, ":~:.")
           fname = ctx.width and #fname > ctx.width and vim.fn.pathshorten(fname) or fname
@@ -157,7 +153,11 @@ return {
       },
     },
     explorer = { enabled = false },
-    image = { enabled = true },
+    image = {
+      -- enabled = false,
+      enabled = not vim.env.SSH_CLIENT or vim.env.TERMINAL ~= "ms-terminal",
+      force = false,
+    },
     indent = {
       enabled = true,
       indent = { char = "▏", enabled = true, only_scope = false, only_current = false },
@@ -165,9 +165,7 @@ return {
       scope = { char = "▏", enabled = true, only_current = true },
       chunk = { enabled = false },
       ---@diagnostic disable-next-line: unused-local
-      filter = function(buf)
-        return vim.env.USER ~= "deshdeep" and vim.bo[buf].buftype ~= "help"
-      end,
+      filter = function(buf) return vim.env.USER ~= "deshdeep" and vim.bo[buf].buftype ~= "help" end,
     },
     input = { enabled = false },
     notifier = { enabled = true, top_down = false },
@@ -178,17 +176,31 @@ return {
     quickfile = { enabled = false },
     scope = { enabled = false },
     scroll = { enabled = false },
-    statuscolumn = {
+    statuscolumn = { -- TODO: set statuscolumn
       enabled = false,
       left = { "fold", "mark", "sign", "git" },
       right = {},
     },
+    -- statuscolumn = {
+    --   left = { "mark", "sign" }, -- priority of signs on the left (high to low)
+    --   right = { "fold", "git" }, -- priority of signs on the right (high to low)
+    --   folds = {
+    --     open = false, -- show open fold icons
+    --     git_hl = false, -- use Git Signs hl for fold icons
+    --   },
+    --   git = {
+    --     -- patterns to match Git signs
+    --     patterns = { "GitSign", "MiniDiffSign" },
+    --   },
+    --   refresh = 50, -- refresh at most every 50ms
+    -- },
     words = { enabled = false },
   },
   keys = {
     -- stylua: ignore start
     -- Files
-    { "<leader>ff", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
+    { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
+    { "<leader>fs", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
     { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
     { "<leader>fr", function() Snacks.picker.recent({filter = {cwd = true}}) end, desc = "Recent" },
     { "<leader>fR", function() Snacks.picker.recent() end, desc = "Recent Global" },
@@ -243,10 +255,20 @@ return {
     { "<leader>fk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
     { "<leader>fm", function() Snacks.picker.marks() end, desc = "Marks" },
     { "<leader>fM", function() Snacks.picker.man() end, desc = "Man Pages" },
-    { "<leader>fu", function() Snacks.picker.undo() end, desc = "Undo History" },
+    { "<leader>fu", function() Snacks.picker.undo({
+      win = {
+        input = {
+          keys = {
+            ["<C-y>"] = { "yank_add", mode = { "n", "i" } },
+            ["<C-A-y>"] = { "yank_del", mode = { "n", "i" } },
+          }
+        }
+      }
+    }) end, desc = "Undo History" },
     { "<leader>fC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
     -- Others
     { "<leader>br", function() Snacks.rename.rename_file() end, desc = "Rename File" },
+    { "<leader>bD", function() Snacks.bufdelete.delete({force = true}) end, desc = "BufDelete" },
     { "<leader>H",  function() Snacks.notifier.show_history() end, desc = "Notification History" },
     { "<leader>tn", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
     { "<leader>tz",  function() Snacks.zen.zoom() end, desc = "Toggle Zoom" },
@@ -279,12 +301,8 @@ return {
       pattern = "VeryLazy",
       callback = function()
         -- Setup some globals for debugging (lazy-loaded)
-        _G.dd = function(...)
-          Snacks.debug.inspect(...)
-        end
-        _G.bt = function()
-          Snacks.debug.backtrace()
-        end
+        _G.dd = function(...) Snacks.debug.inspect(...) end
+        _G.bt = function() Snacks.debug.backtrace() end
         -- vim.print = _G.dd -- Override print to use snacks for `:=` command
         Snacks.toggle.diagnostics():map("<leader>td")
         Snacks.toggle.indent():map("<leader>ti")

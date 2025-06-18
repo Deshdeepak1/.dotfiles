@@ -1,15 +1,18 @@
+---@module "lazy"
+---@type LazySpec
 return {
   "tpope/vim-fugitive",
-  event = "VeryLazy",
-  dependencies = { "tpope/vim-rhubarb" },
+  -- event = "VeryLazy",
+  dependencies = {},
   cond = function()
-    local is_git = vim.fn.system("git rev-parse --is-inside-work-tree")
+    local _ = vim.fn.system("git rev-parse --is-inside-work-tree")
     return vim.v.shell_error == 0
   end,
   -- cond = false,
+  cmd = { "Git", "G" },
   keys = {
     { "<leader>gA", "<cmd>G add .<cr>", desc = "AddCDir", silent = false },
-    { "<leader>gB", "<cmd>GBrowse<cr>", desc = "Browse", silent = false },
+    { "<leader>gB", "<cmd>lua Snacks.gitbrowse()<cr>", desc = "Git Browse", mode = { "n", "v" } },
     { "<leader>gC", ":G checkout ", desc = "Checkout", silent = false },
     { "<leader>gD", "<cmd>G diff<cr>", desc = "Diff", silent = false },
     { "<leader>gF", ":G add ", desc = "CustAdd", silent = false },

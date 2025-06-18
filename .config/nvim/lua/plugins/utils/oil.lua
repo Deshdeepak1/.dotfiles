@@ -1,7 +1,9 @@
+---@module "lazy"
+---@type LazySpec
 return {
   "stevearc/oil.nvim",
   -- cond = false,
-  cond = not vim.g.started_by_firenvim,
+  -- cond = not vim.g.started_by_firenvim,
   -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
   lazy = false,
   -- Optional dependencies
@@ -9,9 +11,7 @@ return {
   keys = {
     {
       "<leader>e",
-      function()
-        require("oil").toggle_float()
-      end,
+      function() require("oil").toggle_float() end,
       desc = "Oil",
     },
   },
@@ -72,12 +72,14 @@ return {
             vim.system({ "fish", "-c", cmd }, { text = false }, function(obj)
               local fdur = obj.stdout:gsub("\n", "")
               -- print( entry.name .. " :- " .. t)
-              vim.schedule(function()
-                vim.api.nvim_buf_set_extmark(bnr, ns_id, line_num - 1, col_num, {
-                  id = entry.id,
-                  virt_text = { { fdur, "LspDiagnosticsVirtualTextInformation" } },
-                })
-              end)
+              vim.schedule(
+                function()
+                  vim.api.nvim_buf_set_extmark(bnr, ns_id, line_num - 1, col_num, {
+                    id = entry.id,
+                    virt_text = { { fdur, "LspDiagnosticsVirtualTextInformation" } },
+                  })
+                end
+              )
             end)
           end
         end,
@@ -129,12 +131,14 @@ return {
             vim.system({ "du", "-sh", fpath }, { text = false }, function(obj)
               local rsize = obj.stdout:gsub("\n", ""):match("(.+)\t")
               -- print( entry.name .. " :- " .. t)
-              vim.schedule(function()
-                vim.api.nvim_buf_set_extmark(bnr, ns_id, line_num - 1, col_num, {
-                  id = entry.id,
-                  virt_text = { { rsize, "LspDiagnosticsVirtualTextWarning" } },
-                })
-              end)
+              vim.schedule(
+                function()
+                  vim.api.nvim_buf_set_extmark(bnr, ns_id, line_num - 1, col_num, {
+                    id = entry.id,
+                    virt_text = { { rsize, "LspDiagnosticsVirtualTextWarning" } },
+                  })
+                end
+              )
             end)
           end
         end,

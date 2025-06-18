@@ -1,151 +1,219 @@
+---@module "lazy"
+---@type LazySpec
 return {
   {
     "nvim-treesitter/nvim-treesitter",
+    branch = "main",
     -- cond = false,
     event = { "BufReadPost", "BufNewFile" },
     build = ":TSUpdate",
     dependencies = {
-      -- "JoosepAlviste/nvim-ts-context-commentstring",
-      -- "nvim-treesitter/nvim-treesitter-textobjects",
-      -- "nvim-treesitter/playground",
+      {
+        "nvim-treesitter/nvim-treesitter-textobjects",
+        branch = "main",
+        opts = {
+          -- TODO: habituate using this
+          select = {
+            lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+            include_surrounding_whitespace = true,
+          },
+          move = {
+            set_jumps = true, -- whether to set jumps in the jumplist
+          },
+        },
+        config = function(_, opts)
+          require("nvim-treesitter-textobjects").setup(opts)
+
+          -- Objects
+          vim.keymap.set(
+            { "x", "o" },
+            "aa",
+            function()
+              require("nvim-treesitter-textobjects.select").select_textobject("@parameter.outer", "textobjects")
+            end
+          )
+          vim.keymap.set(
+            { "x", "o" },
+            "ia",
+            function()
+              require("nvim-treesitter-textobjects.select").select_textobject("@parameter.inner", "textobjects")
+            end
+          )
+          vim.keymap.set(
+            { "x", "o" },
+            "ac",
+            function() require("nvim-treesitter-textobjects.select").select_textobject("@class.outer", "textobjects") end
+          )
+          vim.keymap.set(
+            { "x", "o" },
+            "ic",
+            function() require("nvim-treesitter-textobjects.select").select_textobject("@class.inner", "textobjects") end
+          )
+
+          -- swaps
+          vim.keymap.set(
+            "n",
+            "<localleader>a",
+            function() require("nvim-treesitter-textobjects.swap").swap_next("@parameter.inner") end
+          )
+          vim.keymap.set(
+            "n",
+            "<localleader>A",
+            function() require("nvim-treesitter-textobjects.swap").swap_previous("@parameter.inner") end
+          )
+
+          -- Move
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "]a",
+            function() require("nvim-treesitter-textobjects.move").goto_next_start("@parameter.outer", "textobjects") end
+          )
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "]m",
+            function() require("nvim-treesitter-textobjects.move").goto_next_start("@function.outer", "textobjects") end
+          )
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "]]",
+            function() require("nvim-treesitter-textobjects.move").goto_next_start("@class.outer", "textobjects") end
+          )
+
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "]A",
+            function() require("nvim-treesitter-textobjects.move").goto_next_end("@parameter.outer", "textobjects") end
+          )
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "]M",
+            function() require("nvim-treesitter-textobjects.move").goto_next_end("@function.outer", "textobjects") end
+          )
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "][",
+            function() require("nvim-treesitter-textobjects.move").goto_next_end("@class.outer", "textobjects") end
+          )
+
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "[a",
+            function()
+              require("nvim-treesitter-textobjects.move").goto_previous_start("@parameter.outer", "textobjects")
+            end
+          )
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "[m",
+            function() require("nvim-treesitter-textobjects.move").goto_previous_start("@function.outer", "textobjects") end
+          )
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "[[",
+            function() require("nvim-treesitter-textobjects.move").goto_previous_start("@class.outer", "textobjects") end
+          )
+
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "[A",
+            function() require("nvim-treesitter-textobjects.move").goto_previous_end("@parameter.outer", "textobjects") end
+          )
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "[M",
+            function() require("nvim-treesitter-textobjects.move").goto_previous_end("@function.outer", "textobjects") end
+          )
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "[]",
+            function() require("nvim-treesitter-textobjects.move").goto_previous_end("@class.outer", "textobjects") end
+          )
+
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "]z",
+            function() require("nvim-treesitter-textobjects.move").goto_next_start("@fold", "folds") end
+          )
+          vim.keymap.set(
+            { "n", "x", "o" },
+            "[z",
+            function() require("nvim-treesitter-textobjects.move").goto_previous_start("@fold", "folds") end
+          )
+        end,
+      },
+      -- {
+      --   'daliusd/incr.nvim',
+      --   opts = {
+      --     incr_key = '<C-Space>', -- increment selection key
+      --     decr_key = '<BS>', -- decrement selection key
+      --   },
+      -- },
     },
     config = function()
-      local configs = require("nvim-treesitter.configs")
+      local nvim_ts = require("nvim-treesitter")
 
-      local textobjects = { -- TODO: habituate using this
-        select = {
-          enable = true,
-          -- enable = false,
-          lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-          keymaps = {
-            -- You can use the capture groups defined in textobjects.scm
-            ["aa"] = "@parameter.outer",
-            ["ia"] = "@parameter.inner",
-            ["af"] = "@function.outer",
-            ["if"] = "@function.inner",
-            ["ac"] = "@class.outer",
-            ["ic"] = "@class.inner",
-          },
-        },
-        move = {
-          enable = true,
-          -- enable = false,
-          set_jumps = true, -- whether to set jumps in the jumplist
-          goto_next_start = {
-            ["]m"] = "@function.outer",
-            ["]]"] = "@class.outer",
-          },
-          goto_next_end = {
-            ["]M"] = "@function.outer",
-            ["]["] = "@class.outer",
-          },
-          goto_previous_start = {
-            ["[m"] = "@function.outer",
-            ["[["] = "@class.outer",
-          },
-          goto_previous_end = {
-            ["[M"] = "@function.outer",
-            ["[]"] = "@class.outer",
-          },
-        },
+      local ensure_installed = {
+        "query",
+        "c",
+        "cpp",
+        "glsl",
+        "lua",
+        "vim",
+        "vimdoc",
+        "csv",
+        "yaml",
+        "json",
+        --[[ "toml", ]]
+        -- "ssh_config", --[[ "tmux", ]]
+        "python",
+        "kotlin",
+        "fish",
+        "bash",
+        "html",
+        "css",
+        "javascript",
+        "typescript",
+        "markdown",
+        "markdown_inline",
+        -- "norg", --[[ "org", ]]
+        "git_config",
+        "git_rebase",
+        "gitcommit",
+        "gitattributes",
+        "gitignore",
       }
+      nvim_ts.install(ensure_installed)
 
-      local playground = {
-        enable = true,
-        -- enable = false,
-        disable = {},
-        updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
-        persist_queries = false, -- Whether the query persists across vim sessions
-        keybindings = {
-          toggle_query_editor = "o",
-          toggle_hl_groups = "i",
-          toggle_injected_languages = "t",
-          toggle_anonymous_nodes = "a",
-          toggle_language_display = "I",
-          focus_language = "f",
-          unfocus_language = "F",
-          update = "R",
-          goto_node = "<cr>",
-          show_help = "?",
-        },
-      }
+      vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("treesitter.setup", {}),
+        callback = function(args)
+          local buf = args.buf
+          local filetype = args.match
 
-      ---@diagnostic disable-next-line: missing-fields
-      configs.setup({
-        ensure_installed = {
-          "c",
-          "cpp",
-          "glsl",
-          "lua",
-          "vim",
-          "vimdoc",
-          "csv",
-          "yaml",
-          "json",
-          --[[ "toml", ]]
-          -- "ssh_config", --[[ "tmux", ]]
-          "python",
-          "kotlin",
-          "fish",
-          "bash",
-          "html",
-          "css",
-          "javascript",
-          "typescript",
-          "markdown",
-          "markdown_inline",
-          "norg", --[[ "org", ]]
-          "git_config",
-          "git_rebase",
-          "gitcommit",
-          "gitattributes",
-          "gitignore",
-        },
-        ignore_install = {},
-        sync_install = false,
-        auto_install = false,
-        highlight = {
-          enable = true,
-          -- enable = false,
-          additional_vim_regex_highlighting = {
-            -- "org",
-          },
-        },
-        indent = {
-          enable = true,
-          -- enable = false,
-          disable = { --[[ "cpp", ]] --[[ "lua",  ]]
-          },
-        },
-        incremental_selection = { -- TODO: Learn
-          enable = true,
-          -- enable = false,
-          keymaps = {
-            init_selection = "<C-Space>", -- set to `false` to disable one of the mappings
-            node_incremental = "<C-Space>",
-            -- scope_incremental = --[[  "grc" ]] false,
-            scope_incremental = "<C-M-Space>",
-            node_decremental = "<BS>",
-            -- init_selection = "<Leader>ss", -- set to `false` to disable one of the mappings
-            -- node_incremental = "<Leader>si",
-            -- scope_incremental = "<Leader>sc",
-            -- node_decremental = "<Leader>sd",
-          },
-        },
-        -- textobjects = textobjects,
-        -- playground = playground,
+          local language = vim.treesitter.language.get_lang(filetype) or filetype
+          if not vim.treesitter.language.add(language) then return end
+
+          -- vim.wo.foldmethod = 'expr'
+          -- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
+          vim.treesitter.start(buf, language)
+
+          vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
       })
-
-      -- require('ts_context_commentstring').setup({
-      --   enable_autocmd = false,
-      -- })
-
-      -- vim.g.skip_ts_context_commentstring_module = true
-
-      -- vim.opt.foldmethod = vim.fn.filereadable(".nvim.lua") and vim.opt.foldmethod or "expr"
-      -- vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-      vim.wo.foldmethod = "expr"
-      vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+      -- local configs = require("nvim-treesitter.configs")
     end,
+  },
+  {
+    -- "RRethy/nvim-treesitter-endwise",
+    "brianhuster/treesitter-endwise.nvim",
+    -- cond = false,
+    -- event = {"BufReadPost", "BufNewFile"},
+    ft = { "lua", "vim", "ruby", "bash", "fish" },
+    -- event = "InsertEnter",
+    -- lazy = false,
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+    },
   },
 }

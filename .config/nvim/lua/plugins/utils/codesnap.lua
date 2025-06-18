@@ -1,5 +1,10 @@
+local save_path = "~/Pictures/codesnaps"
+
+---@module "lazy"
+---@type LazySpec
 return {
   "mistricky/codesnap.nvim",
+  -- cond = false,
   build = "make",
   cmd = { "CodeSnap", "CodeSnapSave" },
   opts = {
@@ -16,6 +21,7 @@ return {
     min_width = 0,
     bg_x_padding = 10,
     bg_y_padding = 10,
-    save_path = "~/Pictures/codesnaps",
+    save_path = save_path,
   },
+  init = function() vim.fn.mkdir(vim.fn.expand(save_path), "p") end,
 }

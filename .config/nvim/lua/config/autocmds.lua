@@ -1,7 +1,5 @@
 vim.api.nvim_create_autocmd("TextYankPost", {
-  callback = function()
-    vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 200, on_macro = true })
-  end
+  callback = function() vim.hl.on_yank({ higroup = "IncSearch", timeout = 200, on_macro = true }) end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {

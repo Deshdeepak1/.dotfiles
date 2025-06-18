@@ -1,3 +1,5 @@
+---@module "lazy"
+---@type LazySpec
 return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -16,7 +18,7 @@ return {
       ignore_focus = {},
       always_divide_middle = true,
       always_show_tabline = false,
-      globalstatus = true,
+      globalstatus = true, -- TODO: Either turn false or show title in symbol bar
       refresh = {
         statusline = 100,
         tabline = 100,

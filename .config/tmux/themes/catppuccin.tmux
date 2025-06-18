@@ -3,8 +3,8 @@
 set -g @catppuccin_flavor "mocha"
 set -g @catppuccin_window_status_style "rounded"
 set -g @catppuccin_window_number_position "right"
-set -ogq @catppuccin_window_text "#{b;s=deshdeepak=~=:pane_current_path}|#W"
-set -ogq @catppuccin_window_current_text "#{s=$HOME=~=:pane_current_path}"
+set -ogq @catppuccin_window_text "#{s|.*/||:#{s|$HOME|~|:pane_current_path}}|#W"
+set -ogq @catppuccin_window_current_text "#{s|$HOME|~|:pane_current_path}"
 set -ogq @catppuccin_window_flags "icon"
 
 

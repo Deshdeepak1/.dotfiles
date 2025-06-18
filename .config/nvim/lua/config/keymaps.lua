@@ -8,6 +8,7 @@ vim.g.maplocalleader = "\\"
 -- Save  Quit
 keymap("n", "<leader>q", ":bdelete<CR>", { desc = "CloseBuffer" })
 keymap("n", "<leader>Q", ":quitall!<CR>", { desc = "QuitAll" })
+
 keymap("n", "<leader>S", ":luafile %<CR>", { desc = "Source" })
 
 -- Toggles
@@ -50,6 +51,9 @@ end, { desc = "ConvealLevelToggle" })
 
 -- TODO: learn :norm, gv,marks
 
+-- Visual mode search
+keymap("x", "g/", "<Esc>/\\%V")
+
 -- Remap ESC
 keymap("i", "jk", "<ESC>", opts)
 keymap("i", "kj", "<ESC>", opts)
@@ -69,10 +73,6 @@ keymap("n", "<M-k>", ":resize +2<CR>", opts)
 
 -- Buffer
 keymap("n", "<leader>bb", ":e #<CR>", { desc = "LastOpenedBuffer" })
-keymap("n", "<TAB>", ":bnext<CR>", opts)
-keymap("n", "]b", ":bnext<CR>", opts)
-keymap("n", "<S-TAB>", ":bprevious<CR>", opts)
-keymap("n", "[b", ":bprevious<CR>", opts)
 
 -- Sed like subsitutions
 keymap("n", "<M-s>", ":%s///gI<Left><Left><Left><Left>", opts)
@@ -90,6 +90,7 @@ keymap("x", "<leader>p", [["_dP]], { desc = "PrevPaste" })
 keymap("n", "cp", '"+', opts)
 keymap({ "n", "v" }, "<leader>y", '"+y', { desc = "Copy2Clipboard" })
 keymap("n", "<leader>Y", '"+Y', { desc = "Copy2Clipboard2End", remap = true })
+vim.keymap.set("n", "ycc", '"yy" . v:count1 . "gcc\']p"', { remap = true, expr = true })
 
 -- Join lines without cursor movement
 keymap("n", "J", "mzJ`z")
@@ -97,14 +98,6 @@ keymap("n", "J", "mzJ`z")
 -- Move Lines up and down
 keymap("v", "J", ":move '>+1<CR>gv=gv", opts) -- ddp for 1 line down
 keymap("v", "K", ":move '<-2<CR>gv=gv", opts) -- ddkP for 1 line up
-
--- New Lines
-keymap("n", "zj", ':<C-u>call append(line("."),   repeat([""], v:count1))<CR>', { desc = "New Line below" })
-keymap("n", "zk", ':<C-u>call append(line(".")-1,   repeat([""], v:count1))<CR>', { desc = "New Line above" })
-
--- Quick Fix List
-keymap("n", "<C-k>", "<cmd>cprev<CR>zz", { desc = "Prev" })
-keymap("n", "<C-j>", "<cmd>cnext<CR>zz", { desc = "Next" })
 
 -- TODO: Learn CTags
 -- ctags: !ctags -R .

@@ -16,17 +16,20 @@ set preserveindent
 set copyindent
 
 set mouse=a
+set clipboard=unnamedplus
 set ruler
 set nowrap
 set linebreak
 set nofoldenable
 set undodir=~/.local/share/vim/undo
 set undofile
+set ignorecase
 set incsearch
 set scrolloff=8
 set updatetime=100
 set timeout
-set timeoutlen=300
+set timeoutlen=200
+set ttyfast
 set laststatus=2
 set cursorline
 set pumheight=10
@@ -36,13 +39,13 @@ set virtualedit=block
 set noswapfile
 set fileencoding=utf-8
 set completeopt=menuone,noselect
-set noshowmode
+set showmode
 set exrc
 set showcmd
 
 " Whitespaces
 set listchars=tab:»·,trail:·,space:·
-set list
+" set list
 
 " Autocompletion :find
 set path+=**
@@ -61,6 +64,12 @@ set backupdir=~/.local/share/vim/backup
 " Whichwrap settings
 set whichwrap+=l,h,<,>,[,]
 set shortmess+=c
+
+" Cursor
+let &t_ti.="\e[0 q"
+let &t_SI.="\e[6 q"
+let &t_EI.="\e[0 q"
+let &t_te.="\e[0 q"
 
 " Leader Key
 let mapleader=" "
@@ -94,7 +103,31 @@ endfunction
 
 nnoremap <leader>tc :call ToggleConcealLevel()<CR>
 
+" Toggle Copy Mode
+let g:copy_mode = 0
+function! ToggleCopyMode()
+  if g:copy_mode
+    set mouse=a
+    set relativenumber
+    set number
+    " set list
+    let g:copy_mode = 0
+  else
+    set mouse=
+    set norelativenumber
+    set nonumber
+    set nolist
+    let g:copy_mode = 1
+  endif
+  echo "CopyMode=" . g:copy_mode
+endfunction
 
+command! ToggleCopyMode call ToggleCopyMode()
+nnoremap <leader>tC :ToggleCopyMode<CR>
+
+
+" Visual mode search
+xnoremap g/ <Esc>/\%V
 
 " Escape Remap
 inoremap jk <ESC>
@@ -115,9 +148,7 @@ nnoremap <M-k> :resize +2<CR>
 
 " Buffer Navigation
 nnoremap <leader>bb :e #<CR>
-nnoremap <TAB> :bnext<CR>
 nnoremap ]b :bnext<CR>
-nnoremap <S-TAB> :bprevious<CR>
 nnoremap [b :bprevious<CR>
 
 " Sed-like Substitutions
@@ -144,12 +175,8 @@ vnoremap J :move '>+1<CR>gv=gv
 vnoremap K :move '<-2<CR>gv=gv
 
 " New Lines
-nnoremap zj :call append(line("."), repeat([""], v:count1))<CR>
-nnoremap zk :call append(line(".")-1, repeat([""], v:count1))<CR>
-
-" Quickfix List
-nnoremap <C-k> :cprev<CR>zz
-nnoremap <C-j> :cnext<CR>zz
+nnoremap ]<leader> :call append(line("."), repeat([""], v:count1))<CR>
+nnoremap [<leader> :call append(line(".")-1, repeat([""], v:count1))<CR>
 
 " Netrw
 nnoremap <leader>E :20Lexplore!<CR>
@@ -165,6 +192,7 @@ try
     colorscheme catppuccin_mocha
     set termguicolors
     syntax on
+    hi Normal guibg=NONE ctermbg=NONE
 catch
     syntax on
 endtry
