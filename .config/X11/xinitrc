@@ -3,7 +3,7 @@
 xrandr --output eDP-1 --brightness 0.5
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 picom &
-greenclip daemon &
+clipcatd &
 xss-lock -- i3lock-fancy -n &
 dunst &
 flameshot &

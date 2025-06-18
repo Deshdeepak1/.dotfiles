@@ -27,7 +27,6 @@
 import os
 import random
 from datetime import datetime
-import json
 
 from libqtile import bar, hook, layout, qtile, widget
 from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen
@@ -116,7 +115,7 @@ keys = [
             Key([], "s", lazy.spawn("rofi -show ssh"), desc="SSH Menu"),
             Key([], "e", lazy.spawn("rofi -show filebrowser -show-icons"), desc="File Menu"),
             Key([], "l", lazy.spawn("rofi -modi power_menu:rofi-power-menu -show power_menu"), desc="Power Menu"),
-            Key([], "c", lazy.spawn("rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'"), desc="Clip Menu"),
+            Key([], "c", lazy.spawn("clipcat-menu"), desc="Clip Menu"),
             Key([], "b", lazy.spawn("rofi-bluetooth"), desc="Bluetooth Menu"),
         ],
         name="rofi",

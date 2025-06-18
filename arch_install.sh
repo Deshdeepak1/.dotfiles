@@ -80,16 +80,16 @@ echo "KEYMAP=us" > /etc/vconsole.conf
 pacman --noconfirm -Syy --disable-download-timeout grub os-prober efibootmgr neovim git xterm \
     python-pip python-virtualenv python-pipx lazygit man-db man-pages texinfo sudo gptfdisk \
     wget curl speedtest-cli ttf-mononoki-nerd awesome-terminal-fonts noto-fonts noto-fonts-emoji \
-    noto-fonts-cjk btop zip unzip unrar p7zip fish lua lua51 xorg sx lf xh eza ripgrep jq sd fzf \
+    noto-fonts-cjk btop zip unzip unrar p7zip fish lua lua51 xorg sx eza ripgrep jq sd fzf \
     ytfzf trash-cli imagemagick qtile python-pywlroots nsxiv alacritty bluez bluez-utils pipewire \
     pipewire-pulse pipewire-audio pipewire-jack pipewire-alsa wireplumber alsa-utils pulsemixer \
     ncdu zathura zathura-pdf-poppler arc-icon-theme arc-gtk-theme ffmpeg aria2 ntfs-3g qutebrowser \
     rsync picom xdg-user-dirs libconfig libnotify dunst exa tmux bat ffmpeg mpv noto-fonts-emoji \
-    fd fzf lazygit ranger ctags ripgrep luarocks feh nodejs xclip xdg-desktop-portal flameshot \
+    fd fzf lazygit ctags ripgrep luarocks feh nodejs xclip xdg-desktop-portal flameshot \
     polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmanager brightnessctl npm \
     proxychains-ng parallel parallel-docs  xdotool jc socat zoxide keyd reflector rofi-calc \
     mitmproxy gnome-keyring xss-lock bc mesa mesa-utils usbutils ffmpegthumbnailer poppler \
-    ueberzugpp
+    ueberzugpp kitty clipcat tldr tree-sitter yazi csvlens glow jless
 
 # GPU
 # pacman --noconfirm -Syy --disable-download-timeout xf86-video-amdgpu
@@ -192,12 +192,12 @@ rm paru-bin -rf
 
 ### Paru - Install necessary packages
 paru --noconfirm --sudoflags "-S" --sudoloop -S --disable-download-timeout \
-    materialgram-bin paru-bin pup-bin rofi-greenclip brave-bin \
+    materialgram-bin paru-bin pup-bin brave-bin \
     bento4 dragon-drop simple-mtpfs i3lock-fancy
 
 ## Paru - Install other packages
 paru --noconfirm --sudoflags "-S" --sudoloop -S --disable-download-timeout \
-    mongodb-compass android-studio rofimoji envycontrol
+    mongodb-compass-bin android-studio rofimoji envycontrol
 
 sudo -S systemctl enable auto-cpufreq
 # luarocks --local --lua-version=5.1 install magick
@@ -230,12 +230,11 @@ echo "Installation Completed"
 
 exit
 
-# csvlens, glow, jless
-# Todo: Fan/ Cpu Scaling/ Battery ,  nvidia/amd graphics , nvim resetup, Android Studio setup, qr from link
+# TODO: Fan/ Cpu Scaling/ Battery ,  nvidia/amd graphics , nvim resetup, Android Studio setup, qr from link
 # textlive-basic, texlive-fontsrecommended, texlive-latexrecommended, texlive-latex pandoc, entr, texlive-xetex
+# multi-monitor, Silent boot, mpv setup, fish -> bash
 
 # when gpg error due to some package missing, manually install using pacman -U
-# multi-monitor, Silent boot
 
 #"ControllerMode = bredr" in /etc/bluetooth/main.conf.
 # systemctl --user restart wireplumber.service
