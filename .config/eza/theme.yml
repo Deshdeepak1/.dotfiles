@@ -1,0 +1,6 @@
+users:
+  user_you:
+    foreground: 11
+    is_bold: false
+    is_dimmed: false
+

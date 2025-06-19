@@ -1,0 +1,12 @@
+# yazi.toml
+[mgr]
+show_hidden = true
+# linemode = "size"
+# [opener]
+# do = [
+#     { run = 'xdg-open "$@"', desc = "Do" },
+# ]
+# [open]
+# append_rules = [
+#     { name = "*", use = "do" },
+# ]
