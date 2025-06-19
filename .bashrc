@@ -9,7 +9,8 @@ LOCALBASHRCSOURCED="Y"
 # echo LOCALBASHRCSOURCED
 
 [[ $- != *i* ]] && return
-source ~/.local/share/blesh/ble.sh --noattach
+
+[ -r $HOME/.local/share/blesh/ble.sh ] && source ~/.local/share/blesh/ble.sh --noattach
 
 export EDITOR="nvim"
 export VISUAL="nvim"
