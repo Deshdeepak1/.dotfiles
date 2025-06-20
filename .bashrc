@@ -19,7 +19,11 @@ command_exists () {
     type "$1" &> /dev/null ;
 }
 
-alias ls='ls --color=auto'
+if command_exists eza; then
+    alias ls="eza --hyperlink --icons --group-directories-first"
+else
+    alias ls='ls --color=auto'
+fi
 alias ll="ls -l"
 alias la="ll -a"
 
