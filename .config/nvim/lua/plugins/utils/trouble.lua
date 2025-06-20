@@ -51,7 +51,8 @@ return {
   },
   specs = {
     {
-      "folke/snacks.nvim",
+      -- "folke/snacks.nvim",
+      "ilya-m32/snacks.nvim",
       opts = function(_, opts)
         return vim.tbl_deep_extend("force", opts or {}, {
           picker = {

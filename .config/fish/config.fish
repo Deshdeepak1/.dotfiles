@@ -70,6 +70,7 @@ alias yta="yt-dlp --downloader aria2c --downloader-args '-c -s 32 -x 16 -k 1M -j
 alias xsc="xclip -sel clipboard"
 alias nsxiv="nsxiv -ab"
 
+export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 export FZF_DEFAULT_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_CTRL_T_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_ALT_C_COMMAND="fd --exclude '.git/' --hidden --type d"

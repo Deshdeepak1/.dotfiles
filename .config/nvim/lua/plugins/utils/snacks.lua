@@ -88,7 +88,8 @@ end
 ---@module "lazy"
 ---@type LazySpec
 return {
-  "folke/snacks.nvim",
+  -- "folke/snacks.nvim",
+  "ilya-m32/snacks.nvim",
   -- cond = false,
   cond = not vim.g.started_by_firenvim,
   priority = 1000,
@@ -160,9 +161,9 @@ return {
     },
     indent = {
       enabled = true,
-      indent = { char = "▏", enabled = true, only_scope = false, only_current = false },
+      indent = { char = "▏", enabled = true, only_scope = false, only_current = false, skip_root_level = true },
       animate = { enabled = false },
-      scope = { char = "▏", enabled = true, only_current = true },
+      scope = { char = "▏", enabled = true, only_current = true, skip_root_level = true },
       chunk = { enabled = false },
       ---@diagnostic disable-next-line: unused-local
       filter = function(buf) return vim.env.USER ~= "deshdeep" and vim.bo[buf].buftype ~= "help" end,
