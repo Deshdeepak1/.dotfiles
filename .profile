@@ -5,7 +5,10 @@ if [ -z "$PROFILESOURCED" ]; then
     export PATH="$HOME/go/bin:$HOME/.local/go/bin:$HOME/.local/bin/:$PATH"
     export MANPATH="$HOME/.local/share/man:"
 
-    [ -r $HOME/.cargo/env ] && source "$HOME/.cargo/env"
+    export RUSTUP_HOME=~/.local/share/rustup
+    export CARGO_HOME=~/.local/share/cargo
+
+    [ -r $CARGO_HOME/env ] && source "$CARGO_HOME/env"
 
     [ -r $HOME/.profile_personal ] && source $HOME/.profile_personal
 fi
