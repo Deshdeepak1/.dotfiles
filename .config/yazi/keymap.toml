@@ -1,2 +1,8 @@
-# keymap.toml
 [mgr]
+prepend_keymap = [
+  { on = ["\\", "t", "p"], run = "plugin toggle-pane min-preview", desc = "Toggle Preview" },
+  { on = ["\\", "t","m"], run = "plugin toggle-pane max-preview", desc = "Max Toggle Preview" },
+
+  { on = ["\\", "d"], run = '''shell --orphan -- dragon-drop -x -T "$@"''', desc = "Drag&Drop" },
+  # { on = ["\\", "l"], run = '''linemode size''', desc = "No Linemode" },
+]

@@ -2,11 +2,42 @@
 [mgr]
 show_hidden = true
 # linemode = "size"
-# [opener]
-# do = [
-#     { run = 'xdg-open "$@"', desc = "Do" },
-# ]
-# [open]
-# append_rules = [
-#     { name = "*", use = "do" },
-# ]
+# sort_by = "size"
+# sort_reverse = true
+
+[opener]
+drag = [
+    { run = 'dragon-drop -x -T "$@"', orphan = true, desc = "Drag&Drop" },
+]
+add-sub = [
+    { run  = ''' echo sub-add "'$0'" | socat - /tmp/mpv.sock ''', desc = "Add sub to MPV"}
+]
+
+[open]
+prepend_rules = [
+    { name = "*.{ass,srt,ssa,sty,sup,vtt}", use = "add-sub" },
+    { mime = "inode/directory", use = "play" },
+    { mime = "*", use = "drag" },
+]
+
+[[plugin.prepend_fetchers]]
+id   = "git"
+name = "*"
+run  = "git"
+
+[[plugin.prepend_fetchers]]
+id   = "git"
+name = "*/"
+run  = "git"
+
+[[plugin.prepend_previewers]]
+name = "*.tar*"
+run  = 'piper --format=url -- tar tf "$1"'
+
+[[plugin.prepend_previewers]]
+name = "*.md"
+run  = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'
+
+[[plugin.prepend_previewers]]
+name = "*.csv"
+run  = 'piper -- mlr --icsv --opprint -C --key-color darkcyan --value-color grey70 cat "$1"'

@@ -1,5 +1,37 @@
-[plugin]
-deps = []
+[[plugin.deps]]
+use = "yazi-rs/plugins:piper"
+rev = "86d28e4"
+hash = "684ef2121ac1e33611355f02b799bd67"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:full-border"
+rev = "86d28e4"
+hash = "3996fc74044bc44144b323686f887e1"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:toggle-pane"
+rev = "86d28e4"
+hash = "d6f60c24d8c0cf57a855bf46115b2502"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:git"
+rev = "86d28e4"
+hash = "e01006bfb38951ea89031bd918b20dbb"
+
+[[plugin.deps]]
+use = "imsi32/yatline"
+rev = "88bd1c5"
+hash = "981acbe9b758b1af3a8154c932bb936d"
+
+[[plugin.deps]]
+use = "imsi32/yatline-catppuccin"
+rev = "8cc4773"
+hash = "fd03fb015a28040bca0c0f9a8fe6fd8d"
+
+[[plugin.deps]]
+use = "imsi32/yatline-githead"
+rev = "f8f969e"
+hash = "4d441b38138ce6492a4e10fa349fd65"
 
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"

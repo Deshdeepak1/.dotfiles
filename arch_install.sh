@@ -89,7 +89,7 @@ pacman --noconfirm -Syy --disable-download-timeout grub os-prober efibootmgr neo
     polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmanager brightnessctl npm \
     proxychains-ng parallel parallel-docs  xdotool jc socat zoxide keyd reflector rofi-calc \
     mitmproxy gnome-keyring xss-lock bc mesa mesa-utils usbutils ffmpegthumbnailer poppler \
-    ueberzugpp kitty clipcat tldr tree-sitter yazi csvlens glow jless
+    ueberzugpp kitty clipcat tldr tree-sitter yazi csvlens glow jless miller mediainfo
 
 # GPU
 # pacman --noconfirm -Syy --disable-download-timeout xf86-video-amdgpu

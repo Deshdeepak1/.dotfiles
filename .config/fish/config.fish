@@ -64,11 +64,12 @@ alias tb="nc termbin.com 9999"
 alias tbc="nc termbin.com 9999 | xclip -selection c"
 alias jqc="jq -C | cat"
 alias octave="octave -q"
-alias dragon="dragon-drop"
+alias dragon="dragon-drop -T"
 alias aria2cc="aria2c -c -s 16 -x 16 -k 1M -j 32  --file-allocation none"
 alias yta="yt-dlp --downloader aria2c --downloader-args '-c -s 32 -x 16 -k 1M -j 32  --file-allocation none'"
 alias xsc="xclip -sel clipboard"
 alias nsxiv="nsxiv -ab"
+alias mlrc="mlr --icsv --opprint -C --key-color darkcyan --value-color grey70 cat"
 
 export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 export FZF_DEFAULT_COMMAND="fd --exclude '.git/' --hidden --type f"
@@ -265,4 +266,6 @@ end
 # export MODULAR_HOME="/home/deshdeepak/.modular"
 # fish_add_path ~/.modular/pkg/packages.modular.com_mojo/bin/
 
-zoxide init fish | source
+if status is-interactive
+    zoxide init fish | source
+end
