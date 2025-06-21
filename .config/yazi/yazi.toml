@@ -10,11 +10,13 @@ drag = [
     { run = 'dragon-drop -x -T "$@"', orphan = true, desc = "Drag&Drop" },
 ]
 add-sub = [
-    { run  = ''' echo sub-add "'$0'" | socat - /tmp/mpv.sock ''', desc = "Add sub to MPV"}
+    { run  = ''' echo sub-add "'$0'" | socat - /tmp/mpv.sock ''', orphan = true, desc = "Add sub to MPV"}
 ]
 
 [open]
 prepend_rules = [
+]
+append_rules = [
     { name = "*.{ass,srt,ssa,sty,sup,vtt}", use = "add-sub" },
     { mime = "inode/directory", use = "play" },
     { mime = "*", use = "drag" },
