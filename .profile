@@ -10,7 +10,7 @@ if [ -z "$PROFILESOURCED" ]; then
 
     [ -r $CARGO_HOME/env ] && source "$CARGO_HOME/env"
 
-    [ -r $HOME/.profile_personal ] && source $HOME/.profile_personal
+    [ -r $HOME/.profile_local ] && source $HOME/.profile_local
 fi
 
 if [ "$BASH" ]; then

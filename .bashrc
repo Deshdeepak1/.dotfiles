@@ -27,7 +27,7 @@ fi
 alias ll="ls -l"
 alias la="ll -a"
 
-[ -r $HOME/.bash_personal ] && source $HOME/.bash_personal
+[ -r $HOME/.bash_local ] && source $HOME/.bash_local
 
 if command_exists bat; then
     alias cat="bat"
@@ -69,5 +69,6 @@ fzf_tmux_float() {
 }
 
 
+PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
 eval "$(zoxide init bash)"
 [[ ! ${BLE_VERSION-} ]] || ble-attach
