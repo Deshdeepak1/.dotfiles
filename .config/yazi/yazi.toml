@@ -43,3 +43,6 @@ run  = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'
 [[plugin.prepend_previewers]]
 name = "*.csv"
 run  = 'piper -- mlr --icsv --opprint -C --key-color darkcyan --value-color grey70 cat "$1"'
+
+[pick]
+open_offset = [ 0, 1, 50, 10 ]
