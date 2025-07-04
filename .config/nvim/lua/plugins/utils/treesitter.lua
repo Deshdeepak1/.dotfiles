@@ -182,7 +182,7 @@ return {
         "gitattributes",
         "gitignore",
       }
-      nvim_ts.install(ensure_installed)
+      if vim.fn.executable("tree-sitter") == 1 then nvim_ts.install(ensure_installed) end
 
       vim.api.nvim_create_autocmd("FileType", {
         group = vim.api.nvim_create_augroup("treesitter.setup", {}),
