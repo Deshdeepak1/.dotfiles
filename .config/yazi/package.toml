@@ -33,6 +33,11 @@ use = "imsi32/yatline-githead"
 rev = "f8f969e"
 hash = "4d441b38138ce6492a4e10fa349fd65"
 
+[[plugin.deps]]
+use = "uhs-robert/sshfs"
+rev = "25e8bb0"
+hash = "6ab2128fbbaa3928caa1dbf997293708"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"
 rev = "d04a298"

@@ -64,3 +64,4 @@ require("yatline"):setup({
 require("yatline-githead"):setup({
   theme = catppuccin_theme,
 })
+require("sshfs"):setup()
