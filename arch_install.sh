@@ -89,7 +89,7 @@ pacman --noconfirm -Syy --disable-download-timeout grub os-prober efibootmgr neo
     polkit-gnome openssh sshfs miniserve rofi amd-ucode upower networkmanager brightnessctl npm \
     proxychains-ng parallel parallel-docs  xdotool jc socat zoxide keyd reflector rofi-calc \
     mitmproxy gnome-keyring xss-lock bc mesa mesa-utils usbutils ffmpegthumbnailer poppler \
-    ueberzugpp kitty greenclip tldr tree-sitter yazi csvlens glow jless miller mediainfo
+    ueberzugpp kitty greenclip tldr tree-sitter yazi csvlens glow jless miller mediainfo pkgfile
 
 # GPU
 # pacman --noconfirm -Syy --disable-download-timeout xf86-video-amdgpu
@@ -98,6 +98,7 @@ pacman --noconfirm -Syy --disable-download-timeout nvidia-prime nvidia-utils nvi
 # If you run into trouble with CUDA not being available, run nvidia-modprobe first.
 
 pacman --noconfirm -Fyy
+pkgfile -u
 
 # Initramfs
 cat > /etc/mkinitcpio.conf <<EOF
@@ -143,7 +144,8 @@ cat > /etc/xdg/reflector/reflector.conf <<EOF
 EOF
 
 # Enable Services
-systemctl enable NetworkManager bluetooth sshd reflector.timer fstrim.timer
+systemctl enable NetworkManager bluetooth sshd reflector.timer fstrim.timer \
+    pkgfile-update.timer
 
 ## Boot Loader
 os-prober

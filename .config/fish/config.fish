@@ -49,12 +49,14 @@ abbr dv "GIT_DIR=~/.dotfiles $EDITOR"
 abbr    fpac    "pacman -Slq | fzf -m --preview 'cat (pacman -Si {1} | psub) (pacman -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro sudo pacman -Sy"
 abbr    fyay    "yay -Slq | fzf -m --preview 'cat (yay -Si {1} | psub) (yay -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro  yay -Sy"
 abbr    fparu   "paru -Slq | fzf -m --preview 'cat (paru -Si {1} | psub) (paru -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro  paru -Sy"
-abbr av ". venv/bin/activate.fish"
+abbr av ". .venv/bin/activate.fish"
 abbr ah ". ~/hvenv/bin/activate.fish"
 # abbr    fdur    "find . -iname \"*.mp4\" -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+ | xargs -I \"{}\" python -c \"t = {} ; h = t//3600; m = (t % 3600)// 60; s = t % 60; ms =(s * 1000) % 1000;  print('%d hours %d minutes %d seconds %d miliseconds' %(h, m, s, ms))\""
 abbr p "sudo pacman -Syu"
 abbr v "$EDITOR"
 abbr n "$EDITOR"
+abbr uvcommit 'git commit -m "Release v$(uv version --short)"'
+abbr uvp 'git push && uv build && uv publish --index gitea dist/*-$(uv version --short)*'
 
 
 # Aliases
@@ -70,12 +72,16 @@ alias yta="yt-dlp --downloader aria2c --downloader-args '-c -s 32 -x 16 -k 1M -j
 alias xsc="xclip -sel clipboard"
 alias nsxiv="nsxiv -ab"
 alias mlrc="mlr --icsv --opprint -C --key-color darkcyan --value-color grey70 cat"
+alias sleeplogs='journalctl -n4 -u sleep.target'
+alias realuptime="python3 -c 'import time,datetime;print(datetime.timedelta(seconds=time.clock_gettime(time.CLOCK_MONOTONIC)))'"
 
 export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 export FZF_DEFAULT_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_CTRL_T_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_ALT_C_COMMAND="fd --exclude '.git/' --hidden --type d"
 set -Ux FZF_DEFAULT_OPTS "--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4"
+
+export UV_ENV_FILE="$HOME/.uv.env"
 
 function y
     set tmp (mktemp -t "yazi-cwd.XXXXXX")
@@ -91,9 +97,9 @@ function venv_act --on-variable PWD --description 'change directory - activate v
     # builtin cd $param $argv
     # Check if we are inside a git directory
     if git rev-parse --show-toplevel &>/dev/null
-        set venvdir "$(realpath (git rev-parse --show-toplevel))/venv"
+        set venvdir "$(realpath (git rev-parse --show-toplevel))/.venv"
     else
-        set venvdir "./venv"
+        set venvdir "./.venv"
     end
 
     set actvate_file "$venvdir/bin/activate.fish"
