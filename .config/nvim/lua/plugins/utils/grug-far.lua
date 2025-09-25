@@ -2,6 +2,7 @@
 ---@type LazySpec
 return {
   "MagicDuck/grug-far.nvim",
+  enabled = false,
   --- Ensure existing keymaps and opts remain unaffected
   config = function(_, opts)
     require("grug-far").setup(opts)

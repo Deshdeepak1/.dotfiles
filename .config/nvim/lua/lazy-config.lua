@@ -25,6 +25,7 @@ if not lazy_st_ok then return end
 --- @type LazyConfig
 local lazy_opts = {
   defaults = { lazy = true },
+  rocks = { enabled = false },
   install = { missing = true, colorscheme = { "catppuccin-frappe", "habamax" } },
   checker = { enabled = false },
   ui = { border = "rounded", title = "Lazy" },
