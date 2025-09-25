@@ -5,8 +5,11 @@ return {
     "catppuccin/nvim",
     lazy = false,
     name = "catppuccin",
+    version = "1.11.0",
     priority = 1000,
     -- cond = false,
+    ---@module "catppuccin"
+    ---@type CatppuccinOptions
     opts = {
       transparent_background = true,
       custom_highlights = function(colors)
@@ -22,7 +25,21 @@ return {
       end,
       integrations = {
         flash = false,
+        native_lsp = {
+          enabled = true,
+          underlines = {
+            errors = { "undercurl" },
+            hints = { "undercurl" },
+            warnings = { "undercurl" },
+            information = { "undercurl" },
+            ok = { "undercurl" },
+          },
+        },
       },
+      -- float = {
+      --   transparent = true,
+      --   solid = false,
+      -- },
     },
     init = function()
       -- https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/palettes/mocha.lua

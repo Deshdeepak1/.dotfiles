@@ -4,10 +4,11 @@ vim.lsp.enable({
   "ruff",
   "clangd",
   "jsonls",
+  "tsserver",
 })
 
 vim.diagnostic.config({
-  underline = false,
+  underline = true,
   -- virtual_lines = {
   --   current_line = true,
   -- },
@@ -43,8 +44,6 @@ end
 
 keymap("n", "<leader>lf", vim.diagnostic.open_float, { desc = "DiagFloat" })
 keymap("n", "<leader>lq", vim.diagnostic.setloclist, { desc = "DiagList" })
-keymap("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, { desc = "DiagPrev" }) -- TODO: Remove: Redundant
-keymap("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, { desc = "DiagNext" }) -- TODO: Remove: Redundant
 keymap("n", "[w", function() vim.diagnostic.jump({ count = -1, severity = "WARN" }) end, { desc = "WarnPrev" })
 keymap("n", "]w", function() vim.diagnostic.jump({ count = 1, severity = "WARN" }) end, { desc = "WarnNext" })
 keymap("n", "[e", function() vim.diagnostic.jump({ count = -1, severity = "ERROR" }) end, { desc = "ErrorPrev" })
@@ -52,13 +51,10 @@ keymap("n", "]e", function() vim.diagnostic.jump({ count = 1, severity = "ERROR"
 
 keymap("n", "gd", vim.lsp.buf.definition, { desc = "Definition" }) -- TODO: Learn C-]
 keymap("n", "gD", vim.lsp.buf.declaration, { desc = "Declaration" })
-keymap("n", "K", vim.lsp.buf.hover, { desc = "Documentation" }) -- TODO: Remove: Redundant
 keymap("n", "gr", vim.lsp.buf.references, { desc = "References" }) -- TODO: Learn grr
-keymap("n", "grn", vim.lsp.buf.rename, { desc = "Rename" }) -- TODO: Remove: Redundant
 keymap("n", "<F2>", vim.lsp.buf.rename, { desc = "Rename" }) -- TODO: Learn grn
-keymap("n", "gI", vim.lsp.buf.implementation, { desc = "Implementation" }) -- TODO: Learn gri
 keymap("n", "<leader>la", vim.lsp.buf.code_action, { desc = "CodeAction" }) -- TODO: Learn gra
-keymap("n", "<leader>lt", vim.lsp.buf.type_definition, { desc = "TypeDef" })
+keymap("n", "<leader>lt", vim.lsp.buf.type_definition, { desc = "TypeDef" }) -- TODO: Learn grt
 keymap("n", "<leader>lF", vim.lsp.buf.format, { desc = "Format" })
 
 keymap("n", "<leader>th", function()
@@ -88,6 +84,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- end
 
     if client.name == "ruff" then client.server_capabilities.hoverProvider = false end
+
+    -- client.server_capabilities.semanticTokensProvider = nil
 
     -- client.server_capabilities.documentFormattingProvider = false
     -- if client.name == "tsserver" then

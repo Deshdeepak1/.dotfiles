@@ -179,8 +179,8 @@ return {
     scroll = { enabled = false },
     statuscolumn = { -- TODO: set statuscolumn
       enabled = false,
-      left = { "fold", "mark", "sign", "git" },
-      right = {},
+      left = { "mark", "sign" },
+      right = { "git", "fold" },
     },
     -- statuscolumn = {
     --   left = { "mark", "sign" }, -- priority of signs on the left (high to low)

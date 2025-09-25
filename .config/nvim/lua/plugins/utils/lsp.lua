@@ -47,6 +47,7 @@ return {
         "ruff",
         "clangd",
         "json-lsp",
+        "typescript-language-server",
 
         -- formatter
         { "stylua", version = "v2.0.2" },

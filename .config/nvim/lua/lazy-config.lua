@@ -26,7 +26,7 @@ if not lazy_st_ok then return end
 local lazy_opts = {
   defaults = { lazy = true },
   rocks = { enabled = false },
-  install = { missing = true, colorscheme = { "catppuccin-frappe", "habamax" } },
+  install = { missing = true, colorscheme = { "catppuccin-mocha", "habamax" } },
   checker = { enabled = false },
   ui = { border = "rounded", title = "Lazy" },
   change_detection = {
