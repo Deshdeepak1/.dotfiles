@@ -75,6 +75,9 @@ function blerc/define-sabbrev-branch {
 }
 blehook/eval-after-load complete blerc/define-sabbrev-branch
 
+ble-sabbrev dotcommit='dotfiles commit -m "Update $(date)"'
+ble-sabbrev dv="GIT_DIR=$DOT_GIT_DIR $EDITOR"
+
 
 # Prompt
 

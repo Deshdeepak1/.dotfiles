@@ -10,10 +10,19 @@ LOCALBASHRCSOURCED="Y"
 
 [[ $- != *i* ]] && return
 
-[ -r $HOME/.local/share/blesh/ble.sh ] && source ~/.local/share/blesh/ble.sh --noattach
-
 export EDITOR="nvim"
 export VISUAL="nvim"
+
+[ -r $HOME/.dotfiles/.git ] && export DOT_GIT_DIR=$HOME/.dotfiles/.git DOT_WORK_TREE=$HOME/.dotfiles
+[ -r $HOME/.dotfiles/config ] && export DOT_GIT_DIR=$HOME/.dotfiles DOT_WORK_TREE=$HOME
+
+if [ -n $DOT_GIT_DIR ];then
+    alias dotfiles="git --git-dir=$DOT_GIT_DIR --work-tree=$DOT_WORK_TREE"
+fi
+
+
+[ -r $HOME/.local/share/blesh/ble.sh ] && source ~/.local/share/blesh/ble.sh --noattach
+
 
 command_exists () {
     type "$1" &> /dev/null ;
@@ -27,7 +36,10 @@ fi
 alias ll="ls -l"
 alias la="ll -a"
 
-[ -r $HOME/.bash_local ] && source $HOME/.bash_local
+backup ()
+{
+    cp -r "$1" "$1.bak"
+}
 
 if command_exists bat; then
     alias cat="bat"
@@ -68,6 +80,7 @@ fzf_tmux_float() {
     --bind='ctrl-/:change-preview-window(down,50%,border-top|hidden|)' "$@"
 }
 
+[ -r $HOME/.bash_local ] && source $HOME/.bash_local
 
 # export PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
 eval "$(zoxide init bash)"

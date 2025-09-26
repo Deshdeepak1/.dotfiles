@@ -131,7 +131,7 @@ end
 # fm6000 -r -m 5 -g 5 -c random
 
 function backup --argument filename
-    cp $filename $filename.bak
+    cp -r $filename $filename.bak
 end
 
 # function fdur
