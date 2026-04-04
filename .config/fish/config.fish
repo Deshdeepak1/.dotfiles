@@ -42,8 +42,13 @@ alias dotfiles="git --git-dir=$HOME/.dotfiles"
 #dotfiles config status.showUntrackedFiles no
 #dotfiles config --local credential.helper cache/store
 #git --git-dir=$HOME/.dotfiles --work-tree=$HOME config --local core.worktree $HOME
-abbr dotcommit 'dotfiles commit -m "Update $(date)"'
-abbr dv "GIT_DIR=~/.dotfiles $EDITOR"
+abbr dotcommit  'dotfiles commit -m "Update $(date)"'
+abbr dotstatus  'dotfiles status'
+abbr dotlog     'dotfiles log'
+abbr dotshow    'dotfiles show'
+abbr dotadd     'dotfiles add'
+abbr dotpush    'dotfiles push'
+abbr dv         "GIT_DIR=~/.dotfiles $EDITOR"
 
 # Abbreviations
 abbr    fpac    "pacman -Slq | fzf -m --preview 'cat (pacman -Si {1} | psub) (pacman -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro sudo pacman -Sy"
