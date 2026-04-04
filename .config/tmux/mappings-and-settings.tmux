@@ -20,6 +20,7 @@ set -g set-titles on
 set -g set-titles-string "tmux #S:#I #W"
 
 set -g mouse on
+bind -n MouseDown1StatusRight choose-tree -Zs
 set -g prefix `
 bind ` send-prefix
 # set -g prefix2 C-b

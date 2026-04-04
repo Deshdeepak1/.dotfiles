@@ -84,4 +84,5 @@ fzf_tmux_float() {
 
 # export PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
 eval "$(zoxide init bash)"
+export PROMPT_COMMAND=
 [[ ! ${BLE_VERSION-} ]] || ble-attach
