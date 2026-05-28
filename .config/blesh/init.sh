@@ -1,5 +1,9 @@
 bleopt complete_auto_delay=100
 
+# Append to HISTFILE after every command so new shells see full history
+function blerc/postexec-history { builtin history -a; }
+blehook POSTEXEC+=blerc/postexec-history
+
 bleopt prompt_eol_mark='⏎'
 
 # Disable error exit marker like "[ble: exit %d]"
@@ -85,9 +89,7 @@ if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
   user_prompt="\g{bold,fg=#f2cdcd}\u\g{none}@\g{bold,fg=navy}\h "
 fi
 
-PS1="\q{my/vim-mode} ${user_prompt}\g{fg=cyan}\w \g{fg=red}❯\g{fg=yellow}❯\g{fg=green}❯\g{none} "
-
 ble-import contrib/prompt-git
 
-error_exit_prompt="\$(EXIT_STATUS=\$? ;if [ \$EXIT_STATUS != 0 ]; then echo '\g{fg=red}✘ '\$EXIT_STATUS; fi)"
-bleopt prompt_rps1="$error_exit_prompt \q{contrib/git-branch}"
+error_exit_prompt="\$(EXIT_STATUS=\$? ;if [ \$EXIT_STATUS != 0 ]; then echo '\g{fg=red}✘ '\$EXIT_STATUS' '; fi)"
+PS1="\q{my/vim-mode} ${user_prompt}\g{fg=cyan}\w \g{none}${error_exit_prompt}\q{contrib/git-branch}\n\g{fg=red}❯\g{fg=yellow}❯\g{fg=green}❯\g{none} "

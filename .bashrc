@@ -14,12 +14,21 @@ export EDITOR="nvim"
 export VISUAL="nvim"
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000
+export HISTCONTROL=ignoredups
+export HISTTIMEFORMAT="%F %T "
+shopt -s histappend cmdhist globstar checkwinsize
 
 [ -r $HOME/.dotfiles/.git ] && export DOT_GIT_DIR=$HOME/.dotfiles/.git DOT_WORK_TREE=$HOME/.dotfiles
 [ -r $HOME/.dotfiles/config ] && export DOT_GIT_DIR=$HOME/.dotfiles DOT_WORK_TREE=$HOME
 
 if [ -n $DOT_GIT_DIR ];then
     alias dotfiles="git --git-dir=$DOT_GIT_DIR --work-tree=$DOT_WORK_TREE"
+    alias dotstatus='dotfiles status'
+    alias dotadd='dotfiles add'
+    alias dotpush='dotfiles push'
+    alias dotpull='dotfiles pull'
+    alias dotshow='dotfiles show'
+    alias dotdiff='dotfiles diff'
 fi
 
 
@@ -37,6 +46,16 @@ else
 fi
 alias ll="ls -l"
 alias la="ll -a"
+
+if ! command_exists vim; then
+    alias vim='nvim'
+    alias vi='nvim'
+fi
+
+alias reload='source ~/.bashrc'
+alias path='echo $PATH | tr ":" "\n"'
+alias ports='ss -tulnp'
+alias myip='curl -s ifconfig.co/json | jq'
 
 backup ()
 {
@@ -87,6 +106,4 @@ fzf_tmux_float() {
 if command_exists zoxide; then
     eval "$(zoxide init bash)"
 fi
-# export PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
-# export PROMPT_COMMAND=
 [[ ! ${BLE_VERSION-} ]] || ble-attach
