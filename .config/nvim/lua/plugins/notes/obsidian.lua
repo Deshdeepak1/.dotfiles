@@ -8,7 +8,7 @@ return {
   {
     "obsidian-nvim/obsidian.nvim",
     -- version = "*", -- recommended, use latest release instead of latest commit
-    -- cond = false,
+    enabled = false,
     -- ft = "markdown",
     cmd = { "Obsidian" },
     keys = {

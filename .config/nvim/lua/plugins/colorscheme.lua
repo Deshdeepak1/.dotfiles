@@ -5,7 +5,8 @@ return {
     "catppuccin/nvim",
     lazy = false,
     name = "catppuccin",
-    version = "1.11.0",
+    -- version = "1.11.0",
+    version = "*",
     priority = 1000,
     -- cond = false,
     ---@module "catppuccin"

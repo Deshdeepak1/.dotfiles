@@ -3,6 +3,7 @@
 return {
   "Tweekism/markdown-preview.nvim",
   -- cond = false,
+  -- enabled = false,
   -- cond = not vim.g.started_by_firenvim,
   cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
   -- event = "VeryLazy",

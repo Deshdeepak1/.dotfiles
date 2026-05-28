@@ -3,8 +3,8 @@
 return {
   {
     "MeanderingProgrammer/render-markdown.nvim",
-    -- enabled = false,
-    cond = false,
+    enabled = false,
+    -- cond = false,
     -- lazy = false,
     event = "VeryLazy",
     dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons

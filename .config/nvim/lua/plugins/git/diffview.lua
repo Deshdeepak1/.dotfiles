@@ -1,7 +1,7 @@
 ---@module "lazy"
 ---@type LazySpec
 return {
-  "sindrets/diffview.nvim",
+  "dlyongemallo/diffview.nvim",
   -- event = "VeryLazy",
   dependencies = {},
   cond = function()

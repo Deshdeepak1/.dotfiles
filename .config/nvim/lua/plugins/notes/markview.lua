@@ -3,8 +3,8 @@
 return {
   {
     "OXY2DEV/markview.nvim",
-    -- enabled = false,
-    cond = false,
+    enabled = false,
+    -- cond = false,
     -- lazy = false,
     event = "VeryLazy",
 

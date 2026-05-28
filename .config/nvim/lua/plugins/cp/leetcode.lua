@@ -4,7 +4,7 @@ local leet_arg = "lc"
 ---@type LazySpec
 return {
   {
-    "BYT0723/leetcode.nvim",
+    "kawre/leetcode.nvim",
     -- cmd = "Leet",
     lazy = leet_arg ~= vim.fn.argv()[1],
     dependencies = {

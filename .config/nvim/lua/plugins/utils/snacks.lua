@@ -88,8 +88,8 @@ end
 ---@module "lazy"
 ---@type LazySpec
 return {
-  -- "folke/snacks.nvim",
-  "ilya-m32/snacks.nvim",
+  "folke/snacks.nvim",
+  -- "ilya-m32/snacks.nvim",
   -- cond = false,
   cond = not vim.g.started_by_firenvim,
   priority = 1000,

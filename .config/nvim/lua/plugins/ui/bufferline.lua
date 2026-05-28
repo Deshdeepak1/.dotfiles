@@ -30,7 +30,7 @@ return {
           reveal = { "close" },
         },
       },
-      highlights = require("catppuccin.groups.integrations.bufferline").get(),
+      -- highlights = require("catppuccin.groups.integrations.bufferline").get(),
       -- highlights = require("catppuccin.special.bufferline").get_theme(),
 
       -- highlights = {
