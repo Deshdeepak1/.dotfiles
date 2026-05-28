@@ -5,6 +5,7 @@ prepend_keymap = [
 
   { on = ["\\", "d"], run = '''shell --orphan -- dragon-drop -x -T "$@"''', desc = "Drag&Drop" },
   # { on = ["\\", "l"], run = '''linemode size''', desc = "No Linemode" },
+  { on = ["\\", "p"], run = '''shell --orphan -- mpv "$@"''', desc = "Play" },
 
   { on = ["M","m"], run = "plugin sshfs -- mount --jump",    desc = "Mount & jump" },
   { on = ["M","u"], run = "plugin sshfs -- unmount",         desc = "Unmount SSHFS" },

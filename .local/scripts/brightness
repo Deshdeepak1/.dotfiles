@@ -1,35 +1,73 @@
 #!/bin/sh
 
-# Increment, decrement, or mute the volume using Pipewire and send a notification
-brightness=$( xrandr --verbose | grep  Brightness | sed "s/.*Brightness: //")
+OUTPUT="${2:-eDP-1}"
 
-case $1 in
+brightness=$(
+    xrandr --verbose |
+    awk -v out="$OUTPUT" '
+        $1 == out { found=1 }
+        found && /Brightness:/ {
+            print $2
+            exit
+        }
+    '
+)
+
+case "$1" in
     up)
-        brightness=$(echo "$brightness + 0.05" | bc)
-        xrandr --output eDP-1 --brightness ${brightness}
-        # Set the volume on (if it was muted)
+        step=$(awk -v b="$brightness" 'BEGIN {
+            if (b >= 1) print 0.1;
+            else print 0.05;
+        }')
+
+        brightness=$(awk -v b="$brightness" -v s="$step" 'BEGIN {
+            b += s;
+
+            if (b > 2)
+                b = 2;
+
+            printf "%.2f", b;
+        }')
         ;;
+
     down)
-        brightness=$(echo "$brightness - 0.05" | bc)
-        xrandr --output eDP-1 --brightness ${brightness}
+        step=$(awk -v b="$brightness" 'BEGIN {
+            if (b > 1) print 0.1;
+            else print 0.05;
+        }')
+
+        brightness=$(awk -v b="$brightness" -v s="$step" 'BEGIN {
+            b -= s;
+
+            if (b < 0)
+                b = 0;
+
+            printf "%.2f", b;
+        }')
         ;;
 esac
 
+xrandr --output "$OUTPUT" --brightness "$brightness"
 
+echo "$brightness"
 
 send_notification() {
-    percentage=$(printf "%.0f" $(echo "$brightness * 100" | bc))
+    percentage=$(awk -v b="$brightness" 'BEGIN {
+        printf "%.0f", b * 100
+    }')
+
     HLCOLOR="#cccccc"
     ICON="brightness-display-symbolic"
-    # ICON="display-brightness-symbolic"
-    # if [ "$1" = "up" ]; then TEXT="$percentage"; else TEXT="${VOLUME}%"; fi
-    TEXT=$percentage
-    # if [ "$1" = "mute" ]; then HLCOLOR="#cccccc"; else HLCOLOR=""; fi
 
-    notify-send -a "Brightness" -r 10002 -h int:value:"$percentage" -h string:hlcolor:"$HLCOLOR" -i "${ICON}" "Brigthness: " "$TEXT" -t 2000
+    notify-send \
+        -a "Brightness" \
+        -r 10002 \
+        -h int:value:"$percentage" \
+        -h string:hlcolor:"$HLCOLOR" \
+        -i "$ICON" \
+        "Brightness" \
+        "${percentage}%" \
+        -t 2000
 }
 
-case $1 in
-    *)
-        send_notification;;
-esac
+send_notification

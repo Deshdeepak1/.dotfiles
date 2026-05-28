@@ -61,7 +61,8 @@ abbr p "sudo pacman -Syu"
 abbr v "$EDITOR"
 abbr n "$EDITOR"
 abbr uvcommit 'git commit -m "Release v$(uv version --short)"'
-abbr uvp 'git push && uv build && uv publish --index gitea dist/*-$(uv version --short)*'
+alias uvpublish 'uv publish --index personal dist/*-$(uv version --short)*'
+abbr uvp 'git push && uv build && uvpublish'
 
 
 # Aliases
