@@ -9,7 +9,7 @@ return {
     lazy = leet_arg ~= vim.fn.argv()[1],
     dependencies = {
       -- "folke/snacks.nvim",
-      "ilya-m32/snacks.nvim",
+      "folke/snacks.nvim",
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
       "nvim-treesitter/nvim-treesitter",

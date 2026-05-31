@@ -48,7 +48,7 @@ return {
       -- Required.
       "nvim-lua/plenary.nvim",
       -- "folke/snacks.nvim",
-      "ilya-m32/snacks.nvim",
+      "folke/snacks.nvim",
       "saghen/blink.cmp",
       "nvim-treesitter/nvim-treesitter",
     },

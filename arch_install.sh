@@ -199,7 +199,8 @@ paru --noconfirm --sudoflags "-S" --sudoloop -S --disable-download-timeout \
 
 ## Paru - Install other packages
 paru --noconfirm --sudoflags "-S" --sudoloop -S --disable-download-timeout \
-    mongodb-compass-bin android-studio rofimoji envycontrol
+    mongodb-compass-bin android-studio rofimoji envycontrol \
+    github-cli github-copilot-cli claude-code claude-code-desktop-win
 
 sudo -S systemctl enable auto-cpufreq
 # luarocks --local --lua-version=5.1 install magick

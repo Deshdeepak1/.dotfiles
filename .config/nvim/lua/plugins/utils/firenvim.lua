@@ -7,6 +7,7 @@ return {
   -- Lazy load firenvim
   -- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
   lazy = not vim.g.started_by_firenvim,
+  model = false,
   build = ":call firenvim#install(0)",
   config = function()
     vim.api.nvim_create_autocmd({ "BufEnter" }, {
@@ -17,7 +18,6 @@ return {
       pattern = { "leetcode.com_*.txt", "www.learning.algozenith.com_*.c" },
       command = "set filetype=cpp",
     })
-    vim.g.firenvim_config.localSettings[".*"] = { takeover = "never" }
     vim.g.firenvim_config = {
       localSettings = {
         [".*"] = {

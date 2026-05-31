@@ -4,7 +4,7 @@ vim.lsp.enable({
   "ruff",
   "clangd",
   "jsonls",
-  "tsserver",
+  "ts_ls",
 })
 
 vim.diagnostic.config({
@@ -88,7 +88,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- client.server_capabilities.semanticTokensProvider = nil
 
     -- client.server_capabilities.documentFormattingProvider = false
-    -- if client.name == "tsserver" then
+    -- if client.name == "ts_ls" then
     --   client.server_capabilities.documentFormattingProvider = false
     -- end
   end,

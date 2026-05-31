@@ -61,7 +61,17 @@ abbr p "sudo pacman -Syu"
 abbr v "$EDITOR"
 abbr n "$EDITOR"
 abbr uvcommit 'git commit -m "Release v$(uv version --short)"'
-alias uvpublish 'uv publish --index personal dist/*-$(uv version --short)*'
+function uvpublish
+    set creds (python3 -c "import netrc, urllib.parse, tomllib; \
+        data = tomllib.load(open('pyproject.toml', 'rb')); \
+        indexes = data.get('tool', {}).get('uv', {}).get('index', []); \
+        url = next(idx['publish-url'] for idx in indexes if 'publish-url' in idx); \
+        host = urllib.parse.urlparse(url).hostname; \
+        auth = netrc.netrc().authenticators(host); \
+        print(auth[0]); print(auth[2])")
+    set ver (uv version --short)
+    uv publish --index personal --username $creds[1] --password $creds[2] dist/*-$ver*
+end
 abbr uvp 'git push && uv build && uvpublish'
 
 

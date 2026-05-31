@@ -8,7 +8,6 @@ return {
   -- cond = false,
   -- cond = not vim.g.started_by_firenvim,
   config = function()
-    local buffer_bg = "#232627"
     local bufferline = require("bufferline")
     bufferline.setup({
       options = {
@@ -30,26 +29,6 @@ return {
           reveal = { "close" },
         },
       },
-      -- highlights = require("catppuccin.groups.integrations.bufferline").get(),
-      -- highlights = require("catppuccin.special.bufferline").get_theme(),
-
-      -- highlights = {
-      --     fill = {
-      --         bg = buffer_bg,
-      --     },
-      --     separator_selected = {
-      --         fg = buffer_bg,
-      --         -- bg = 'black',
-      --     },
-      --     separator = {
-      --         fg = buffer_bg,
-      --         -- bg = 'black',
-      --     },
-      --     separator_visible = {
-      --         fg = buffer_bg,
-      --         -- bg = 'black',
-      --     },
-      -- }
     })
     for i = 1, 9 do
       vim.keymap.set(

@@ -12,6 +12,7 @@ return {
     ---@module "catppuccin"
     ---@type CatppuccinOptions
     opts = {
+      flavour = "mocha",
       transparent_background = true,
       custom_highlights = function(colors)
         return {
@@ -44,7 +45,7 @@ return {
     },
     init = function()
       -- https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/palettes/mocha.lua
-      vim.cmd([[colorscheme catppuccin-mocha]])
+      vim.cmd.colorscheme("catppuccin-nvim")
     end,
   },
   {
