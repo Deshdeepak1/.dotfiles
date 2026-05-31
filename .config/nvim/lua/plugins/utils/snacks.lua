@@ -273,7 +273,7 @@ return {
     { "<leader>H",  function() Snacks.notifier.show_history() end, desc = "Notification History" },
     { "<leader>tn", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
     { "<leader>tz",  function() Snacks.zen.zoom() end, desc = "Toggle Zoom" },
-    { "<C-\\>",      function() Snacks.terminal() end, desc = "Toggle Terminal", mode = {"n", "t"} },
+    { "<C-\\>\\",      function() Snacks.terminal() end, desc = "Toggle Terminal", mode = {"n", "t"} },
     { "<leader>.",  function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
     { "]r",         function() Snacks.words.jump(vim.v.count1) end, desc = "Next Reference", mode = { "n", "t" } },
     { "[r",         function() Snacks.words.jump(-vim.v.count1) end, desc = "Prev Reference", mode = { "n", "t" } },

@@ -55,6 +55,9 @@ return {
         -- DAP
         "codelldb",
         "debugpy",
+
+        -- AI
+        "copilot-language-server",
       },
       integrations = {
         ["mason-lspconfig"] = false,

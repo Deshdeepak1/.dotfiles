@@ -5,6 +5,7 @@ vim.lsp.enable({
   "clangd",
   "jsonls",
   "ts_ls",
+  "copilot", -- TODO: disable by default
 })
 
 vim.diagnostic.config({

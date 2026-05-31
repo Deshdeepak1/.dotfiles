@@ -5,6 +5,7 @@ return {
   { "nvim-lua/plenary.nvim" },
 
   { import = "plugins.utils" },
+  { import = "plugins.ai" },
   { import = "plugins.ui" },
   { import = "plugins.keys" },
   { import = "plugins.git" },

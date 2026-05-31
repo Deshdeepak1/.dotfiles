@@ -5,6 +5,9 @@ return {
     "olimorris/codecompanion.nvim",
     enabled = false,
     -- cond = false,
+    -- NOTE: to enable, set enabled = true. Default adapter is copilot.
+    -- Switch adapter: opts.strategies.chat.adapter = "copilot" | "claude" | "gemini"
+    -- Requires ANTHROPIC_API_KEY / GEMINI_API_KEY env vars for respective adapters.
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
@@ -18,14 +21,20 @@ return {
     },
     opts = {
       adapters = {
-        copilot = function()
-          return require("codecompanion.adapters").extend("copilot", {})
-        end,
+        copilot = function() return require("codecompanion.adapters").extend("copilot", {}) end,
         claude = function()
           return require("codecompanion.adapters").extend("anthropic", {
             env = { api_key = "ANTHROPIC_API_KEY" },
             schema = {
-              model = { default = "claude-sonnet-4-6" },
+              model = { default = "claude-sonnet-4-5" },
+            },
+          })
+        end,
+        gemini = function()
+          return require("codecompanion.adapters").extend("gemini", {
+            env = { api_key = "GEMINI_API_KEY" },
+            schema = {
+              model = { default = "gemini-2.0-flash" },
             },
           })
         end,
