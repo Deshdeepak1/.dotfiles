@@ -5,7 +5,6 @@ vim.lsp.enable({
   "clangd",
   "jsonls",
   "ts_ls",
-  "copilot", -- TODO: disable by default
 })
 
 vim.diagnostic.config({
@@ -32,7 +31,6 @@ vim.diagnostic.config({
   update_in_insert = false,
   severity_sort = true,
   float = {
-    border = "rounded",
     source = "if_many",
     header = "",
   },
@@ -51,11 +49,7 @@ keymap("n", "[e", function() vim.diagnostic.jump({ count = -1, severity = "ERROR
 keymap("n", "]e", function() vim.diagnostic.jump({ count = 1, severity = "ERROR" }) end, { desc = "ErrorNext" })
 
 keymap("n", "gd", vim.lsp.buf.definition, { desc = "Definition" }) -- TODO: Learn C-]
-keymap("n", "gD", vim.lsp.buf.declaration, { desc = "Declaration" })
-keymap("n", "gr", vim.lsp.buf.references, { desc = "References" }) -- TODO: Learn grr
-keymap("n", "<F2>", vim.lsp.buf.rename, { desc = "Rename" }) -- TODO: Learn grn
-keymap("n", "<leader>la", vim.lsp.buf.code_action, { desc = "CodeAction" }) -- TODO: Learn gra
-keymap("n", "<leader>lt", vim.lsp.buf.type_definition, { desc = "TypeDef" }) -- TODO: Learn grt
+
 keymap("n", "<leader>lF", vim.lsp.buf.format, { desc = "Format" })
 
 keymap("n", "<leader>th", function()

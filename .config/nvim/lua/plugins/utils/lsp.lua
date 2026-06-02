@@ -55,9 +55,6 @@ return {
         -- DAP
         "codelldb",
         "debugpy",
-
-        -- AI
-        "copilot-language-server",
       },
       integrations = {
         ["mason-lspconfig"] = false,
@@ -73,7 +70,6 @@ return {
     -- lazy = false,
     -- cond = false,
     ft = { "python", "lua", "cpp", "html", "css", "javascript", "typescript", "kotlin", "glsl", "markdown" },
-    cmd = { "LspInfo", "LspStart", "LspInstall", "LspRestart" },
     dependencies = {
       "mason-org/mason.nvim",
       -- "WhoIsSethDaniel/mason-tool-installer.nvim",

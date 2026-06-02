@@ -89,7 +89,6 @@ end
 ---@type LazySpec
 return {
   "folke/snacks.nvim",
-  -- "ilya-m32/snacks.nvim",
   -- cond = false,
   cond = not vim.g.started_by_firenvim,
   priority = 1000,
@@ -160,7 +159,7 @@ return {
       force = false,
     },
     indent = {
-      enabled = true,
+      enabled = false,
       indent = { char = "▏", enabled = true, only_scope = false, only_current = false, skip_root_level = true },
       animate = { enabled = false },
       scope = { char = "▏", enabled = true, only_current = true, skip_root_level = true },

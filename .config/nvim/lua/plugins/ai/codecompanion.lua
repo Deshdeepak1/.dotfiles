@@ -3,11 +3,8 @@
 return {
   {
     "olimorris/codecompanion.nvim",
-    enabled = false,
+    enabled = vim.env.AI_CODECOMPANION == "1",
     -- cond = false,
-    -- NOTE: to enable, set enabled = true. Default adapter is copilot.
-    -- Switch adapter: opts.strategies.chat.adapter = "copilot" | "claude" | "gemini"
-    -- Requires ANTHROPIC_API_KEY / GEMINI_API_KEY env vars for respective adapters.
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
@@ -21,28 +18,28 @@ return {
     },
     opts = {
       adapters = {
-        copilot = function() return require("codecompanion.adapters").extend("copilot", {}) end,
+        copilot = function()
+          return require("codecompanion.adapters").extend("copilot", {})
+        end,
         claude = function()
-          return require("codecompanion.adapters").extend("anthropic", {
-            env = { api_key = "ANTHROPIC_API_KEY" },
+          return require("codecompanion.adapters").extend("copilot", {
             schema = {
               model = { default = "claude-sonnet-4-5" },
             },
           })
         end,
-        gemini = function()
-          return require("codecompanion.adapters").extend("gemini", {
-            env = { api_key = "GEMINI_API_KEY" },
+        antigravity = function()
+          return require("codecompanion.adapters").extend("copilot", {
             schema = {
-              model = { default = "gemini-2.0-flash" },
+              model = { default = "gemini-2.0-flash-001" },
             },
           })
         end,
       },
       strategies = {
-        chat = { adapter = "copilot" },
-        inline = { adapter = "copilot" },
-        agent = { adapter = "copilot" },
+        chat = { adapter = vim.env.AI_AGENT or "copilot" },
+        inline = { adapter = vim.env.AI_AGENT or "copilot" },
+        agent = { adapter = vim.env.AI_AGENT or "copilot" },
       },
     },
   },

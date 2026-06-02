@@ -14,7 +14,7 @@ return {
       "<leader>F",
       function() require("conform").format({ async = true }) end,
       mode = "",
-      desc = "Confirm Format",
+      desc = "Conform Format",
     },
     {
       "<leader>tf",

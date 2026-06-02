@@ -9,6 +9,16 @@ return {
     version = "*",
     priority = 1000,
     -- cond = false,
+    dependencies = {
+      {
+        "saghen/blink.indent",
+        --- @module 'blink.indent'
+        --- @type blink.indent.Config
+        opts = {
+          scope = { enabled = false },
+        },
+      },
+    },
     ---@module "catppuccin"
     ---@type CatppuccinOptions
     opts = {
@@ -25,18 +35,17 @@ return {
           -- DiagnosticUnderlineError = { gui = "undercurl" },
         }
       end,
+      lsp_styles = {
+        underlines = {
+          errors = { "undercurl" },
+          hints = { "undercurl" },
+          warnings = { "undercurl" },
+          information = { "undercurl" },
+          ok = { "undercurl" },
+        },
+      },
       integrations = {
         flash = false,
-        native_lsp = {
-          enabled = true,
-          underlines = {
-            errors = { "undercurl" },
-            hints = { "undercurl" },
-            warnings = { "undercurl" },
-            information = { "undercurl" },
-            ok = { "undercurl" },
-          },
-        },
       },
       -- float = {
       --   transparent = true,
