@@ -1,5 +1,25 @@
 ---@module "lazy"
 ---@type LazySpec
+
+-- Fast glibc minor version detection via libuv readlink (no shell spawn, ~1-3 µs).
+-- Returns nil on non-glibc systems (macOS, musl/Alpine).
+local function glibc_minor()
+  local paths = {
+    "/lib64/libc.so.6",                  -- RHEL / Fedora / CentOS
+    "/lib/x86_64-linux-gnu/libc.so.6",  -- Debian / Ubuntu x86_64
+    "/lib/aarch64-linux-gnu/libc.so.6", -- Debian / Ubuntu ARM64
+    "/usr/lib/libc.so.6",               -- Arch Linux
+    "/lib/libc.so.6",                   -- generic fallback
+  }
+  for _, p in ipairs(paths) do
+    local link = vim.uv.fs_readlink(p)
+    if link then
+      local v = tonumber(link:match("libc%-2%.(%d+)%.so"))
+      if v then return v end
+    end
+  end
+end
+
 return {
   {
     "mason-org/mason.nvim",
@@ -18,6 +38,9 @@ return {
           package_pending = "➜",
           package_uninstalled = "✗",
         },
+      },
+      pip = {
+        upgrade_pip = true,
       },
     },
   },
@@ -50,7 +73,7 @@ return {
         "typescript-language-server",
 
         -- formatter
-        { "stylua", version = "v2.0.2" },
+        { "stylua", version = (glibc_minor() or 99) < 30 and "v2.0.2" or nil },
 
         -- DAP
         "codelldb",
