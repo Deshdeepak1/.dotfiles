@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.freedesktop.FileManager1
+#EXEC=/bin/false
+Exec=/bin/sh -c 'exec "$HOME/.local/scripts/yazi-fm1"'

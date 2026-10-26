@@ -1,0 +1,17 @@
+id = "local/qr"
+name = "QR"
+version = "1.0.0"
+plugin_api = 34
+author = "local"
+license = "MIT"
+icon = "qrcode"
+description = "QR code of the text passed to panel-open"
+dependencies = ["qrencode"]
+
+[[panel]]
+id = "panel"
+entry = "panel.luau"
+width = 440
+height = 500
+placement = "floating"
+position = "center"

@@ -2,7 +2,7 @@
 ---@type LazySpec
 return {
   {
-    "echasnovski/mini.splitjoin", -- TODO: Learn gS
+    "nvim-mini/mini.splitjoin", -- TODO: Learn gS
     -- cond = false,
     version = "*",
     keys = { "gS" },

@@ -1,0 +1,68 @@
+#!/bin/bash
+# Fix Bluetooth after Windows dual-boot: stale link-key mismatch or a stuck adapter.
+# Designed to be launched from a rofi run-menu (no terminal attached).
+set -e
+
+notify() {
+    notify-send "Bluetooth" "$1"
+}
+
+mac="$1"
+
+if [ -z "$mac" ]; then
+    bluetoothctl scan --timeout 5 >/dev/null 2>&1
+    sel=$(bluetoothctl devices | rofi -dmenu -p "Bluetooth device")
+    if [ -z "$sel" ]; then
+        notify "No device selected."
+        exit 1
+    fi
+    mac=$(echo "$sel" | awk '{print $2}')
+fi
+
+keyfix() {
+    notify "Stale link key detected. Removing pairing..."
+    bluetoothctl remove "$mac" >/dev/null 2>&1
+    echo -e "Ready - device is in pairing mode\nCancel" | rofi -dmenu -p "Put device in pairing mode, then select" | grep -q "^Ready" || { notify "Cancelled."; exit 1; }
+    bluetoothctl scan --timeout 5 >/dev/null 2>&1
+    if bluetoothctl pair "$mac" && bluetoothctl trust "$mac" && bluetoothctl connect "$mac"; then
+        notify "Re-paired and connected."
+    else
+        notify "Re-pair failed."
+        exit 1
+    fi
+}
+
+notify "Trying to connect to $mac..."
+out=$(bluetoothctl connect "$mac" 2>&1)
+
+if echo "$out" | grep -q "Connection successful"; then
+    notify "Connected."
+    exit 0
+fi
+
+if echo "$out" | grep -q "key-missing"; then
+    keyfix
+    exit
+fi
+
+notify "Connect failed. Restarting Bluetooth adapter..."
+bluetoothctl power off
+pkexec systemctl restart bluetooth
+sleep 2
+bluetoothctl power on
+sleep 1
+
+out2=$(bluetoothctl connect "$mac" 2>&1)
+
+if echo "$out2" | grep -q "Connection successful"; then
+    notify "Connected after adapter restart."
+    exit 0
+fi
+
+if echo "$out2" | grep -q "key-missing"; then
+    keyfix
+    exit
+fi
+
+notify "Still failing: $out2"
+exit 1

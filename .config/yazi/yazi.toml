@@ -17,32 +17,32 @@ add-sub = [
 prepend_rules = [
 ]
 append_rules = [
-    { name = "*.{ass,srt,ssa,sty,sup,vtt}", use = "add-sub" },
+    { url = "*.{ass,srt,ssa,sty,sup,vtt}", use = "add-sub" },
     { mime = "inode/directory", use = "play" },
     { mime = "*", use = "drag" },
 ]
 
 [[plugin.prepend_fetchers]]
-id   = "git"
-name = "*"
-run  = "git"
+url   = "*"
+run   = "git"
+group = "git"
 
 [[plugin.prepend_fetchers]]
-id   = "git"
-name = "*/"
-run  = "git"
+url   = "*/"
+run   = "git"
+group = "git"
 
 [[plugin.prepend_previewers]]
-name = "*.tar*"
-run  = 'piper --format=url -- tar tf "$1"'
+url = "*.tar*"
+run = 'piper --format=url -- tar tf "$1"'
 
 [[plugin.prepend_previewers]]
-name = "*.md"
-run  = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'
+url = "*.md"
+run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'
 
 # [[plugin.prepend_previewers]]
-# name = "*.csv"
-# run  = 'piper -- mlr --icsv --opprint -C --key-color darkcyan --value-color grey70 cat "$1"'
+# url = "*.csv"
+# run = 'piper -- mlr --icsv --opprint -C --key-color darkcyan --value-color grey70 cat "$1"'
 
 [pick]
 open_offset = [ 0, 1, 50, 10 ]

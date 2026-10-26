@@ -1,0 +1,34 @@
+# secrets / identity
+.ssh
+.gnupg
+.local/share/keyrings
+.config/gh
+
+# history
+.local/share/fish/fish_history
+.local/share/zoxide
+
+# data
+labs
+notes
+Documents
+my_files
+Pictures
+Videos
+Downloads
+AnkushSirAIMaterials
+AndroidStudioProjects
+az
+backup
+temp
+Desktop
+
+# app state worth not re-logging into
+.config/BraveSoftware
+.local/share/materialgram
+.claude
+.claude.json
+.codex
+.mitmproxy
+.ipython
+.face

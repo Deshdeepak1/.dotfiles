@@ -1,0 +1,9 @@
+[Unit]
+Description=proxychains-ng remote DNS daemon
+
+[Service]
+ExecStart=/usr/bin/proxychains4-daemon 127.0.0.1:1053
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

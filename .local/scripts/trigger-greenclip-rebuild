@@ -1,0 +1,11 @@
+#!/bin/bash
+# Referenced directly by Exec= in ~/.config/pacman/hooks/rebuild-greenclip.hook
+# (symlinked into /etc/pacman.d/hooks/). Called by pacman (as root) via that
+# hook's PostTransaction action.
+# Detaches into deshdeepak's session so it survives past the end of this
+# pacman transaction (the alpm db lock is still held by the parent pacman
+# process for the hook's duration, so anything that itself calls
+# pacman/yay must run after this hook -- and this process -- have exited).
+runuser -u deshdeepak -- setsid /home/deshdeepak/.local/scripts/rebuild-greenclip.sh </dev/null >/tmp/greenclip-rebuild-hook.log 2>&1 &
+disown
+exit 0

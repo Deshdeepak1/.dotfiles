@@ -1,0 +1,16 @@
+id = "local/train"
+name = "Train"
+version = "1.0.0"
+plugin_api = 34
+author = "local"
+license = "MIT"
+icon = "train"
+description = "Indian Railways lookup with the train script"
+
+[[panel]]
+id = "panel"
+entry = "panel.luau"
+width = 1000
+height = 700
+placement = "floating"
+position = "center"

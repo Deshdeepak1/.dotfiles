@@ -2,7 +2,8 @@ if [ -z "$PROFILESOURCED" ]; then
     export PROFILESOURCED="Y"
     # echo PROFILESOURCED
 
-    export PATH="$HOME/go/bin:$HOME/.local/go/bin:$HOME/.local/bin/:$PATH"
+    export PATH="$HOME/.local/scripts:$HOME/.config/nsxiv/scripts:$HOME/.config/emacs/bin:$HOME/go/bin:$HOME/.local/go/bin:$HOME/.local/bin:$PATH"
+    export PYTHONPATH="$HOME/.local/mypyprogs${PYTHONPATH:+:$PYTHONPATH}"
     export MANPATH="$HOME/.local/share/man:"
 
     export RUSTUP_HOME=~/.local/share/rustup

@@ -9,6 +9,11 @@ if-shell 'test -z "$TERMUX_VERSION"' {
 }
 set -ga terminal-features ",$TERM:RGB"
 
+# Extended keys (lets apps tell Shift+Enter, Ctrl+Enter etc. apart from Enter)
+set -g extended-keys on
+set -g extended-keys-format csi-u
+set -ga terminal-features ",$TERM:extkeys"
+
 
 if-shell 'test "$WIN_TERMINAL" = "ms-terminal"' {
     set -sg escape-time 100 # Fix windows terminal pushing escape sequences

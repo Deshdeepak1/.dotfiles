@@ -125,9 +125,9 @@ keys = [
         [mod],
         "p",
         [
-            Key([], "m", lazy.spawn("fish -c 'cp -r /home/deshdeepak/temp/1/main.py (xclip -selection clipboard -o)'"), desc=""),
-            Key([], "g", lazy.spawn("fish -c 'cp -r /home/deshdeepak/temp/1/getntp.py (xclip -selection clipboard -o)'"), desc=""),
-            Key([], "a", lazy.spawn("fish -c 'cp -r /home/deshdeepak/temp/1/* (xclip -selection clipboard -o)'"), desc=""),
+            Key([], "m", lazy.spawn("fish -c 'cp -r ~/temp/1/main.py (xclip -selection clipboard -o)'"), desc=""),
+            Key([], "g", lazy.spawn("fish -c 'cp -r ~/temp/1/getntp.py (xclip -selection clipboard -o)'"), desc=""),
+            Key([], "a", lazy.spawn("fish -c 'cp -r ~/temp/1/* (xclip -selection clipboard -o)'"), desc=""),
         ],
     ),
     KeyChord(
@@ -147,6 +147,7 @@ keys = [
     Key([mod, "shift"], "w", lazy.spawn("networkmanager_dmenu"), desc="Wifi Menu"),
     Key([mod, "control"], "b", lazy.spawn("battery-notify"), desc="Battery"),
     Key([mod, "control"], "p", lazy.spawn("pnr"), desc="PNR"),
+    Key([mod, "shift"], "p", lazy.spawn("display-switch"), desc="Display mode switcher"),
     ## Applications
     Key([mod], "b", lazy.spawn("brave"), desc="Brave"),
     Key([mod, "shift"], "b", lazy.spawn("brave --incognito"), desc="Launch brave(incognito)"),
@@ -288,6 +289,31 @@ def autostart():
     # subprocess.Popen([home])
     # notify_send("hi")
     check_battery()
+
+
+_last_screen_count = None
+
+
+@hook.subscribe.screen_change
+def screen_change(event):
+    global _last_screen_count
+    # qtile fires a synthetic screen_change(None) on every startup/restart
+    # (backend/x11/core.py) just to trigger the initial screen setup - it
+    # is not a real display event. Reacting to it by restarting re-enters
+    # startup and deadlocks. Only react to real RandR events.
+    if event is None:
+        return
+
+    # reconfigure_screens() is already subscribed internally and runs
+    # before this fires. It alone doesn't tear down a bar when the screen
+    # count decreases (e.g. extend -> single screen), leaving a stale bar,
+    # so only pay for a full restart when that actually happens.
+    count = len(qtile.screens)
+    if _last_screen_count is not None and count < _last_screen_count:
+        _last_screen_count = count
+        qtile.restart()
+    else:
+        _last_screen_count = count
 
 
 layout_defaults = {

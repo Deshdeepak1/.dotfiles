@@ -1,0 +1,59 @@
+#!/bin/sh
+# Noctalia when running and it provides the mode, rofi otherwise; -r or OMNIMENU_ROFI=1 forces rofi
+if [ "$1" = "-r" ]; then OMNIMENU_ROFI=1; shift; fi
+mode=${1:-launcher}
+
+train_menu() {
+    menu=$1; shift
+    # use the given query, or let the user pick one from history
+    query=${*:-$(train --history | $menu)}
+    case $query in
+        # cancelled
+        "") exit ;;
+        # options for train itself, e.g. -w
+        -*) exec train $query ;;
+        # between stations: let the user choose one of the trains found
+        [!0-9]*" "*)
+            # if the search fails, show the error as a notification
+            trains=$(train $query 2>/dev/null) || exec train -n $query
+            # choose a train from the list (skip title and header), keep its number
+            trainNum=$(echo "$trains" | tail -n +3 | $menu | cut -d' ' -f1)
+            # cancelled
+            [ -n "$trainNum" ] || exit
+            # show the chosen train's route
+            query=$trainNum
+            ;;
+    esac
+    # PNR, train route or running status
+    exec train -n $query
+}
+
+if [ -z "$OMNIMENU_ROFI" ] && pgrep -x noctalia >/dev/null; then
+    case "$mode" in
+        launcher)  exec noctalia msg panel-toggle launcher ;;
+        window)    exec noctalia msg panel-toggle launcher "/win " ;;
+        ssh)       exec noctalia msg panel-toggle launcher "/ssh " ;;
+        emoji)     exec noctalia msg panel-toggle launcher "/emo " ;;
+        calc)      exec noctalia msg panel-toggle launcher "/calc " ;;
+        clipboard) exec noctalia msg panel-toggle clipboard ;;
+        session)   exec noctalia msg panel-toggle session ;;
+        lock)      exec noctalia msg session lock ;;
+        wifi)      exec noctalia msg panel-toggle control-center network ;;
+        bluetooth) exec noctalia msg panel-toggle control-center bluetooth ;;
+        train)     shift; train_menu "noctalia dmenu -p Train" "$@" ;;
+    esac
+fi
+
+case "$mode" in
+    launcher)  exec rofi -show drun -modi drun,run,window,ssh -show-icons ;;
+    run)       exec rofi -theme dmenu -show run -show-icons -display-run 'Run: ' ;;
+    window)    exec rofi -show window -show-icons ;;
+    ssh)       exec rofi -show ssh ;;
+    files)     exec rofi -show filebrowser -show-icons ;;
+    emoji)     exec rofimoji ;;
+    calc)      exec rofi -show calc -modi calc -no-show-match -no-sort ;;
+    session)   exec rofi -modi power_menu:rofi-power-menu -show power_menu ;;
+    wifi)      exec networkmanager_dmenu ;;
+    bluetooth) exec rofi-bluetooth ;;
+    train)     shift; train_menu "rofi -dmenu -i -p Train" "$@" ;;
+esac

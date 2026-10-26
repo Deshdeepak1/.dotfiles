@@ -26,3 +26,12 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   pattern = { "*.vs", "*.fs" },
   command = "set filetype=glsl",
 })
+
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "BufEnter" }, {
+  desc = "Fugitive: fall back to dotfiles bare repo",
+  callback = function(ev)
+    if (vim.b[ev.buf].git_dir or "") == "" and not vim.fs.root(ev.buf, ".git") then
+      vim.b[ev.buf].git_dir = vim.env.HOME .. "/.dotfiles"
+    end
+  end,
+})

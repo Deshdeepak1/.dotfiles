@@ -1,0 +1,1236 @@
+#!/bin/python
+"""Indian Railways lookup.
+
+train PNR                       PNR status (10 digits)
+train NAME                      trains with NAME in their name, e.g. train rajdhani
+train TRAIN                     route (5 digits)
+train TRAIN live [DATE]         running status: current run, or the one starting on DATE
+train TRAIN coaches             coach order
+train TRAIN fare [FROM TO]      fares per class, for the whole route or FROM to TO
+train TRAIN seats FROM TO CLASS [DATE] [QUOTA]
+                                seat availability in CLASS (e.g. 3A) over 14 days from DATE, default today;
+                                QUOTA: GN (default) TQ PT LD DF FT SS YU DP HP PH
+train TRAIN history [PERIOD]    delays at each stop over 1w, 1m, 3m, 6m or 1y; default 1m
+train TRAIN alerts              cancellations, diversions and reschedules of coming runs
+train TRAIN map                 stops with their coordinates
+train STATION live              trains due at a station around now, with delays
+train STATION all [DATE]        every train at a station, running on DATE if given
+train FROM TO [DATE]            trains between stations, running on DATE if given;
+                                codes or names, quote multi-word: train patna "new delhi"
+train FROM TO via [PAGE]        stations to change trains at, nearest first
+train list TYPE [PAGE]          trains of a type: RAJ SHT JSHT DUR GRB SF EXP PASS PRM T18 HMS
+
+DATE is DD-MM[-YY]. Each lookup tries its providers in turn until one answers.
+"""
+
+import argparse
+import csv
+import html
+import json
+import re
+import shlex
+import subprocess
+import sys
+import time
+from collections import Counter
+from dataclasses import dataclass, field
+from datetime import date, datetime
+from functools import cached_property
+from pathlib import Path
+from types import SimpleNamespace
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import HTTPCookieProcessor, Request, build_opener
+
+CACHE = Path.home() / ".cache/train"
+HISTORY, WATCH, STATIONS = CACHE / "history", CACHE / "watch", CACHE / "stations"
+ICON = Path.home() / ".local/share/icons/train-ticket.png"
+DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+CLASSES = ["1A", "2A", "3A", "CC", "FC", "SL", "2S", "3E", "GN", "EA", "EC", "EV", "VC", "VS"]
+QUOTAS = ["GN", "TQ", "PT", "LD", "DF", "FT", "SS", "YU", "DP", "HP", "PH"]
+PNR, TRAIN, DATE = re.compile(r"\d{10}"), re.compile(r"\d{5}"), re.compile(r"(\d{1,2})-(\d{1,2})(?:-(\d{2,4}))?")
+
+WEB = build_opener(HTTPCookieProcessor())
+WEB.addheaders = [("User-Agent", "Mozilla/5.0")]
+
+
+@dataclass
+class Result:
+    title: str
+    columns: list = field(default_factory=list)
+    rows: list = field(default_factory=list)
+    notes: list = field(default_factory=list)
+    detail: tuple = ()  # columns shown only with -v
+    until: date | None = None  # PNR: last journey day, watching stops after it
+    provider: str = ""  # the provider that answered
+
+
+# columns whose cells name a train or station, for the panel to open
+LINKS = {"No": "train", "Train": "train", "Code": "station"}
+
+
+# Helpers
+
+
+def fetch(url, data=None, **headers):
+    """GET url, or POST data, in the shared cookie session; return the body as text."""
+    with WEB.open(Request(url, data, headers), timeout=30) as response:
+        return response.read().decode()
+
+
+def strip_tags(markup):
+    """Plain text of an HTML fragment, whitespace collapsed."""
+    text = html.unescape(re.sub(r"<[^>]+>", " ", markup))
+    return " ".join(text.split())
+
+
+def table_rows(table):
+    """Cells of each row of an HTML table, as markup."""
+    return [re.split(r"<t[dh][^>]*>", row)[1:] for row in re.split(r"<tr[^>]*>", table)[1:]]
+
+
+def parse_date(text):
+    """DD-MM[-YY] → date; the year defaults to the current one."""
+    day, month, year = DATE.fullmatch(text).groups()
+    year = int(year) % 100 + 2000 if year else date.today().year
+    return date(year, int(month), int(day))
+
+
+def erail_time(hhmm):
+    """erail's HH.MM → HH:MM."""
+    return hhmm.replace(".", ":")
+
+
+def train_type(train):
+    """Category of an erail train, e.g. Superfast."""
+    return train.type.replace("_", " ").title()
+
+
+def run_days(bits):
+    """Weekday bitmask, Monday first → "daily" or day names."""
+    if bits == "1111111":
+        return "daily"
+    return " ".join(day for day, runs in zip(DAYS, bits) if runs == "1")
+
+
+def flag(bit, label="yes"):
+    """label if bit is "1", else empty."""
+    return label if bit == "1" else ""
+
+
+def class_fares(train):
+    """Adult fare of each class the train has, "?" when unknown."""
+    # a ":"-separated fare group per class in CLASSES order, after two leading fields; the adult fare comes first
+    adult = [group.split(",")[0].lstrip("0") or "?" for group in train.fares.split(":")[2:]]
+    adult += [""] * (len(CLASSES) - len(adult))
+    return {cls: fare for cls, bit, fare in zip(CLASSES, train.classes, adult) if bit == "1"}
+
+
+def coach_order(name, rows, *notes):
+    """Result of coach rows (position, coach, class), summed up as the order and the count per class."""
+    per_class = Counter(cls for _, _, cls in rows)
+    order = " ".join(code for _, code, _ in rows)
+    counts = " · ".join(f"{cls} {per_class[cls]}" for cls in CLASSES if cls in per_class)
+    columns = ["Pos", "Coach", "Class"]
+    # the table only with -v; the notes say it all
+    return Result(f"{name} · coaches", columns, rows, [order, counts, *notes], detail=tuple(columns))
+
+
+def ends(times):
+    """A time, blank for a route's ends: "Source"/"Destination", "SRC"/"DSTN" or erail's "First"/"Last"."""
+    return "" if times in ("Source", "Destination", "SRC", "DSTN", "First", "Last") else times
+
+
+def week_days(days):
+    """railradar's run days, e.g. ["mon", "wed"] → "daily" or day names."""
+    return run_days("".join("1" if day.lower() in days else "0" for day in DAYS))
+
+
+def clock(stamp):
+    """HH:MM of an ISO time, empty for none."""
+    return stamp[11:16] if stamp else ""
+
+
+def late(minutes):
+    """Delay in minutes → "on time", "+1h41m", "+12m"; early counts as on time."""
+    if minutes is None:
+        return ""
+    if minutes <= 0:
+        return "on time"
+    return f"+{minutes // 60}h{minutes % 60:02}m" if minutes >= 60 else f"+{minutes}m"
+
+
+def stop_times(times):
+    """Scheduled and actual time from an Ntes.TIMES match; * marks an actual time that is only expected."""
+    if not times:
+        return "", ""
+    actual = times["actual"] or ""
+    if actual and times["actual_date"].endswith("*"):
+        actual += "*"
+    return times["scheduled"], actual
+
+
+def format_delay(delay):
+    """NTES delay ("On Time", "01:41 Hr", "00:01", "12 Min") → "on time", "+1h41m", "+1m", "+12m"; "--" for none."""
+    if not delay or delay == "--":
+        return ""
+    if delay == "On Time":
+        return "on time"
+    hours, _, minutes = delay.split()[0].rpartition(":")
+    return late(int(hours or 0) * 60 + int(minutes))
+
+
+def notice(message):
+    """An exception notice without its brackets, e.g. "[Train is Cancelled]" → "Train is Cancelled"."""
+    return " ".join(message.strip("[]").split())
+
+
+# Providers: each method named after a service answers it; SERVICES says which are tried, in what order.
+
+
+# positions of the fields used in erail's "~"-separated records
+# fmt: off
+ERAIL_TRAIN = {
+    "number": 0, "name": 1, "src": 7, "dst": 9, "departs": 10, "arrives": 11, "duration": 12, "days": 13,
+    "classes": 21, "lhb": 24, "type": 32, "id": 33, "pantry": 35, "speed": 40, "fares": 41, "rake": 59,
+    "src_pf": 69, "dst_pf": 70,
+}
+ERAIL_STOP = {
+    "code": 1, "name": 2, "arrives": 3, "departs": 4, "halt": 5, "km": 6, "day": 7, "pf": 8, "zone": 10,
+    "division": 11,
+}
+# fmt: on
+
+
+class Erail:
+    """erail.in: stations, routes, trains between stations, fares, coach order, station live"""
+
+    URL = "https://erail.in/"
+
+    def get(self, path, fields, **params):
+        """Records of an erail endpoint, each with the named fields; raise erail's error if it gives one."""
+        params |= {"DataSource": 0, "Language": 0, "Cache": "true"}
+        # "^"-separated records; the first is a header whose sixth field holds any error
+        header, *records = fetch(f"{self.URL}{path}?{urlencode(params)}").split("^")
+        error = (header.split("~") + [""] * 6)[5]
+        if error:
+            raise LookupError(error.split("<")[0])
+        values = [record.split("~") for record in records]
+        return [SimpleNamespace(**{name: record[i] for name, i in fields.items()}) for record in values]
+
+    def train_info(self, train_no):
+        """erail record of a train."""
+        return self.get("rail/getTrains.aspx", ERAIL_TRAIN, TrainNo=train_no)[0]
+
+    def stations(self):
+        """Code → name of every station."""
+        # one quoted string of "code,name" pairs, after two leading fields
+        items = fetch(self.URL + "js/cmp/stations.js").split('"')[1].split(",")[2:]
+        return dict(zip(items[::2], items[1::2]))
+
+    def route(self, train_no):
+        """Stops of a train with times, distance and platforms."""
+        train = self.train_info(train_no)
+        stops = self.get("data.aspx", ERAIL_STOP, Action="TRAINROUTE", Password=2012, Data1=train.id, Data2=0)
+        features = [flag(train.lhb, "LHB"), flag(train.pantry, "pantry")]
+        about = [train_type(train), run_days(train.days), f"{train.speed} km/h", *features]
+        # fmt: off
+        rows = [
+            [stop.code, stop.name, ends(erail_time(stop.arrives)), ends(erail_time(stop.departs)), stop.day, stop.km,
+             stop.halt, stop.pf, stop.zone, stop.division]
+            for stop in stops
+        ]
+        # fmt: on
+        return Result(
+            f"{train.name} ({train_no})",
+            ["Code", "Station", "Arr", "Dep", "Day", "Km", "Halt", "PF", "Zone", "Division"],
+            rows,
+            notes=[" · ".join(filter(None, about))],
+            detail=("Halt", "PF", "Zone", "Division"),
+        )
+
+    def between(self, src, dst, day=None):
+        """Trains from src to dst, running on day if given, with fares per class."""
+        trains = self.get("rail/getTrains.aspx", ERAIL_TRAIN, Station_From=src, Station_To=dst)
+        if day:
+            trains = [train for train in trains if train.days[day.weekday()] == "1"]
+        if not trains:
+            raise LookupError("No trains found")
+        fares = [class_fares(train) for train in trains]
+        # a fare column only for the classes some train has
+        classes = [cls for cls in CLASSES if any(cls in train_fares for train_fares in fares)]
+        # fmt: off
+        columns = ["No", "Name", "From", "Dep", "To", "Arr", "Time", "Days", "Type", *classes,
+                   "PF From", "PF To", "Speed", "LHB", "Pantry"]
+        rows = [
+            [train.number, train.name, train.src, erail_time(train.departs), train.dst, erail_time(train.arrives),
+             erail_time(train.duration), run_days(train.days), train_type(train),
+             *(train_fares.get(cls, "") for cls in classes),
+             train.src_pf, train.dst_pf, train.speed, flag(train.lhb), flag(train.pantry)]
+            for train, train_fares in zip(trains, fares)
+        ]
+        # fmt: on
+        title = f"{src} → {dst}" + (f" · {day:%a %d %b}" if day else "")
+        return Result(title, columns, rows, detail=("PF From", "PF To", "Speed", "LHB", "Pantry"))
+
+    def coaches(self, train_no):
+        """Coach order from the engine, with counts per class."""
+        train = self.train_info(train_no)
+        # ":"-separated coaches, each "position,code,class"; the engine has no code
+        coaches = [coach.split(",") for coach in train.rake.split(":") if coach.count(",") == 2]
+        if not coaches:
+            raise LookupError("No coach data")
+        rows = [[position, code or "ENG", cls] for position, (_, code, cls) in enumerate(coaches, 1)]
+        return coach_order(f"{train.name} ({train_no})", rows)
+
+    def fare(self, train_no, src="", dst=""):
+        """Adult, child and Tatkal fares per class, between two stops or over the whole route."""
+        # a web page: the data endpoints have no child or Tatkal fares
+        stops = f"?from={src}&to={dst}" if src else ""
+        page = fetch(f"{self.URL}train-fare/{train_no}{stops}")
+        table = re.search(r"Individual passenger fare.*?(<table.*?</table>)", page, re.DOTALL)
+        if not table:
+            raise LookupError("No fare data")
+        # a row per fare kind, a column per class; "-" where the class has no Tatkal
+        header, *kinds = [[strip_tags(cell).replace(",", "") for cell in row] for row in table_rows(table[1])]
+        rows = [[cls, *(kind[i] for kind in kinds)] for i, cls in enumerate(header[1:], 1)]
+        name = re.search(r'mainpageH1">(.*?) Fare<', page)[1]
+        # the stops the fares are for, as the From and To options selected
+        src, dst = re.findall(r"<option value='[A-Z]+' selected='selected'>([^<]*)", page)
+        return Result(f"{name} · {src} → {dst}", ["Class", *(kind[0] for kind in kinds)], rows)
+
+    def station_live(self, code):
+        """Trains due at a station, with platform and delay."""
+        page = fetch(f"{self.URL}station-live/{code}")
+        table = re.search(r"<table class='table StationLive.*?</table>", page, re.DOTALL)
+        if not table:
+            raise LookupError("No trains")
+        rows = []
+        # cells: the train with its number, name, route and platform; then arrival and departure
+        for train, arrives, departs in table_rows(table[0])[1:]:
+            train_no, name = re.search(r"'TrainNo'>(\d+)</span> ([^<]*)", train).groups()
+            route, platform = re.search(r"stns'>&nbsp;([^<]*)<div class='fr'>PF-([^<]*)", train).groups()
+            # a late train's delay follows its arrival time; the source has "SRC" and the destination "DSTN"
+            arr, _, delay = strip_tags(arrives).partition(" ")
+            dep = strip_tags(departs)
+            # fmt: off
+            rows.append([train_no, name, strip_tags(route).title(), platform, ends(arr), ends(dep),
+                         delay and f"+{delay}"])
+            # fmt: on
+        name = re.search(r'mainpageH1">(.*?) Station Live Status<', page)[1]
+        return Result(f"{name} ({code}) · live", ["Train", "Name", "Route", "PF", "Arr", "Dep", "Delay"], rows)
+
+
+ETRAIN_PERIODS = {
+    "1W": "last week",
+    "1M": "last month",
+    "3M": "last 3 months",
+    "6M": "last 6 months",
+    "1Y": "last year",
+}
+ETRAIN_LISTS = ["RAJ", "SHT", "JSHT", "DUR", "GRB", "SF", "EXP", "PASS", "PRM", "T18", "HMS"]
+
+
+class Etrain:
+    """etrain.info: routes, coaches with layouts, trains between stations, station timetables, fares, delay history,
+    route maps, transit stations, train search and lists"""
+
+    URL = "https://etrain.info/"
+    NAME = re.compile(r"[A-Z][^<>]*?\(\d{5}\)")
+    # a schedule stop as text: "1 RJPB RJNDR NGR BIHAR 0 kms Platform: 1 A D Source (Day 1) 19:10 (Day 1)"
+    STOP = re.compile(
+        r"\d+ (?P<code>[A-Z\d]+) (?P<name>[^\d()]+?) (?P<km>\d+) kms Platform:(?: (?P<pf>\S+))? A D "
+        r"(?P<arr>\S+) \(Day (?P<day>\d+)\) (?P<dep>\S+) \(Day \d+\)"
+    )
+
+    @cached_property
+    def version(self):
+        """Site version; ajax calls without it only get asked to reload."""
+        return re.search(r"js_v = '([^']+)'", fetch(self.URL + "in"))[1]
+
+    def ajax(self, kind, form=None, **params):
+        """Data of an ajax call, POSTing form if given; raise etrain's error if it gives one."""
+        query = urlencode({"q": kind, "v": self.version} | params)
+        reply = json.loads(fetch(f"{self.URL}ajax.php?{query}", form and urlencode(form).encode()))
+        if isinstance(reply, list):
+            return reply
+        if not reply.get("data"):
+            raise LookupError(strip_tags(reply.get("error", "")) or "No data")
+        return reply["data"]
+
+    def page(self, path, **params):
+        """HTML of a site page."""
+        return "".join(self.ajax("page", {"page": path}, **params).values())
+
+    def stations(self):
+        """Code → name of every station."""
+        # slist="CODE,NAME;CODE,NAME;…";
+        items = fetch(self.URL + "jscss/station_code.js").split('"')[1].split(";")
+        return dict(item.split(",", 1) for item in items if item)
+
+    def trains(self, page, day=None):
+        """Trains listed on a between-stations or station page, running on day if given."""
+        trains = []
+        # each row starts with its train as JSON, "--" for none
+        for row in page.split("<tr data-train='")[1:]:
+            train = {key: "" if value == "--" else value for key, value in json.loads(row.split("'", 1)[0]).items()}
+            days = train["dy"][1:] + train["dy"][0]  # Sunday first
+            if day and days[day.weekday()] != "1":
+                continue
+            classes = re.findall(rf">({'|'.join(CLASSES)})</(?:a|span)>", row)
+            runs = re.search(r'sd="([^"]*)"(?: ed="([^"]*)")?', row)
+            # fmt: off
+            trains.append([train["num"], " ".join(train["name"].split()), train["s"], train["st"], train["d"],
+                           train["dt"], train["tt"].rstrip("H"), run_days(days), train["typ"].upper(),
+                           " ".join(classes) or "unreserved", runs and " – ".join(filter(None, runs.groups())),
+                           "yes" if "icon-food" in row else ""])
+            # fmt: on
+        if not trains:
+            raise LookupError("No trains found")
+        return trains
+
+    def route(self, train_no):
+        """Stops of a train with times, distance and platforms."""
+        page = self.page(f"/train/{train_no}/schedule")
+
+        def about(label):
+            return strip_tags(re.search(rf"{label}:(?:</b>)?([^<]*)", page)[1])
+
+        # fmt: off
+        rows = [
+            [stop["code"], stop["name"], *(ends(times) for times in stop.group("arr", "dep")), stop["day"], stop["km"],
+             stop["pf"] or ""]
+            for stop in self.STOP.finditer(strip_tags(page))
+        ]
+        # fmt: on
+        notes = [about("Type"), about("Running Days"), about("Available Classes"), f"zone {about('Zone')}"]
+        return Result(
+            self.NAME.search(page)[0],
+            ["Code", "Station", "Arr", "Dep", "Day", "Km", "PF"],
+            rows,
+            notes=[" · ".join(notes) + f" · booking {about('ARP')} ahead"],
+            detail=("PF",),
+        )
+
+    def between(self, src, dst, day=None):
+        """Trains from src to dst, running on day if given, with their classes."""
+        columns = ["No", "Name", "From", "Dep", "To", "Arr", "Time", "Days", "Type", "Classes", "Runs", "Pantry"]
+        rows = self.trains(self.page(f"/trains/{src}-to-{dst}"), day)
+        title = f"{src} → {dst}" + (f" · {day:%a %d %b}" if day else "")
+        return Result(title, columns, rows, detail=("Runs", "Pantry"))
+
+    def timetable(self, code, day=None):
+        """Every train at a station, running on day if given."""
+        page = self.page(f"/station/{code}/all")
+        columns = ["No", "Name", "From", "Arr", "To", "Dep", "Halt", "Days", "Type", "Classes", "Runs", "Pantry"]
+        name = re.search(r"at Station - (.*?) \(", page)[1]
+        title = f"{name} ({code}) · all trains" + (f" · {day:%a %d %b}" if day else "")
+        return Result(title, columns, self.trains(page, day), detail=("Runs", "Pantry"))
+
+    def coaches(self, train_no):
+        """Coach order from the engine, with counts per class and a layout image per coach type."""
+        page = self.page(f"/train/{train_no}/schedule")
+        # a coach type like "3A_LHB", empty for engine and power cars
+        coaches = re.findall(r'rake="([^"]*)"></div><span>([^<]*)</span>', page)
+        if not coaches:
+            raise LookupError("No coach data")
+        rows = [[position, code, kind.split("_")[0]] for position, (kind, code) in enumerate(coaches, 1)]
+        layouts = [
+            f"{kind}: " + re.search(r'src="([^"]+coach-layout[^"]+)"', self.page(f"/page/seatmap/{kind}"))[1]
+            for kind in dict.fromkeys(kind for kind, _ in coaches if kind)
+        ]
+        return coach_order(self.NAME.search(page)[0], rows, *layouts)
+
+    def fare(self, train_no, src="", dst=""):
+        """Adult, child, Tatkal and senior fares per class, between two stops or over the whole route."""
+        data = self.ajax("farecsv", {"ftrain": train_no, "src": src, "dest": dst})
+        # "number,name,from,to,km,type;stops;class:fares|class:fares…", fares "~"-separated
+        train, _, fares = data.split(";")
+        _, name, src, dst, km, _ = train.split(",")
+        if km.startswith("-"):
+            raise LookupError(f"{src} comes after {dst}")
+        rows = []
+        for group in fares.split("|"):
+            cls, values = group.split(":")
+            # a Tatkal fare after each fare; seniors get no concession in Tatkal
+            adult, adult_tatkal, child, child_tatkal, senior_man, _, senior_woman, _ = values.split("~")
+            rows.append([cls, adult, child, adult_tatkal, child_tatkal, senior_man, senior_woman])
+        columns = ["Class", "Adult", "Child", "Adult Tatkal", "Child Tatkal", "Senior Man", "Senior Woman"]
+        return Result(f"{name} · {src} → {dst} · {km} km", columns, rows)
+
+    def history(self, train_no, period="1M"):
+        """Delay at each stop over a period: average, days by lateness, and the worst day."""
+        page = self.page(f"/train/{train_no}/history", d=period.lower())
+        # per stop: code, days on time (under 15 min), up to 1 h late, later, cancelled or unknown, average delay
+        stops = re.findall(r"\['(\w+)', (\d+), (\d+), (\d+), (\d+), ([-\d.]+)\]", page)
+        if not stops:
+            raise LookupError("No running history")
+        # per day: its date, month from 0, then each stop's delay in minutes, or null
+        days = [
+            (date(int(year), int(month) + 1, int(day)), delays.split(","))
+            for year, month, day, delays in re.findall(r"\[new Date\((\d+),(\d+),(\d+)\),([^\]]*)\]", page)
+        ]
+        rows = []
+        for i, (code, on_time, late, very_late, unknown, average) in enumerate(stops):
+            known = [(int(delays[i]), f"{day:%d %b}") for day, delays in days if delays[i].strip() != "null"]
+            worst, worst_day = max(known, default=("", ""))
+            rows.append([code, round(float(average)), on_time, late, very_late, unknown, worst, worst_day])
+        columns = ["Code", "Avg", "On time", "<1h late", ">1h late", "No data", "Worst", "Worst day"]
+        notes = [f"{len(days)} days from {days[0][0]:%d %b} to {days[-1][0]:%d %b} · delays in minutes"] if days else []
+        title = f"{self.NAME.search(page)[0]} · delays {ETRAIN_PERIODS[period]}"
+        return Result(title, columns, rows, notes)
+
+    def route_map(self, train_no):
+        """Stops of a train with their coordinates."""
+        page = self.page(f"/train/{train_no}/map")
+        # "stop~name~arrival~departure~km~lat~lng~" per stop, "^"-separated
+        stops = [stop.split("~")[1:7] for stop in re.search(r"routedata = \('([^']*)'", page)[1].split("^")]
+        rows = [[name, ends(arr), ends(dep), km, lat, lng] for name, arr, dep, km, lat, lng in stops]
+        return Result(f"{self.NAME.search(page)[0]} · map", ["Station", "Arr", "Dep", "Km", "Lat", "Lng"], rows)
+
+    def transit(self, src, dst, number=1):
+        """Stations to change trains at between src and dst, nearest first."""
+        page = self.page(f"/transit/{src}-{dst}", page=number)
+        # trains in from src, the station, trains out to dst, then the total distance
+        station = r"<td>(\d+)</td><td class=\"rel\".*?Show</a></span>([^<]+)<br>\((\w+)\)</td><td>(\d+)</td><td>.*?</td><td>(\d+) Kms"
+        rows = [[code, name, into, out, km] for into, name, code, out, km in re.findall(station, page, re.DOTALL)]
+        if not rows:
+            raise LookupError("No transit stations")
+        direct = strip_tags(re.search(r"There (?:are|is) [^<]*", page)[0])
+        pages = re.search(r"\[Page [^\]]*\]", page)[0]
+        return Result(
+            f"{src} → {dst} · via", ["Code", "Station", "Trains in", "Trains out", "Km"], rows, [direct, pages]
+        )
+
+    def search(self, name):
+        """Trains with name in their name."""
+        trains = self.ajax("trnsuggst", term=name)
+        if not trains:
+            raise LookupError("No trains found")
+        return Result(f"Trains named {name}", ["No", "Name"], [[train["number"], train["name"]] for train in trains])
+
+    def type_list(self, kind, number=1):
+        """Trains of a type, a page at a time."""
+        page = self.page(f"/list/{kind}-TRAINS", page=number)
+        train = (
+            r'<a train="(\d+)"[^>]*>\d+</a></td><td[^>]*><a[^>]*>([^<]*)</a>.*?</td><td>([^<]*)</td><td>([^<]*)</td>'
+        )
+        title = strip_tags(re.search(r'<span class="bold">([^<]*)', page)[1])
+        return Result(title, ["No", "Name", "From", "To"], [list(row) for row in re.findall(train, page, re.DOTALL)])
+
+
+class Ntes:
+    """enquiry.indianrail.gov.in: official running status, routes, delays over the last week, trains between
+    stations, station boards and timetables, cancellations, diversions and reschedules"""
+
+    URL = "https://enquiry.indianrail.gov.in/mntes/"
+    # a stop's scheduled time and date, then its actual (or expected, date marked *) time, date and delay, or "--"
+    TIMES = re.compile(
+        r"(?P<scheduled>\d\d:\d\d) \S+ "
+        r"(?:(?P<actual>\d\d:\d\d) (?P<actual_date>\S+) (?P<delay>On Time|[\d:]+ \w+)|--)"
+    )
+    # a train between stations as text:
+    # "04095 PPTA ANVT SPL Daily | Train On Demand See Train Status >> 00:45 Patliputra PPTA --20:45 Hrs.-- [classes]
+    # 21:30 Anand Vihar Terminal ANVT"
+    BETWEEN = re.compile(
+        r"(?P<no>\d{5}) (?P<name>.+?) (?P<days>\S+) \| (?P<type>.+?) See Train Status >> (?P<dep>\S+) .+? "
+        r"(?P<src>[A-Z\d]+) --(?P<time>\S+) Hrs\.--(?: (?P<classes>\S+))? (?P<arr>\d\d:\d\d) .+? (?P<dst>[A-Z\d]+)"
+    )
+    # a train at a station: number, name, its source and destination codes, type | classes, arrival, departure
+    AT_STATION = re.compile(
+        r"<b>(\d{5})</b>&nbsp;&nbsp;([^<]*)</span>\s*<br><span >[^<]*?\(([A-Z\d]+)\) - [^<]*\(([A-Z\d]+)\)</span>"
+        r"\s*<br><span >([^<|]*?)(?: \| ([^<]*))?</span>.*?Arr\.\s*: <b>([^<]*)</b>.*?Dep\.: <b>([^<]*)</b>",
+        re.DOTALL,
+    )
+    # a station board time: expected (* until confirmed) or "Cancelled", delay or "--", scheduled
+    BOARD = re.compile(r"(?P<expected>\S+) (?P<delay>On Time|[\d:]+ \w+\.?|--) (?P<scheduled>\d\d:\d\d)")
+
+    def post(self, path, **form):
+        """POST a form to NTES in a fresh session with its CSRF token; return the page, or raise its error."""
+        fetch(self.URL)  # sets the session cookies the token belongs to
+        token = fetch(f"{self.URL}GetCSRFToken?t={time.time_ns()}", Referer=self.URL)
+        # the token comes as a hidden input: name='…' value='…'
+        name, value = re.search(r"name='([^']+)' value='([^']+)'", token).groups()
+        form |= {name: value, "lan": "en"}
+        page = fetch(self.URL + path, urlencode(form).encode(), Referer=self.URL)
+        # a red panel, or an error code
+        if error := re.search(r'w3-panel w3-round w3-red"><h4>([^<]*)|class="redError11L"[^>]*>(.*?)</span>', page):
+            raise LookupError(strip_tags(error[1] or error[2]))
+        return page
+
+    def live(self, train_no, day=None):
+        """Running status of the current run, or of the run starting on day."""
+        page = self.post("tr?opt=TrainRunning&subOpt=FindRunningInstance", trainNo=train_no)
+        # a tab per run, id "train<dd-mon-yyyy>"; the active one is the current run
+        if day:
+            run = f"{day:%d-%b-%Y}".lower()
+        elif active := re.search(r"nav-link active'[^>]*href='#train([^']+)'", page):
+            run = active[1]
+        else:
+            raise LookupError("No running data")
+        pane = re.search(rf'id="train{run}"[^>]*>(.*?)(?:<div class="tab-pane|\Z)', page, re.DOTALL)
+        if not pane:
+            raise LookupError(f"No running data for {run}")
+
+        # the pane: a status header, then a row per stop
+        header, *stops = re.split(r"<div[^>]*stopRow[^>]*>", pane[1])
+        # "Start Date : <run> [Current Position] <status> Last Updates On <time> [Refresh …]"
+        status = strip_tags(header.split('<div class="card-body')[0])
+        status = re.sub(r"^Start Date : \S+ (Current Position )?| ?Refresh.*", "", status)
+        name = re.search(r"<h3>(\d{5} [^<]*)</h3>", page)[1]
+        day = day or datetime.strptime(run, "%d-%b-%Y").date()
+        return Result(
+            f"{name} · run of {day:%a %d %b}",
+            ["Code", "Station", "Sch Arr", "Arr", "Sch Dep", "Dep", "Delay", "PF"],
+            [self.parse_stop(strip_tags(stop)) for stop in stops],
+            notes=[status.replace(" Last Updates On ", " · updated ")],
+            detail=("Sch Arr", "Sch Dep"),
+        )
+
+    def parse_stop(self, row):
+        """Text of a stop row → code, station, scheduled and actual times, delay, platform."""
+        # "<arrival> NAME CODE PF <platform> … <departure> Coach Position : <coach list> …",
+        # where the source has "SRC SRC" for its arrival, and the destination no departure
+        station, after = row.split(" PF ", 1)
+        arr = self.TIMES.match(station)
+        name, code = station[arr.end() if arr else len("SRC SRC") :].strip().rsplit(" ", 1)
+        dep = self.TIMES.search(after.split("Coach Position :")[0])
+        # the latest known delay: at departure, else at arrival
+        delay = next((times["delay"] for times in (dep, arr) if times and times["delay"]), "")
+        platform = after.split()[0]
+        return [code, name.title(), *stop_times(arr), *stop_times(dep), format_delay(delay), platform]
+
+    def route(self, train_no):
+        """Stops of a train with times, halts and distance."""
+        page = self.post("q?opt=TrainServiceSchedule&subOpt=show", trainNo=train_no)
+        head, stops = re.search(r'name="mapFrm"(.*?)KMs\.(.*?)</table>', page, re.DOTALL).groups()
+        about = re.search(
+            r"Travel Time : (\S+).*?Days of Run: (.*?) Type: (.*?) Reserved Class of Travel: (\S*)", strip_tags(head)
+        )
+        travel, days, kind, classes = about.groups()
+        rows = []
+        # cells: serial, "NAME<br>CODE", day, "ARR<br>DEP", halt, km
+        for _, station, day, times, halt, km in (map(strip_tags, cells) for cells in table_rows(stops)):
+            name, code = station.rsplit(" ", 1)
+            arr, dep = times.split()
+            rows.append([code, name.title(), ends(arr), ends(dep), day, km, halt])
+        name = re.search(r"<b>\d{5} ([^<]*)</b>", head)[1]
+        notes = [kind.title(), days, classes.replace(",", " "), f"{travel} h"]
+        columns = ["Code", "Station", "Arr", "Dep", "Day", "Km", "Halt"]
+        return Result(f"{name} ({train_no})", columns, rows, [" · ".join(filter(None, notes))], detail=("Halt",))
+
+    def history(self, train_no, period="1M"):
+        """Average delay at each stop over the last week, the only period NTES has."""
+        page = self.post("q?opt=AverageDelay&subOpt=show", trainNo=train_no)
+        stops = re.search(r"Avg\. Dep\. Delay(.*?)</table>", page, re.DOTALL)[1]
+        # cells: serial, station, code, average arrival delay, average departure delay
+        rows = [
+            [code, station.title(), format_delay(arr), format_delay(dep)]
+            for _, station, code, arr, dep in (map(strip_tags, cells) for cells in table_rows(stops))
+        ]
+        name = re.search(r"<span >\d{5} ([^<]*)</span>", page)[1]
+        return Result(f"{name} ({train_no}) · delays last week", ["Code", "Station", "Avg Arr", "Avg Dep"], rows)
+
+    def between(self, src, dst, day=None):
+        """Trains from src to dst, running on day if given; specials and trains on demand included."""
+        page = self.post("q?opt=TrainsBetweenStation&subOpt=tbs", jFromStationInput=src, jToStationInput=dst)
+        trains = [self.BETWEEN.fullmatch(strip_tags(row.split("</tr>")[0])) for row in page.split('w3-round ">')[1:]]
+        # fmt: off
+        rows = [
+            [train["no"], train["name"], train["src"], train["dep"], train["dst"], train["arr"], train["time"],
+             train["days"], train["type"], (train["classes"] or "").replace(",", " ")]
+            for train in trains
+            if not day or train["days"] == "Daily" or DAYS[day.weekday()] in train["days"]
+        ]
+        # fmt: on
+        if not rows:
+            raise LookupError("No trains found")
+        title = f"{src} → {dst}" + (f" · {day:%a %d %b}" if day else "")
+        return Result(title, ["No", "Name", "From", "Dep", "To", "Arr", "Time", "Days", "Type", "Classes"], rows)
+
+    def station_live(self, code):
+        """Trains due at a station in the next 8 hours, with platform and delay."""
+        page = self.post("q?opt=LiveStation&subOpt=show", jFromStationInput=code, jToStationInput="", nHr=8)
+        table = re.search(r'id="myTable".*?</table>', page, re.DOTALL)[0]
+        rows = []
+        trains = [cells for cells in table_rows(table) if cells and strip_tags(cells[0]).isdigit()]
+        # cells: serial, train, arrival, departure, platform; a time is "Source"/"Destination" at the train's ends
+        for _, train, arrives, departs, platform in trains:
+            number, name, route, kind, classes = re.search(
+                r"<b>(\d{5})</b>.*?<b>\s*([^<]*)</b><br>\s*<font[^>]*>\(([^)]*)\)&nbsp;([^<]*)(?:<br/>([^<]*))?",
+                train,
+                re.DOTALL,
+            ).groups()
+            arr, dep = (self.BOARD.match(strip_tags(times)) for times in (arrives, departs))
+            delay, platform = format_delay((dep or arr)["delay"]), strip_tags(platform).removesuffix(" Coach Position")
+            # a cancelled train has the reason in place of its platform
+            if (dep or arr)["expected"] == "Cancelled":
+                delay, platform = platform.lower(), ""
+            # fmt: off
+            rows.append([number, name, route.replace("-", " → "), platform,
+                         arr and arr["scheduled"] or "", dep and dep["scheduled"] or "",
+                         delay, kind.title(), (classes or "").replace(",", " ")])
+            # fmt: on
+        if not rows:
+            raise LookupError("No trains")
+        name = re.search(r"arriving at <b>[A-Z\d]+ ?- ([^<]*)</b>", page)[1]
+        columns = ["Train", "Name", "Route", "PF", "Arr", "Dep", "Delay", "Type", "Classes"]
+        return Result(f"{name.title()} ({code}) · live", columns, rows, detail=("Type", "Classes"))
+
+    def timetable(self, code, day=None):
+        """Every train at a station, running on day if given: NTES knows only yesterday, today and tomorrow."""
+        run = f"{day:%d-%b-%Y}" if day else "No Specific Date"
+        page = self.post("q?opt=TrainsAtStation&subOpt=tas", jFromStationInput=code, trainStartDate=run)
+        # fmt: off
+        rows = [
+            [number, " ".join(name.split()), src, ends(arr), dst, ends(dep), kind, (classes or "").replace(",", " ")]
+            for number, name, src, dst, kind, classes, arr, dep in self.AT_STATION.findall(page)
+        ]
+        # fmt: on
+        name = re.search(r"Trains scheduled at [A-Z\d]+ ?- (.*?)(?: on |<)", page)[1]
+        title = f"{name.title()} ({code}) · all trains" + (f" · {day:%a %d %b}" if day else "")
+        return Result(title, ["No", "Name", "From", "Arr", "To", "Dep", "Type", "Classes"], rows)
+
+    def alerts(self, train_no):
+        """Cancellations, diversions and reschedules of coming runs, months ahead."""
+        try:
+            page = self.post("q?opt=TrainRunning&subOpt=canDtl", trainNo=train_no)
+        except LookupError as error:
+            if not str(error).startswith("No Exceptional Details"):
+                raise
+            return Result(f"{train_no} · alerts", notes=["No cancellations, diversions or reschedules"])
+        # a calendar per month, where a day with an exception has its notice just before the day's number
+        rows = [
+            [f"{datetime.strptime(f'{day}-{month}', '%d-%b-%Y'):%a %d %b}", notice(text)]
+            for month, days in re.findall(r'<font size="5pt">([^<]+)</font>(.*?)</table>', page, re.DOTALL)
+            for text, day in re.findall(r"w3-tag[^>]*>([^<]*)</span>\s*<b>\s*<font[^>]*>(\d+)<", days)
+        ]
+        name = re.search(r"<h4>\d{5} - ([^<]*)</h4>", page)[1]
+        return Result(f"{name} ({train_no}) · alerts", ["Run", "Alert"], rows)
+
+
+class ConfirmTkt:
+    """confirmtkt.com: PNR status with confirmation chance"""
+
+    URL = "https://cttrainsapi.confirmtkt.com/api/v2/ctpro/mweb/"
+
+    def pnr(self, pnr):
+        """Booking, journey and passenger status of a PNR."""
+        query = urlencode({"querysource": "ct-mweb", "locale": "en", "getHighChanceText": "true", "livePnr": "true"})
+        body = json.dumps({"proPlanName": "CP7", "emailId": "", "tempToken": ""}).encode()
+        reply = fetch(f"{self.URL}{pnr}?{query}", body, **{"Content-Type": "application/json"})
+        booking = json.loads(reply)["data"]["pnrResponse"]
+        if not booking["trainNo"]:
+            raise LookupError(booking.get("error") or "PNR not found")
+
+        rows = []
+        for passenger in booking["passengerStatus"]:
+            status = " ".join(filter(None, [passenger["currentStatus"], passenger["currentBerthCode"]]))
+            # a confirmed seat needs no confirmation chance
+            chance = "" if status.startswith("CNF") else passenger["prediction"] or ""
+            if chance and passenger["predictionPercentage"]:
+                chance += f" {passenger['predictionPercentage']}%"
+            rows.append([passenger["number"], status, chance])
+        # the coach order, with the booked coaches marked
+        booked = {passenger["currentCoachId"] for passenger in booking["passengerStatus"]}
+        rake = (booking["coachPosition"] or "").split()
+        coaches = " ".join(f"[{coach}]" if coach in booked else coach for coach in rake)
+        train = "{trainName} ({trainNo}) " + ("❌ Cancelled" if booking["trainCancelledFlag"] else "✅︎")
+        chart = "{class} · {quota} · ₹{bookingFare} · booked {bookingDate} · chart "
+        chart += "prepared" if booking["chartPrepared"] else "not prepared"
+        notes = [
+            train,
+            chart,
+            "{boardingStationName} ({boardingPoint}) {sourceDoj} {departureTime}",
+            "{reservationUptoName} ({reservationUpto}) {destinationDoj} {arrivalTime}",
+            "Platform: " + (booking["expectedPlatformNo"] or "?"),
+            *filter(None, [coaches]),
+        ]
+        return Result(
+            f"PNR {pnr}",
+            ["Seat", "Status", "Chance"],
+            rows,
+            [note.format_map(booking) for note in notes],
+            until=datetime.strptime(booking["destinationDoj"], "%d-%m-%Y").date(),
+        )
+
+
+# column → field of railradar's fare breakdown
+# fmt: off
+RAILRADAR_FARE = {
+    "Base": "baseFare", "Reservation": "reservationCharge", "Superfast": "superfastCharge", "Catering": "cateringCharge",
+    "Dynamic": "dynamicFare", "GST": "goodsServiceTax", "Total": "totalFare",
+}
+# fmt: on
+
+
+class Railradar:
+    """railradar.in: stations, running status, coaches, station boards, seat availability, route maps, train search;
+    also routes, fares, trains between stations, station timetables and PNR status"""
+
+    URL = "https://railradar.in/app/v1/"
+
+    def get(self, path, **params):
+        """Data of an API call; raise railradar's error if it gives one."""
+        try:
+            reply = json.loads(fetch(f"{self.URL}{path}?{urlencode(params)}", Accept="application/json"))
+        except HTTPError as error:  # errors come as JSON too
+            reply = json.load(error)
+        if not reply["success"]:
+            raise LookupError(reply["error"]["message"])
+        return reply["data"]
+
+    def schedule(self, train_no):
+        """A train and its halts."""
+        return self.get(f"trains/{train_no}", haltsOnly="true")
+
+    def stations(self):
+        """Code → name of every station."""
+        return self.get("lookup/stations")
+
+    def route(self, train_no):
+        """Stops of a train with times, distance and platforms."""
+        data = self.schedule(train_no)
+        train = data["train"]
+        return_train = train["returnTrain"] and f"return {train['returnTrain']}"
+        classes = " ".join(train["classes"])
+        about = [train["type"], week_days(train["runDays"]), f"{train['avgSpeed']} km/h", classes, return_train]
+        # fmt: off
+        rows = [
+            [stop["station"]["code"], stop["station"]["name"], stop.get("arrival", ""), stop.get("departure", ""),
+             stop.get("arrivalDay") or stop["departureDay"], round(stop["distance"]), stop.get("platform", "")]
+            for stop in data["route"]
+        ]
+        # fmt: on
+        columns = ["Code", "Station", "Arr", "Dep", "Day", "Km", "PF"]
+        return Result(f"{train['name']} ({train_no})", columns, rows, [" · ".join(filter(None, about))], detail=("PF",))
+
+    def route_map(self, train_no):
+        """Stops of a train with their coordinates."""
+        data = self.schedule(train_no)
+        # fmt: off
+        rows = [
+            [stop["station"]["name"], stop.get("arrival", ""), stop.get("departure", ""), round(stop["distance"]),
+             stop["station"]["lat"], stop["station"]["lng"]]
+            for stop in data["route"]
+        ]
+        # fmt: on
+        columns = ["Station", "Arr", "Dep", "Km", "Lat", "Lng"]
+        return Result(f"{data['train']['name']} ({train_no}) · map", columns, rows)
+
+    def live(self, train_no, day=None):
+        """Running status of the current run, or of the run starting on day."""
+        data = self.get(f"trains/{train_no}/live", haltsOnly="true", **({"date": day.isoformat()} if day else {}))
+
+        def actual(stop, kind):
+            """Actual time of a stop's arrival or departure; * marks one that is only expected."""
+            time = clock(stop.get(f"actual{kind}"))
+            return time and time + ("*" if stop.get("provenance") == "predicted" else "")
+
+        # fmt: off
+        rows = [
+            [stop["stationCode"], stop["stationName"], clock(stop.get("scheduledArrival")), actual(stop, "Arrival"),
+             clock(stop.get("scheduledDeparture")), actual(stop, "Departure"),
+             late(stop.get("delayDeparture", stop.get("delayArrival"))), stop.get("platform", "")]
+            for stop in data["route"]
+        ]
+        # fmt: on
+        where, ahead = data.get("currentLocation") or {}, data.get("nextHalt") or {}
+        status = [
+            data["status"].replace("-", " "),
+            where.get("stationName"),
+            where.get("speedKmh") and f"{where['speedKmh']} km/h",
+            ahead and f"next {ahead['stationName']}",
+            f"updated {clock(data['lastUpdatedAt'])}",
+        ]
+        alerts = [
+            f"⚠ {notice(exception['message'])}"
+            for run in self.exceptions(train_no)
+            if run["startDate"] == data["startDate"]
+            for exception in run["exceptions"]
+        ]
+        return Result(
+            f"{train_no} {data['trainName']} · run of {date.fromisoformat(data['startDate']):%a %d %b}",
+            ["Code", "Station", "Sch Arr", "Arr", "Sch Dep", "Dep", "Delay", "PF"],
+            rows,
+            notes=[" · ".join(filter(None, status)), *alerts],
+            detail=("Sch Arr", "Sch Dep"),
+        )
+
+    def exceptions(self, train_no):
+        """Current runs of a train that are cancelled, diverted or rescheduled."""
+        return [run for run in self.get("trains/exceptions")["trains"] if run["trainNumber"] == train_no]
+
+    def alerts(self, train_no):
+        """Cancellations, diversions and reschedules of current runs."""
+        runs = self.exceptions(train_no)
+        if not runs:
+            return Result(f"{train_no} · alerts", notes=["No cancellations, diversions or reschedules"])
+        # fmt: off
+        rows = [[f"{date.fromisoformat(run['startDate']):%a %d %b}", notice(exception["message"])]
+                for run in runs for exception in run["exceptions"]]
+        # fmt: on
+        return Result(f"{runs[0]['trainName']} ({train_no}) · alerts", ["Run", "Alert"], rows)
+
+    def coaches(self, train_no):
+        """Coach order from the engine, with counts per class and where the train reverses."""
+        data = self.get(f"trains/{train_no}/coaches")
+        if not data["rake"]:
+            raise LookupError("No coach data")
+        rows = [[coach["position"], coach["code"], coach["classType"]] for coach in data["rake"]]
+        # each leg after the first starts where the train reverses
+        reversals = [f"reverses at {leg['fromStationName']}" for leg in data["legs"][1:]]
+        return coach_order(f"{data['trainName']} ({train_no})", rows, *reversals)
+
+    def fare(self, train_no, src="", dst=""):
+        """Today's fare per class, itemised, between two stops or over the whole route."""
+        train = self.schedule(train_no)["train"]
+        if not train["classes"]:
+            raise LookupError("No reserved classes")
+        src, dst = src or train["source"]["code"], dst or train["destination"]["code"]
+        params = {"source": src, "destination": dst, "journeyDate": date.today().isoformat()}
+        fares = {cls: self.get(f"trains/{train_no}/fare", classCode=cls, **params) for cls in train["classes"]}
+        rows = [[cls, *(fare["breakdown"][key] for key in RAILRADAR_FARE.values())] for cls, fare in fares.items()]
+        km = round(next(iter(fares.values()))["distance"])
+        return Result(f"{train['name']} · {src} → {dst} · {km} km", ["Class", *RAILRADAR_FARE], rows)
+
+    def seats(self, train_no, src, dst, cls, quota, day=None):
+        """Availability in a class and quota on each of the 14 days from day, by default today."""
+        params = {"classCode": cls, "quotaCode": quota, "journeyDate": (day or date.today()).isoformat()}
+        data = self.get(f"trains/{train_no}/seats", source=src, destination=dst, **params)
+        # fmt: off
+        rows = [[f"{date.fromisoformat(entry['date']):%a %d %b}", " ".join(entry["status"].split())]
+                for entry in data["calendar"]]
+        # fmt: on
+        return Result(f"{data['trainName']} ({train_no}) · {src} → {dst} · {cls} · {quota}", ["Date", "Status"], rows)
+
+    def between(self, src, dst, day=None):
+        """Trains from src to dst, running on day if given."""
+        # byCity: from and to every station of both cities, e.g. Patna Jn and Rajendra Nagar
+        data = self.get(f"trains/between/{src}/{dst}", byCity="true", **({"date": day.isoformat()} if day else {}))
+        if not data["trains"]:
+            raise LookupError("No trains found")
+        # fmt: off
+        rows = [
+            [run["train"]["number"], run["train"]["name"], run["from"]["code"], run["from"]["departure"],
+             run["to"]["code"], run["to"]["arrival"], f"{run['duration'] // 60}:{run['duration'] % 60:02}",
+             week_days(run["train"]["runDays"]), run["train"]["type"]]
+            for run in data["trains"]
+        ]
+        # fmt: on
+        title = f"{src} → {dst}" + (f" · {day:%a %d %b}" if day else "")
+        return Result(title, ["No", "Name", "From", "Dep", "To", "Arr", "Time", "Days", "Type"], rows)
+
+    def station_live(self, code):
+        """Trains due at a station, with platform, delay and where each is."""
+        data = self.get(f"stations/{code}/live", hours=8)
+        if not data["trains"]:
+            raise LookupError("No trains")
+        rows = []
+        for entry in data["trains"]:
+            train, stop, live = entry["train"], entry["stop"], entry["live"]
+            # fmt: off
+            rows.append([train["number"], train["name"], f"{train['source']} → {train['destination']}",
+                         stop.get("platform") or "", stop["arrival"] or "", stop["departure"] or "",
+                         late(live.get("delayMinutes")), live["type"].replace("-", " ")])
+            # fmt: on
+        columns = ["Train", "Name", "Route", "PF", "Arr", "Dep", "Delay", "Status"]
+        return Result(f"{data['station']['name']} ({code}) · live", columns, rows)
+
+    def timetable(self, code, day=None):
+        """Every train at a station, running on day if given."""
+        data = self.get(f"stations/{code}/trains")
+        # fmt: off
+        rows = [
+            [train["number"], train["name"], train["source"]["code"], stop["arrival"] or "",
+             train["destination"]["code"], stop["departure"] or "", week_days(train["runDays"]), train["type"]]
+            for train, stop in ((entry["train"], entry["stop"]) for entry in data["trains"])
+            if not day or DAYS[day.weekday()].lower() in train["runDays"]
+        ]
+        # fmt: on
+        title = f"{data['station']['name']} ({code}) · all trains" + (f" · {day:%a %d %b}" if day else "")
+        return Result(title, ["No", "Name", "From", "Arr", "To", "Dep", "Days", "Type"], rows)
+
+    def pnr(self, pnr):
+        """Booking, journey and passenger status of a PNR."""
+        data = self.get(f"pnr/{pnr}")
+        train = data["train"]
+        rows = []
+        for passenger in data["passengers"]:
+            current = "/".join(filter(None, [passenger["current"]["formatted"], passenger["berthCode"]]))
+            rows.append([passenger["serialNumber"], current, passenger["booking"]["formatted"]])
+        departs = datetime.strptime(train["journeyDateRaw"], "%b %d, %Y %I:%M:%S %p")
+        notes = [
+            f"{train['name']} ({train['number']})",
+            f"{train['journeyClass']} · {data['charting']['status'].lower()} · ₹{train['bookingFare']}",
+            "{name} ({code}) → ".format_map(train["boardingPoint"])
+            + "{name} ({code})".format_map(train["reservationUpto"])
+            + f" · {departs:%a %d %b %H:%M}",
+        ]
+        if not all(passenger["isConfirmed"] for passenger in data["passengers"]):
+            chance = self.get(f"pnr/{pnr}/prediction")
+            notes.append(f"{chance['probabilityPercent']}% chance to confirm ({chance['probabilityStatus'].lower()})")
+        return Result(f"PNR {pnr}", ["Seat", "Status", "Booked"], rows, notes, until=departs.date())
+
+    def search(self, name):
+        """Trains with name in their name."""
+        trains = self.get("lookup/search/trains", q=name, limit=50)
+        if not trains:
+            raise LookupError("No trains found")
+        # fmt: off
+        rows = [[train["number"], train["name"], train["source"], train["dest"], week_days(train["runDays"] or [])]
+                for train in trains]
+        # fmt: on
+        return Result(f"Trains named {name}", ["No", "Name", "From", "To", "Days"], rows)
+
+
+PROVIDERS = {"railradar": Railradar(), "erail": Erail(), "etrain": Etrain(), "ntes": Ntes(), "confirmtkt": ConfirmTkt()}
+
+# each service and the providers that answer it, tried in this order
+SERVICES = {
+    "stations": ["railradar", "erail", "etrain"],
+    "route": ["erail", "etrain", "railradar", "ntes"],
+    "coaches": ["railradar", "erail", "etrain"],
+    "fare": ["erail", "etrain", "railradar"],
+    "seats": ["railradar"],
+    "between": ["erail", "etrain", "railradar", "ntes"],
+    "live": ["railradar", "ntes"],
+    "station_live": ["railradar", "erail", "ntes"],
+    "pnr": ["confirmtkt", "railradar"],
+    "timetable": ["etrain", "railradar", "ntes"],
+    "history": ["etrain", "ntes"],
+    "alerts": ["ntes", "railradar"],
+    "route_map": ["railradar", "etrain"],
+    "transit": ["etrain"],
+    "search": ["railradar", "etrain"],
+    "type_list": ["etrain"],
+}
+
+
+def ask(service, *args, only=None):
+    """Answer service with the first of its providers that succeeds; otherwise raise all their errors."""
+    errors = []
+    for name in SERVICES[service]:
+        if only in (None, name):
+            try:
+                result = getattr(PROVIDERS[name], service)(*args)
+                if isinstance(result, Result):
+                    result.provider = name
+                return result
+            except Exception as error:  # noqa: BLE001
+                errors.append(f"{name}: {error}")
+    raise LookupError("; ".join(errors) or f"{only} has no {service}")
+
+
+def station_names():
+    """Code → name of every station, downloaded again once the cache is a month old."""
+    if not STATIONS.exists() or time.time() - STATIONS.stat().st_mtime > 30 * 86400:
+        names = ask("stations")
+        STATIONS.parent.mkdir(parents=True, exist_ok=True)
+        STATIONS.write_text("".join(f"{code},{name}\n" for code, name in names.items()))
+    return dict(line.split(",", 1) for line in STATIONS.read_text().splitlines())
+
+
+def find_stations(query):
+    """Station codes for a code or name, best first: exact code, then names starting with it, then containing it."""
+    names, query = station_names(), query.lower()
+    exact = [code for code in names if code.lower() == query]
+    # the shortest name is the closest match, e.g. "patna" → Patna Jn, not Patna Sahib
+    starts, contains = (
+        sorted((code for code, name in names.items() if matches(name.lower(), query)), key=lambda code: len(names[code]))
+        for matches in (str.startswith, str.__contains__)
+    )
+    return list(dict.fromkeys(exact + starts + contains))
+
+
+def station(query):
+    """Station code for a code or name: the best match."""
+    if codes := find_stations(query):
+        return codes[0]
+    raise LookupError(f"Unknown station: {query}")
+
+
+# Command line
+
+
+def parse_query(words):
+    """Query words → service, its arguments, and the query as kept in history."""
+
+    def optional(pattern, rest):
+        """Whether rest is empty or a single word matching pattern."""
+        return len(rest) < 2 and all(re.fullmatch(pattern, word) for word in rest)
+
+    match words:
+        case [pnr] if PNR.fullmatch(pnr):
+            return "pnr", [pnr], pnr
+        case [train_no] if TRAIN.fullmatch(train_no):
+            return "route", [train_no], train_no
+        case [name]:
+            return "search", [name], name
+        case ["LIST", kind, *number] if kind in ETRAIN_LISTS and optional(r"\d+", number):
+            return "type_list", [kind, *number], f"LIST {kind}"
+        case [train_no, "LIVE", *day] if TRAIN.fullmatch(train_no) and optional(DATE, day):
+            return "live", [train_no, *map(parse_date, day)], f"{train_no} LIVE"
+        case [train_no, "COACHES"] if TRAIN.fullmatch(train_no):
+            return "coaches", [train_no], f"{train_no} COACHES"
+        case [train_no, "FARE", *stops] if TRAIN.fullmatch(train_no) and len(stops) in (0, 2):
+            stops = [station(stop) for stop in stops]
+            return "fare", [train_no, *stops], " ".join([train_no, "FARE", *stops])
+        case [train_no, "SEATS", src, dst, cls, *day, quota] if (
+            TRAIN.fullmatch(train_no) and optional(DATE, day) and quota in QUOTAS
+        ):
+            src, dst = station(src), station(dst)
+            query = f"{train_no} SEATS {src} {dst} {cls} {quota}"
+            return "seats", [train_no, src, dst, cls, quota, *map(parse_date, day)], query
+        case [train_no, "SEATS", _, _, _, *day] if TRAIN.fullmatch(train_no) and optional(DATE, day):
+            return parse_query([*words, "GN"])
+        case [train_no, "HISTORY", *period] if TRAIN.fullmatch(train_no) and optional("|".join(ETRAIN_PERIODS), period):
+            return "history", [train_no, *period], " ".join([train_no, "HISTORY", *period])
+        case [train_no, "MAP"] if TRAIN.fullmatch(train_no):
+            return "route_map", [train_no], f"{train_no} MAP"
+        case [train_no, "ALERTS"] if TRAIN.fullmatch(train_no):
+            return "alerts", [train_no], f"{train_no} ALERTS"
+        case [name, "LIVE"] if not TRAIN.fullmatch(name):
+            code = station(name)
+            return "station_live", [code], f"{code} LIVE"
+        case [name, "ALL", *day] if not TRAIN.fullmatch(name) and optional(DATE, day):
+            code = station(name)
+            return "timetable", [code, *map(parse_date, day)], f"{code} ALL"
+        case [src, dst, "VIA", *number] if not TRAIN.fullmatch(src) and optional(r"\d+", number):
+            src, dst = station(src), station(dst)
+            return "transit", [src, dst, *number], f"{src} {dst} VIA"
+        # two station codes or names; a train number here is a mistyped train query
+        case [src, dst, *day] if not TRAIN.fullmatch(src) and optional(DATE, day):
+            src, dst = station(src), station(dst)
+            return "between", [src, dst, *map(parse_date, day)], f"{src} {dst}"
+    sys.exit(__doc__)
+
+
+def as_text(result, verbose=False):
+    """Notes followed by an aligned table; columns in result.detail only when verbose."""
+    shown = [i for i, column in enumerate(result.columns) if verbose or column not in result.detail]
+    if not shown:
+        return "\n".join(result.notes)
+    table = [[str(row[i]) for i in shown] for row in [result.columns, *result.rows]]
+    widths = [max(map(len, column)) for column in zip(*table)]
+    lines = ["  ".join(cell.ljust(width) for cell, width in zip(row, widths)).rstrip() for row in table]
+    return "\n".join(result.notes + lines)
+
+
+def as_markdown(result):
+    """Title as a heading, notes as a quote, and a table of every column."""
+    notes = [f"> {note}  " for note in result.notes]  # trailing spaces keep each note on its own line
+    table = [result.columns, ["--"] * len(result.columns), *result.rows]
+    return "\n".join([f"### {result.title}", *notes, "", *("|".join(map(str, row)) for row in table)])
+
+
+def as_json(result, service, args):
+    """The result with its service, arguments, and link columns, for the noctalia panel."""
+    links = {column: LINKS[column] for column in result.columns if column in LINKS}
+    return json.dumps({**vars(result), "service": service, "args": args, "links": links}, default=str)
+
+
+def notify(title, body):
+    """Show a desktop notification that stays until dismissed."""
+    subprocess.run(["notify-send", "-a", "train", "-i", str(ICON), "-t", "0", title, body], check=False)
+
+
+def add_history(query):
+    """Move query to the top of history, keeping the latest 50."""
+    past = HISTORY.read_text().splitlines() if HISTORY.exists() else []
+    recent = [query, *(old for old in past if old != query)][:50]
+    HISTORY.parent.mkdir(parents=True, exist_ok=True)
+    HISTORY.write_text("\n".join(recent) + "\n")
+
+
+def watch(pnrs):
+    """Notify when a watched PNR's status changes; all watched if none given. Drop it after the journey."""
+    WATCH.mkdir(parents=True, exist_ok=True)
+    # a file per watched PNR, holding its last seen status
+    for file in [WATCH / pnr for pnr in pnrs] or list(WATCH.iterdir()):
+        try:
+            result = ask("pnr", file.name)
+        except Exception as error:  # noqa: BLE001
+            print(f"{file.name}: {error}", file=sys.stderr)
+            continue
+        status = as_text(result)
+        if result.until < date.today():
+            file.unlink(missing_ok=True)
+        elif not file.exists() or file.read_text() != status:
+            file.write_text(status)
+            notify(result.title, status)
+
+
+def parse_options():
+    """Parse the command line; options may come anywhere among the query words."""
+    usage = (
+        "train [options] PNR | NAME | TRAIN [live [DATE] | coaches | fare [FROM TO]"
+        " | seats FROM TO CLASS [DATE] [QUOTA] | history [PERIOD] | map | alerts]"
+        " | STATION live | STATION all [DATE] | FROM TO [DATE | via [PAGE]] | list TYPE [PAGE]"
+    )
+    # fmt: off
+    parser = argparse.ArgumentParser(prog="train", usage=usage, description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("query", nargs="*", help=argparse.SUPPRESS)
+    parser.add_argument("-n", "--notify", action="store_true", help="send the result as a notification instead of printing")
+    parser.add_argument("-c", "--csv", action="store_true", help="print as CSV with every column, e.g. train -c patna ndls | csvlens")
+    parser.add_argument("-m", "--markdown", action="store_true", help="print as markdown, e.g. train -m patna ndls | glow")
+    parser.add_argument("-v", "--verbose", action="store_true", help="more columns: halts, platforms, speed, pantry, limited runs")
+    parser.add_argument("-p", "--provider", choices=PROVIDERS, help="ask only this provider")
+    parser.add_argument("-w", "--watch", nargs="*", metavar="PNR", help="notify on any change until the journey; no PNR checks all watched")
+    parser.add_argument("-u", "--unwatch", metavar="PNR", help="stop watching PNR")
+    parser.add_argument("-j", "--json", action="store_true", help="print as JSON, for the noctalia panel")
+    parser.add_argument("--history", action="store_true", help="print past queries, most recent first (for menus)")
+    parser.add_argument("--services", action="store_true", help="print each lookup's providers as JSON")
+    parser.add_argument("--stations", nargs="?", const="", metavar="TEXT", help="print stations matching TEXT (all without it) as CODE,Name")
+    # fmt: on
+    return parser.parse_intermixed_args()
+
+
+def main():
+    """Print history, update watches, or run a lookup and show it as a table, CSV, markdown or notification."""
+    opts = parse_options()
+    if opts.history:
+        return print(HISTORY.read_text() if HISTORY.exists() else "", end="")
+    if opts.services:
+        return print(json.dumps(SERVICES))
+    if opts.stations is not None:
+        names = station_names()
+        codes = find_stations(opts.stations)[:8] if opts.stations else names
+        return print("".join(f"{code},{names[code]}\n" for code in codes), end="")
+    if opts.unwatch:
+        return (WATCH / opts.unwatch).unlink(missing_ok=True)
+    if opts.watch is not None:
+        return watch(opts.watch)
+
+    words = [word.upper() for word in opts.query]
+    # a query from a menu arrives split on spaces with its quotes kept; regroup quoted station names
+    if any('"' in word for word in words):
+        words = shlex.split(" ".join(words))
+    try:
+        service, args, query = parse_query(words)
+        result = ask(service, *args, only=opts.provider)
+    except Exception as error:  # noqa: BLE001
+        title, body = f"train {' '.join(words)}", f"Error: {error}"
+        if opts.json:
+            print(json.dumps({"error": str(error)}))
+        elif opts.notify:
+            notify(title, body)
+        else:
+            print(title, body, sep="\n", file=sys.stderr)
+        sys.exit(1)
+
+    add_history(query)
+    if opts.notify:
+        notify(result.title, as_text(result, opts.verbose))
+    elif opts.csv:
+        csv.writer(sys.stdout).writerows([result.columns, *result.rows])
+    elif opts.markdown:
+        print(as_markdown(result))
+    elif opts.json:
+        print(as_json(result, service, args))
+    else:
+        print(result.title, as_text(result, opts.verbose), sep="\n")
+
+
+if __name__ == "__main__":
+    main()

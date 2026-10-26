@@ -448,9 +448,9 @@ globalkeys = gears.table.join(
               {description = "Clipmenu", group = "Dmenu"}),
 
     -- Flameshot
-    awful.key({ modkey, "Shift" },            "p",     function () awful.util.spawn("flameshot screen -p /home/deshdeepak/Pictures") end,
+    awful.key({ modkey, "Shift" },            "p",     function () awful.util.spawn("flameshot screen -p " .. os.getenv("HOME") .. "/Pictures") end,
               {description = "Entire desktop", group = "Screenshot"}),
-    awful.key({ modkey, "Control" },            "p",     function () awful.util.spawn("flameshot gui -p /home/deshdeepak/Pictures") end,
+    awful.key({ modkey, "Control" },            "p",     function () awful.util.spawn("flameshot gui -p " .. os.getenv("HOME") .. "/Pictures") end,
               {description = "Manual", group = "Screenshot"}),
     awful.key({ modkey, "Mod1" },            "p",     function () awful.util.spawn("flameshot launcher") end,
               {description = "Capture Mode", group = "Screenshot"}),
@@ -747,8 +747,8 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 awful.spawn.with_shell("picom")
 awful.spawn.with_shell("nm-applet")
 awful.spawn.with_shell("CM_SELECTIONS='clipboard' /usr/bin/clipmenud")
-awful.spawn.with_shell("feh --randomize --bg-fill /home/deshdeepak/wallpapers")
+awful.spawn.with_shell("feh --randomize --bg-fill ~/wallpapers")
 -- awful.spawn.with_shell("bash -c \"killall -9 volumeicon\"")
 -- awful.spawn.with_shell("volumeicon")
 -- awful.spawn.with_shell("flameshot")
--- awful.spawn.with_shell("/home/deshdeepak/.config/polybar/launch.sh")
+-- awful.spawn.with_shell("~/.config/polybar/launch.sh")

@@ -5,13 +5,13 @@ return {
   event = "VeryLazy",
   cond = function()
     local _ = vim.fn.system("git rev-parse --is-inside-work-tree")
-    return vim.v.shell_error == 0
+    return vim.v.shell_error == 0 or vim.uv.fs_stat(vim.env.HOME .. "/.dotfiles") ~= nil
   end,
   -- cond = false,
-  opts = {},
   config = function()
     require("gitsigns").setup({
       sign_priority = 100,
+      worktrees = { { toplevel = vim.env.HOME, gitdir = vim.env.HOME .. "/.dotfiles" } },
       on_attach = function(bufnr)
         local gs = package.loaded.gitsigns
 
@@ -24,13 +24,13 @@ return {
         -- Navigation
         map("n", "]c", function()
           if vim.wo.diff then return "]c" end
-          vim.schedule(function() gs.next_hunk() end)
+          vim.schedule(function() gs.nav_hunk("next") end)
           return "<Ignore>"
         end, { expr = true })
 
         map("n", "[c", function()
           if vim.wo.diff then return "[c" end
-          vim.schedule(function() gs.prev_hunk() end)
+          vim.schedule(function() gs.nav_hunk("prev") end)
           return "<Ignore>"
         end, { expr = true })
 
@@ -40,7 +40,7 @@ return {
         map("v", "<leader>hs", function() gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, { desc = "Stage" })
         map("v", "<leader>hr", function() gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, { desc = "Reset" })
         map("n", "<leader>hS", gs.stage_buffer, { desc = "StageBuffer" })
-        map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "Undo" })
+        map("n", "<leader>hu", gs.stage_hunk, { desc = "Unstage" })
         map("n", "<leader>hR", gs.reset_buffer, { desc = "ResetBuffer" })
         map("n", "<leader>hp", gs.preview_hunk, { desc = "Preview" })
         map("n", "<leader>hP", gs.preview_hunk_inline, { desc = "PreviewInline" })

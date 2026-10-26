@@ -1,0 +1,31 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = ghc-libs
+Target = haskell-async
+Target = haskell-base16-bytestring
+Target = haskell-case-insensitive
+Target = haskell-cryptohash-md5
+Target = haskell-data-default-class
+Target = haskell-hashable
+Target = haskell-integer-logarithms
+Target = haskell-megaparsec
+Target = haskell-os-string
+Target = haskell-parser-combinators
+Target = haskell-primitive
+Target = haskell-protolude
+Target = haskell-scientific
+Target = haskell-selective
+Target = haskell-tomland
+Target = haskell-transformers-compat
+Target = haskell-unordered-containers
+Target = haskell-validation-selective
+Target = haskell-vector
+Target = haskell-vector-stream
+Target = haskell-x11
+
+[Action]
+Description = Triggering greenclip rebuild (Haskell ABI dependency changed)...
+When = PostTransaction
+Exec = /home/deshdeepak/.local/scripts/trigger-greenclip-rebuild

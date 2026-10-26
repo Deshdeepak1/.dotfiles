@@ -1,0 +1,25 @@
+#!/bin/bash
+# Move paths listed in ~/.config/keep back from ~.old (left by arch_install.sh).
+# Shows a checklist (all on, with sizes); rerun later for anything skipped.
+set -e
+
+old="$HOME.old"
+[[ -d "$old" ]] || { echo "Nothing to restore: $old not found" >&2; exit 1; }
+
+items=()
+while read -r p; do
+    [[ -e "$old/$p" ]] && items+=("$p" "$(du -sh "$old/$p" | cut -f1)" on)
+done < <(grep -v '^\s*\(#\|$\)' "$HOME/.config/keep")
+[[ ${#items[@]} -gt 0 ]] || { echo "Nothing left to restore"; exit 0; }
+
+selected=$(dialog --separate-output --checklist "Restore from $old" 0 0 0 "${items[@]}" \
+    3>&1 1>&2 2>&3) || exit 1
+clear
+
+while read -r p; do
+    [[ -n "$p" ]] || continue
+    rm -rf "${HOME:?}/$p"
+    mkdir -p "$(dirname "$HOME/$p")"
+    mv "$old/$p" "$HOME/$p"
+    echo "restored $p"
+done <<< "$selected"

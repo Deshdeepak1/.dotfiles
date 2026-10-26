@@ -1,0 +1,39 @@
+#!/bin/sh
+# Generic 4-way display mode picker for Hyprland, niri, or X11 (autorandr).
+# Works with whatever monitor is currently connected - no hardcoded output names.
+
+choice=$(printf 'Main only\nExternal only\nDuplicate\nExtend\n' | rofi -dmenu -p 'Display Mode')
+
+if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+    [ -z "$choice" ] && exit 0
+    hyprctl reload >/dev/null
+    hyprctl repl 'hl.monitor({ output = "eDP-1", disabled = false, mode = "preferred", position = "0x0", scale = 1 })' >/dev/null
+    ext=$(hyprctl -j monitors all | jq -r '.[] | select(.name != "eDP-1") | .name' | head -1)
+    case "$choice" in
+        "Main only")     [ -n "$ext" ] && hyprctl repl "hl.monitor({ output = \"$ext\", disabled = true })" ;;
+        "External only") [ -n "$ext" ] && hyprctl repl 'hl.monitor({ output = "eDP-1", disabled = true })' ;;
+        "Duplicate")     [ -n "$ext" ] && hyprctl repl "hl.monitor({ output = \"$ext\", mode = \"preferred\", position = \"auto\", scale = 1, mirror = \"eDP-1\" })" ;;
+    esac
+    exit 0
+fi
+
+if [ -n "$NIRI_SOCKET" ]; then
+    [ -z "$choice" ] && exit 0
+    ext=$(niri msg -j outputs | jq -r 'keys[] | select(. != "eDP-1")' | head -1)
+    [ -z "$ext" ] && exit 0
+    case "$choice" in
+        "Main only")     niri msg output eDP-1 on; niri msg output "$ext" off ;;
+        "External only") niri msg output "$ext" on; niri msg output eDP-1 off ;;
+        "Duplicate")     notify-send "display-switch" "niri has no mirroring" ;;
+        "Extend")        niri msg output eDP-1 on; niri msg output "$ext" on ;;
+    esac
+    exit 0
+fi
+
+case "$choice" in
+    "Main only")     autorandr --load main ;;
+    "External only") autorandr --load external ;;
+    "Duplicate")     autorandr --load common ;;
+    "Extend")        autorandr --load horizontal ;;
+    *) exit 0 ;;
+esac

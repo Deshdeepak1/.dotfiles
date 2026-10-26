@@ -141,13 +141,6 @@ return {
           )
         end,
       },
-      -- {
-      --   'daliusd/incr.nvim',
-      --   opts = {
-      --     incr_key = '<C-Space>', -- increment selection key
-      --     decr_key = '<BS>', -- decrement selection key
-      --   },
-      -- },
     },
     config = function()
       local nvim_ts = require("nvim-treesitter")
@@ -164,6 +157,7 @@ return {
         "yaml",
         "json",
         --[[ "toml", ]]
+        "regex",
         -- "ssh_config", --[[ "tmux", ]]
         "python",
         "kotlin",
@@ -175,6 +169,7 @@ return {
         "typescript",
         "markdown",
         "markdown_inline",
+        "latex", -- snacks.image math rendering in markdown + .tex
         -- "norg", --[[ "org", ]]
         "git_config",
         "git_rebase",

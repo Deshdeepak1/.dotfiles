@@ -1,27 +1,27 @@
 [[plugin.deps]]
 use = "yazi-rs/plugins:piper"
-rev = "e84f4fe"
-hash = "384464b6df8cb807425c521f8cd790f3"
+rev = "e0bbd20"
+hash = "d1e0499cae5f3aeb628c267616d4b682"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "e84f4fe"
-hash = "6fa6a05a81c98dd000fbca3cca6e9682"
+rev = "e0bbd20"
+hash = "17ebde15c4349f90aedbc45984b98db2"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:toggle-pane"
-rev = "e84f4fe"
-hash = "4c0260feb50ea2437380690ffc241da7"
+rev = "e0bbd20"
+hash = "5b2fbef7d1513ce38ff72623a071a5e"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:git"
-rev = "e84f4fe"
-hash = "26db011a778f261d730d4f5f8bf24b3f"
+rev = "e0bbd20"
+hash = "347cc6b190eb0c2fd60513cc7ae37412"
 
 [[plugin.deps]]
 use = "imsi32/yatline"
-rev = "c5d4b48"
-hash = "e6e98d12b1648d1894c2b560d85eeaa7"
+rev = "dc44b73"
+hash = "fa488655544e367e5439a9748d28519e"
 
 [[plugin.deps]]
 use = "imsi32/yatline-catppuccin"
@@ -35,10 +35,10 @@ hash = "8282baf02fcd6aac00ccad2276775358"
 
 [[plugin.deps]]
 use = "uhs-robert/sshfs"
-rev = "b4c7c5c"
-hash = "d1cd188c14a53d03ae4a87e6e40f7233"
+rev = "2a10f73"
+hash = "9bc5b0969bb16a9dc4b5cc0e62a25ce4"
 
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"
-rev = "9511cb0"
-hash = "7dfe41c9c3d9be76da8a844263d0bbed"
+rev = "1183892"
+hash = "ce320f877fe709b189433941aba747c4"

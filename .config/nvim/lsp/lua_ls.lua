@@ -15,7 +15,7 @@ return {
         enable = true, -- Enable semantic tokens for better syntax highlighting
       },
       diagnostics = {
-        globals = { "vim", "Snacks" },
+        globals = { "vim", "Snacks", "hl" },
         disable = { "lowercase-global" },
         severity = {
           ["unused-local"] = "Hint",

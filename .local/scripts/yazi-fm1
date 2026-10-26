@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+# org.freedesktop.FileManager1 for yazi: ShowItems opens the parent folder with the item hovered
+import signal
+import subprocess
+from gi.repository import Gio, GLib
+
+XML = """<node><interface name="org.freedesktop.FileManager1">
+<method name="ShowFolders"><arg type="as" direction="in"/><arg type="s" direction="in"/></method>
+<method name="ShowItems"><arg type="as" direction="in"/><arg type="s" direction="in"/></method>
+<method name="ShowItemProperties"><arg type="as" direction="in"/><arg type="s" direction="in"/></method>
+</interface></node>"""
+
+
+def on_call(conn, sender, path, iface, method, params, invocation):
+    uris, _ = params.unpack()
+    for uri in uris:
+        subprocess.Popen(["xdg-terminal-exec", "yazi", Gio.File.new_for_uri(uri).get_path()])
+    invocation.return_value(None)
+
+
+def on_bus(conn, name):
+    iface = Gio.DBusNodeInfo.new_for_xml(XML).interfaces[0]
+    conn.register_object("/org/freedesktop/FileManager1", iface, on_call)
+
+
+signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+loop = GLib.MainLoop()
+Gio.bus_own_name(Gio.BusType.SESSION, "org.freedesktop.FileManager1", Gio.BusNameOwnerFlags.NONE,
+                 on_bus, None, lambda *_: loop.quit())
+loop.run()

@@ -1,0 +1,18 @@
+#!/bin/bash
+# Fetch third-party mpv scripts: uosc, thumbfast, sponsorblock_minimal, ytdl-preload, reload.
+set -e
+cd "${XDG_CONFIG_HOME:-$HOME/.config}/mpv"
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+curl -fsSL https://github.com/tomasklaen/uosc/releases/latest/download/uosc.zip -o "$tmp/uosc.zip"
+rm -rf scripts/uosc
+unzip -qo "$tmp/uosc.zip"
+rm scripts/uosc/bin/ziggy-{darwin,windows.exe}
+
+curl -fsSLo scripts/thumbfast.lua https://raw.githubusercontent.com/po5/thumbfast/master/thumbfast.lua
+curl -fsSLo scripts/sponsorblock_minimal.lua \
+    https://codeberg.org/jouni/mpv_sponsorblock_minimal/raw/branch/master/sponsorblock_minimal.lua
+curl -fsSLo scripts/ytdl-preload.lua \
+    https://gist.githubusercontent.com/bitingsock/17d90e3deeb35b5f75e55adb19098f58/raw/ytdl-preload.lua
+curl -fsSLo scripts/reload.lua https://raw.githubusercontent.com/4e6/mpv-reload/master/main.lua

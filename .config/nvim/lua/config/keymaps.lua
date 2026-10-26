@@ -112,15 +112,17 @@ keymap("v", "K", ":move '<-2<CR>gv=gv", opts) -- ddkP for 1 line up
 -- My Snippets -- Port to vim and fix cp
 keymap("n", "<localleader>h", ":-1read $HOME/.config/nvim/snippets/skeleton.html<CR>3jwf>a", opts)
 keymap("n", "<localleader>c", ":-1read $HOME/.config/nvim/snippets/skeleton.c<CR>3ja<TAB>", opts)
-keymap("n", "<localleader>cc", ":-1read $HOME/.config/nvim/snippets/skeleton.cpp<CR>4ja<TAB>", opts)
-keymap("n", "<localleader>cp", ":-1read $HOME/.config/nvim/snippets/skeleton_cp.cpp<CR>5ja<TAB>", opts)
+keymap("n", "<localleader>C", ":-1read $HOME/.config/nvim/snippets/skeleton.cpp<CR>4ja<TAB>", opts)
+keymap("n", "<localleader>x", ":-1read $HOME/.config/nvim/snippets/skeleton_cp.cpp<CR>5ja<TAB>", opts)
 keymap("n", "<localleader>p", ":-1read $HOME/.config/nvim/snippets/skeleton.py<CR>o<TAB>", opts)
-keymap("n", "<localleader>pa", ":-1read $HOME/.config/nvim/snippets/skeleton_aio.py<CR>4ja<TAB>", opts)
+keymap("n", "<localleader>P", ":-1read $HOME/.config/nvim/snippets/skeleton_aio.py<CR>4ja<TAB>", opts)
 
 -- Netrw
 keymap("n", "<leader>E", ":20Lexplore!<CR>", { desc = "Netrw" }) -- Open on right side
 
-keymap("n", "gx", '<cmd>silent !xdg-open "<cfile>"<CR>', { desc = "Open" })
+keymap("n", "<leader>u", "<cmd>Undotree<CR>", { desc = "Undotree" })
+
+-- keymap("n", "gx", '<cmd>silent !xdg-open "<cfile>"<CR>', { desc = "Open" })
 keymap("n", "<leader>x", '<cmd>silent !nsxiv-url "<cfile>"<CR>', { desc = "Nsxiv" })
 
 -- Comment nvim >= 0.10

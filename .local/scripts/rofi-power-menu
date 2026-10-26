@@ -45,7 +45,13 @@ actions[lockscreen]="loginctl lock-session ${XDG_SESSION_ID-}"
 #actions[switchuser]="???"
 # actions[logout]="loginctl terminate-session ${XDG_SESSION_ID-}"
 # actions[logout]="awesome-client awesome.quit()"
-actions[logout]="qtile cmd-obj -o cmd -f shutdown"
+if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+    actions[logout]="hyprctl dispatch hl.dsp.exit()"
+elif [ -n "${NIRI_SOCKET-}" ]; then
+    actions[logout]="niri msg action quit --skip-confirmation"
+else
+    actions[logout]="qtile cmd-obj -o cmd -f shutdown"
+fi
 actions[suspend]="systemctl suspend"
 actions[hibernate]="systemctl hibernate"
 actions[reboot]="systemctl reboot"

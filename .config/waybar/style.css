@@ -1,0 +1,26 @@
+@import "/etc/xdg/waybar/style.css";
+
+* {
+    font-family: "Mononoki Nerd Font Propo";
+}
+
+#workspaces button.empty {
+    color: #808080;
+}
+
+/* workspace shown on this bar's monitor */
+#workspaces button.visible.hosting-monitor {
+    background-color: #64727D;
+    box-shadow: none;
+}
+
+/* ...and that monitor is focused */
+#workspaces button.active.hosting-monitor {
+    box-shadow: inset 0 -3px #ffffff;
+}
+
+/* workspace shown on the other monitor */
+#workspaces button.visible:not(.hosting-monitor) {
+    background-color: transparent;
+    box-shadow: inset 0 -3px #808080;
+}

@@ -6,7 +6,7 @@ return {
   dependencies = {},
   cond = function()
     local _ = vim.fn.system("git rev-parse --is-inside-work-tree")
-    return vim.v.shell_error == 0
+    return vim.v.shell_error == 0 or vim.uv.fs_stat(vim.env.HOME .. "/.dotfiles") ~= nil
   end,
   -- cond = false,
   cmd = { "Git", "G" },

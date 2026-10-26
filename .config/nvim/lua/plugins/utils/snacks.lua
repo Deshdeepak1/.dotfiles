@@ -171,6 +171,12 @@ return {
     notifier = { enabled = true, top_down = false },
     picker = {
       enabled = true,
+      config = function(opts)
+        if type(opts.finder) == "string" and opts.finder:find("^git_") and not Snacks.git.get_root(vim.uv.cwd()) then
+          opts.args = { "--git-dir=" .. vim.env.HOME .. "/.dotfiles", "--work-tree=" .. vim.env.HOME }
+          if opts.finder == "git_status" then opts.cmd_args = { "-uno" } end
+        end
+      end,
     },
     profiler = { enabled = false },
     quickfile = { enabled = false },

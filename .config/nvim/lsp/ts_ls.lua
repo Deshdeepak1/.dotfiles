@@ -2,7 +2,7 @@
 return {
   init_options = {
     settings = {
-      logLevel = "debug",
+      -- logLevel = "debug",
     },
   },
 }

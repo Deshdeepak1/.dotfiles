@@ -2,7 +2,7 @@
 	email = rkdeshdeepak1@gmail.com
 	name = Deshdeepak
 [credential]
-	helper = store
+	helper = /usr/lib/git-core/git-credential-libsecret
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
@@ -15,7 +15,18 @@
 	editor = nvim
 [diff]
 	tool = nvimdiff
+	algorithm = histogram
+	colorMoved = plain
 [merge]
 	tool = nvimdiff
+	conflictstyle = zdiff3
+[push]
+	autoSetupRemote = true
+[fetch]
+	prune = true
+[rerere]
+	enabled = true
+[branch]
+	sort = -committerdate
 [init]
 	defaultBranch = master

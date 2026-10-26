@@ -75,6 +75,11 @@ end
 
 vim.opt.whichwrap:append("l,h,<,>,[,]")
 vim.opt.shortmess:append("c")
+vim.opt.diffopt = "internal,filler,closeoff,indent-heuristic,inline:char,linematch:60,algorithm:histogram"
+
+vim.cmd.packadd("nvim.undotree")
+vim.cmd.packadd("nvim.difftool")
+require("vim._core.ui2").enable()
 
 if vim.fn.filereadable(".nvim.lua") == 0 then vim.opt.foldmethod = "expr" end
 

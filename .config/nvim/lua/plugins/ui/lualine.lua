@@ -27,7 +27,16 @@ return {
     },
     sections = {
       lualine_a = { "mode" },
-      lualine_b = { "branch", "diff" },
+      lualine_b = {
+        { "b:gitsigns_head", icon = "" },
+        {
+          "diff",
+          source = function()
+            local g = vim.b.gitsigns_status_dict
+            if g then return { added = g.added, modified = g.changed, removed = g.removed } end
+          end,
+        },
+      },
       lualine_c = { { "%=", separator = "" }, { "filename", path = 1 } },
       -- lualine_x = {'diagnostics', 'filetype', 'filesize'},
       lualine_x = { "diagnostics", "filetype" },

@@ -6,7 +6,7 @@ return {
   dependencies = {},
   cond = function()
     local _ = vim.fn.system("git rev-parse --is-inside-work-tree")
-    return vim.v.shell_error == 0
+    return vim.v.shell_error == 0 or vim.uv.fs_stat(vim.env.HOME .. "/.dotfiles") ~= nil
   end,
   -- cond = false,
   cmd = {
@@ -29,7 +29,10 @@ return {
     { "<leader>vb", "<cmd>DiffviewFileHistory<cr>", desc = "BranchHistory", silent = false },
     { "<leader>vr", "<cmd>DiffviewRefresh<cr>", desc = "Refresh", silent = false },
   },
-  opts = {
-    -- enhanced_diff_hl = true,
-  },
+  opts = function()
+    if not vim.fs.root(0, ".git") then
+      return { git_cmd = { "git", "--git-dir=" .. vim.env.HOME .. "/.dotfiles", "--work-tree=" .. vim.env.HOME } }
+    end
+    return {}
+  end,
 }

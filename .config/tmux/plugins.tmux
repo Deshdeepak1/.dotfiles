@@ -47,7 +47,7 @@ set -g @pomodoro_granularity 'on'             # Enables MM:SS (ex: 00:10) format
 ## Theme
 
 ### Catppuccin theme
-set -g @plugin 'catppuccin/tmux#v2.1.2'
+set -g @plugin 'catppuccin/tmux#v2.3.2'
 source-file ~/.config/tmux/themes/catppuccin.tmux
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)

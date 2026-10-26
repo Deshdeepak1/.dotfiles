@@ -19,7 +19,7 @@ set -g status-right ""
 set -ag status-right "#{E:@catppuccin_status_application}"
 set -agF status-right "#{E:@catppuccin_status_pomodoro_plus}"
 
-if-shell 'test (-z "$TERMUX_VERSION") -o ("$BATTERY_AVAILABLE" != "false")' {
+if-shell 'test -z "$TERMUX_VERSION" -o "$BATTERY_AVAILABLE" != "false"' {
     set -agF status-right "#{E:@catppuccin_status_battery}"
 }
 

@@ -1,9 +1,11 @@
 ---@module "lazy"
 ---@type LazySpec
+local ai = require("config.ai")
+
 return {
   {
     "zbirenbaum/copilot.lua",
-    -- cond = false,
+    cond = ai.copilot,
     cmd = "Copilot",
     event = "InsertEnter",
     opts = {
@@ -16,8 +18,8 @@ return {
     },
   },
   {
-    "giuxtaposition/blink-cmp-copilot",
-    -- cond = false,
+    "fang2hou/blink-copilot",
+    cond = ai.copilot,
     dependencies = {
       "zbirenbaum/copilot.lua",
     },
@@ -30,7 +32,7 @@ return {
             providers = {
               copilot = {
                 name = "copilot",
-                module = "blink-cmp-copilot",
+                module = "blink-copilot",
                 score_offset = 100,
                 async = true,
               },

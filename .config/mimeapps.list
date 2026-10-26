@@ -12,7 +12,7 @@ image/jpeg=nsxiv.desktop
 image/png=nsxiv.desktop
 application/pdf=org.pwmt.zathura.desktop
 x-scheme-handler/tg=userapp-64Gram Desktop-2AUSB2.desktop
-inode/directory=pcmanfm.desktop
+inode/directory=yazi.desktop
 x-scheme-handler/rdp=org.remmina.Remmina.desktop
 x-scheme-handler/spice=org.remmina.Remmina.desktop
 x-scheme-handler/vnc=org.remmina.Remmina.desktop
@@ -23,13 +23,16 @@ text/x-shellscript=nvim.desktop
 x-scheme-handler/stremio=stremio-enhanced.desktop
 x-scheme-handler/claude-cli=claude-code-url-handler.desktop
 x-scheme-handler/claude=claude.desktop
+x-scheme-handler/ton=io.github.kukuruzka165.materialgram.desktop
+x-scheme-handler/mongodb=mongodb-compass.desktop
+x-scheme-handler/mongodb+srv=mongodb-compass.desktop
 
 [Added Associations]
 text/x-install=nvim.desktop;
 text/plain=nvim.desktop;
 image/jpeg=nsxiv.desktop;feh.desktop;
 image/png=nsxiv.desktop;feh.desktop;
-inode/directory=ranger.desktop;
+inode/directory=yazi.desktop;
 application/pdf=org.pwmt.zathura.desktop;
 x-scheme-handler/tg=userapp-Telegram Desktop-HIMY30.desktop;userapp-Kotatogram Desktop-ZDE9C1.desktop;userapp-Kotatogram Desktop-OJG8K1.desktop;userapp-64Gram Desktop-2AUSB2.desktop;
 application/json=nvim.desktop;
@@ -38,5 +41,6 @@ x-scheme-handler/spice=org.remmina.Remmina.desktop;
 x-scheme-handler/vnc=org.remmina.Remmina.desktop;
 x-scheme-handler/remmina=org.remmina.Remmina.desktop;
 application/x-remmina=org.remmina.Remmina.desktop;
+x-scheme-handler/ton=io.github.kukuruzka165.materialgram.desktop;
 
 [Removed Associations]

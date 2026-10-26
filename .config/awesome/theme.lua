@@ -129,7 +129,7 @@ theme.awesome_icon = theme_assets.awesome_icon(
     theme.menu_height, theme.bg_focus, theme.fg_focus
 )
 
-theme.awesome_icon = "/home/deshdeepak/.config/awesome/arch.png"
+theme.awesome_icon = gfs.get_configuration_dir() .. "arch.png"
 
 -- Define the icon theme for application icons. If not set then the icons
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.

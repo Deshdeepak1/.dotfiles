@@ -1,17 +1,21 @@
 set fish_greeting
 set fish_cursor_unknown block
 
-set -x PATH ~/.screenlayout/  ~/.ghcup/bin ~/.config/emacs/bin ~/.local/scripts ~/.local/bin ~/.config/nsxiv/scripts $PATH
-set -xg PYTHONPATH ~/.local/mypyprogs $PYTHONPATH
+if status is-login; and status is-interactive; and not set -q PROFILESOURCED
+    exec sh -c '. ~/.profile; exec fish -l'
+end
 
 
 export EDITOR="nvim"
 export VISUAL="nvim"
 export TERMINAL="kitty"
 
-if status is-login
-    if test -z "$DISPLAY" -a "$XDG_VTNR" = 1
-        sx sh ~/.config/X11/xinitrc 2> /dev/null
+set -g fish_key_bindings fish_vi_key_bindings
+
+# tty1 login starts Hyprland
+if status is-login; and status is-interactive
+    if test -z "$WAYLAND_DISPLAY" -a "$XDG_VTNR" = 1
+        exec uwsm start hyprland.desktop
     end
 end
 
@@ -33,14 +37,14 @@ end
 
 # git config --global user.email "rkdeshdeepak1@gmail.com"
 # git config --global user.name "Deshdeepak"
-# git config --global credential.helper cache/store
+# git config --global credential.helper /usr/lib/git-core/git-credential-libsecret
 
 # Dot files management
-alias dotfiles="git --git-dir=$HOME/.dotfiles"
+alias dotfiles="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 #dotfiles remote add https://gitea.deshdeepak.xyz/deshdeepak/.dotfiles
 #dotfiles pull -u origin master
 #dotfiles config status.showUntrackedFiles no
-#dotfiles config --local credential.helper cache/store
+#dotfiles config --local credential.helper /usr/lib/git-core/git-credential-libsecret
 #git --git-dir=$HOME/.dotfiles --work-tree=$HOME config --local core.worktree $HOME
 abbr dotcommit  'dotfiles commit -m "Update $(date)"'
 abbr dotstatus  'dotfiles status'
@@ -48,12 +52,11 @@ abbr dotlog     'dotfiles log'
 abbr dotshow    'dotfiles show'
 abbr dotadd     'dotfiles add'
 abbr dotpush    'dotfiles push'
-abbr dv         "GIT_DIR=~/.dotfiles $EDITOR"
 
 # Abbreviations
-abbr    fpac    "pacman -Slq | fzf -m --preview 'cat (pacman -Si {1} | psub) (pacman -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro sudo pacman -Sy"
-abbr    fyay    "yay -Slq | fzf -m --preview 'cat (yay -Si {1} | psub) (yay -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro  yay -Sy"
-abbr    fparu   "paru -Slq | fzf -m --preview 'cat (paru -Si {1} | psub) (paru -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro  paru -Sy"
+abbr    fpac    "pacman -Slq | fzf -m --preview 'cat (pacman -Si {1} | psub) (pacman -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro sudo pacman -S"
+abbr    fyay    "yay -Slq | fzf -m --preview 'cat (yay -Si {1} | psub) (yay -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro yay -S"
+abbr    fparu   "paru -Slq | fzf -m --preview 'cat (paru -Si {1} | psub) (paru -Fl {1} | awk \"{print \$2}\" | psub)' | xargs -ro paru -S"
 abbr av ". .venv/bin/activate.fish"
 abbr ah ". ~/hvenv/bin/activate.fish"
 # abbr    fdur    "find . -iname \"*.mp4\" -exec ffprobe -v quiet -of csv=p=0 -show_entries format=duration {} \;  | paste -sd+ | xargs -I \"{}\" python -c \"t = {} ; h = t//3600; m = (t % 3600)// 60; s = t % 60; ms =(s * 1000) % 1000;  print('%d hours %d minutes %d seconds %d miliseconds' %(h, m, s, ms))\""
@@ -79,13 +82,13 @@ abbr uvp 'git push && uv build && uvpublish'
 alias ls="eza --hyperlink --icons --group-directories-first"
 alias cat="bat"
 alias tb="nc termbin.com 9999"
-alias tbc="nc termbin.com 9999 | xclip -selection c"
+alias tbc="nc termbin.com 9999 | fish_clipboard_copy"
 alias jqc="jq -C | cat"
 alias octave="octave -q"
 alias dragon="dragon-drop -T"
 alias aria2cc="aria2c -c -s 16 -x 16 -k 1M -j 32  --file-allocation none"
 alias yta="yt-dlp --downloader aria2c --downloader-args '-c -s 32 -x 16 -k 1M -j 32  --file-allocation none'"
-alias xsc="xclip -sel clipboard"
+alias xsc="fish_clipboard_copy"
 alias nsxiv="nsxiv -ab"
 alias mlrc="mlr --icsv --opprint -C --key-color darkcyan --value-color grey70 cat"
 alias sleeplogs='journalctl -n4 -u sleep.target'
@@ -95,7 +98,7 @@ export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p
 export FZF_DEFAULT_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_CTRL_T_COMMAND="fd --exclude '.git/' --hidden --type f"
 export FZF_ALT_C_COMMAND="fd --exclude '.git/' --hidden --type d"
-set -Ux FZF_DEFAULT_OPTS "--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4"
+set -gx FZF_DEFAULT_OPTS "--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4"
 
 export UV_ENV_FILE="$HOME/.uv.env"
 
@@ -285,7 +288,7 @@ if not is_empty_dir ~/.sdkman/candidates/
     # fish_add_path (find $HOME/.sdkman/candidates/*/current/bin -maxdepth 0)
 end
 
-# export MODULAR_HOME="/home/deshdeepak/.modular"
+# export MODULAR_HOME=~/.modular
 # fish_add_path ~/.modular/pkg/packages.modular.com_mojo/bin/
 
 if status is-interactive

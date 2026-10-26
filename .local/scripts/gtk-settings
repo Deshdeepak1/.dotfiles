@@ -1,0 +1,8 @@
+#!/bin/sh
+# Wayland GTK reads gsettings, not settings.ini
+schema=org.gnome.desktop.interface
+gsettings set $schema font-name 'Mononoki Nerd Font Propo 11'
+gsettings set $schema color-scheme 'prefer-dark'
+gsettings set $schema icon-theme 'Papirus-Dark'
+gsettings set $schema cursor-theme 'Bibata-Modern-Classic'
+gsettings set $schema cursor-size 24

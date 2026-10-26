@@ -18,6 +18,8 @@
 
 exec 2>/dev/null
 
+[ -n "$QR_TITLE" ] && { printf "%s" "$QR_TITLE"; exit; }
+
 filename="${1##*/}"
 
 if [ -n "$4" ]; then # image mode

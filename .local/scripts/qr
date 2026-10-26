@@ -1,0 +1,38 @@
+#!/bin/bash
+# Show a QR code for a link (argument, or clipboard if none): in the terminal,
+# or -p noctalia panel (default outside a terminal, else -m mpv), -m mpv, -n notification, -N nsxiv.
+# -w: the current Wi-Fi network (join code) instead of a link.
+mode=t
+[[ -t 1 ]] || { pgrep -x noctalia >/dev/null && mode=p || mode=m; }
+while getopts mnNpw o; do [[ $o == w ]] && wifi=1 || mode=$o; done
+shift $((OPTIND - 1))
+if [[ $wifi ]]; then
+    con=$(nmcli -t -f name,type connection show --active | sed -n 's/:802-11-wireless$//p' | head -1)
+    [[ $con ]] || { echo "qr: not on Wi-Fi" >&2; exit 1; }
+    { IFS= read -r ssid; IFS= read -r pass; } < <(nmcli -s -g 802-11-wireless.ssid,802-11-wireless-security.psk connection show "$con")
+    esc() { sed 's/[\\;,:"]/\\&/g' <<< "$1"; }
+    [[ $pass ]] && t=WPA || t=nopass
+    text="WIFI:T:$t;S:$(esc "$ssid");P:$(esc "$pass");;"
+    title=$ssid
+else
+    text=${1:-$(wl-paste -n -t text 2>/dev/null)}
+    [[ $text ]] || { echo "qr: no text to encode" >&2; exit 1; }
+    (( ${#text} <= 60 )) && title=$text
+fi
+f=$XDG_RUNTIME_DIR/qr.png
+png() { qrencode -s 12 -m 2 -o "$f" -- "$text"; }
+mpv_qr() {
+    mpv --no-config --no-osc --gpu-api=opengl --wayland-app-id=qr --title="${title:-QR}" --really-quiet \
+        --image-display-duration=inf --scale=nearest --autofit=400x400 --osd-msg1="$title" \
+        --osd-align-x=center --osd-font-size=40 ${title:+--video-margin-ratio-top=0.12 --video-margin-ratio-bottom=0.12} "$f"
+}
+
+case $mode in
+    t) [[ $title ]] && printf '%s\n' "$title"
+       [[ $TERM == xterm-kitty ]] && png && kitten icat --align=left "$f" || qrencode -t ansi256utf8 -m 2 -- "$text" ;;
+    m) png && mpv_qr ;;
+    n) png && ( [[ $(notify-send -t 0 -i "$f" -A show=Show QR "$text") == show ]] && mpv_qr ) & ;;
+    N) png && QR_TITLE=$title nsxiv $([[ $title ]] || echo -b) -g 400x400 "$f" ;;
+    p) noctalia msg panel-open local/qr:panel "$text" ;;
+    *) echo "usage: qr [-m|-n|-N|-p] [-w | text]" >&2; exit 1 ;;
+esac

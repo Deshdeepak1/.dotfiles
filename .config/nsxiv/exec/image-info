@@ -13,6 +13,8 @@ s="  " # field separator
 
 exec 2>/dev/null
 
+[ -n "$QR_TITLE" ] && { echo "$QR_TITLE"; exit; }
+
 filename=$(basename -- "$1")
 filesize=$(du -Hh -- "$1" | cut -f 1)
 geometry="${2}x${3}"
