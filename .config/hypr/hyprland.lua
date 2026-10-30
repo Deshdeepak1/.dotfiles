@@ -28,6 +28,15 @@ hl.monitor({
   scale = 1,
 })
 
+-- QEMU VM: virtio-gpu scans out only XRGB8888, so the KMS format filter leaves GL clients no alpha formats;
+-- dmabuf hardware cursor is flipped (qemu#2315); window-resize hotplugs are ignored, so pin the mode
+local vendor = io.open("/sys/class/dmi/id/sys_vendor")
+if vendor and vendor:read("l") == "QEMU" then
+  hl.config({ quirks = { skip_non_kms_dmabuf_formats = false }, cursor = { use_cpu_buffer = 1 } })
+  hl.monitor({ output = "Virtual-1", mode = "1920x1080@60", position = "auto", scale = 1 })
+end
+if vendor then vendor:close() end
+
 ---------------------
 ---- MY PROGRAMS ----
 ---------------------
@@ -227,6 +236,12 @@ hl.config({
   },
 })
 
+hl.config({
+  binds = {
+    hide_special_on_workspace_change = true,
+  },
+})
+
 ---------------
 ---- INPUT ----
 ---------------
@@ -418,11 +433,17 @@ end
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"), { description = "Toggle scratchpad" })
 hl.bind(
   mainMod .. " + SHIFT + S",
-  hl.dsp.window.move({ workspace = "special:magic" }),
+  hl.dsp.window.move({ workspace = "special:magic", follow = true }),
+  { description = "Move window to scratchpad and follow" }
+)
+hl.bind(
+  mainMod .. " + CTRL + S",
+  hl.dsp.window.move({ workspace = "special:magic", follow = false }),
   { description = "Move window to scratchpad" }
 )
-hl.bind(mainMod .. " + ALT + S", hl.dsp.workspace.toggle_special("alt"), {})
-hl.bind(mainMod .. " + CTRL + S", hl.dsp.window.move({ workspace = "special:alt" }), {})
+hl.bind(mainMod .. " + minus", hl.dsp.workspace.toggle_special("alt"), {})
+hl.bind(mainMod .. " + SHIFT + minus", hl.dsp.window.move({ workspace = "special:alt", follow = true }), {})
+hl.bind(mainMod .. " + CTRL + minus", hl.dsp.window.move({ workspace = "special:alt", follow = false }), {})
 
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }), { description = "Next workspace" })

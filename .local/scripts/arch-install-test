@@ -1,8 +1,8 @@
 #!/bin/bash
 # Test arch_install.sh in a throwaway QEMU/UEFI VM.
-# Usage: arch-install-test [install|boot|clean]
-#   install  fresh disk, boot the Arch ISO; inside the VM run:
-#            curl -o arch_install.sh http://10.0.2.2:8000/ && bash arch_install.sh
+# Usage: arch-install-test [install|run|boot|clean]
+#   install  fresh disk, boot the Arch ISO, open a terminal running "run"
+#   run      (re)run arch_install.sh in the booted ISO over SSH
 #   boot     boot the installed disk
 #   clean    delete the VM files
 #
@@ -15,7 +15,9 @@
 #    qemu-system-x86_64 -enable-kvm -cpu host -m 4G -smp 2 \
 #        -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd \
 #        -drive if=pflash,format=raw,file=OVMF_VARS.4m.fd \
-#        -device virtio-vga-gl -display gtk,gl=on \
+#        -device virtio-vga-gl -display gtk,gl=on,grab-on-hover=on -device virtio-tablet-pci \
+#        -device virtio-serial,packed=on,ioeventfd=on -device virtserialport,name=com.redhat.spice.0,chardev=vdagent \
+#        -chardev qemu-vdagent,id=vdagent,name=vdagent,clipboard=on,mouse=off \
 #        -drive file=disk.qcow2,if=virtio \
 #        -cdrom archlinux-x86_64.iso -boot d
 #    After install, rerun without -cdrom/-boot d to boot the installed system.
@@ -39,7 +41,10 @@ vm() {
     qemu-system-x86_64 -enable-kvm -cpu host -m 4G -smp 2 \
         -drive if=pflash,format=raw,readonly=on,file="$ovmf/OVMF_CODE.4m.fd" \
         -drive if=pflash,format=raw,file=OVMF_VARS.4m.fd \
-        -device virtio-vga-gl -display gtk,gl=on \
+        -device virtio-vga-gl -display gtk,gl=on,grab-on-hover=on -device virtio-tablet-pci \
+        -device virtio-serial,packed=on,ioeventfd=on -device virtserialport,name=com.redhat.spice.0,chardev=vdagent \
+        -chardev qemu-vdagent,id=vdagent,name=vdagent,clipboard=on,mouse=off \
+        -nic user,hostfwd=tcp:127.0.0.1:2222-:22 \
         -drive file=disk.qcow2,if=virtio "$@"
 }
 
@@ -47,6 +52,7 @@ case ${1:-install} in
 install)
     step "1/4 Checking Arch ISO"
     sha=$(curl -fsSL "$mirror/sha256sums.txt" | awk '$2 == "archlinux-x86_64.iso" {print $1}')
+    [[ -n $sha ]] || { echo "can't fetch checksums" >&2; exit 1; }
     if sha256sum -c --status <<<"$sha  archlinux-x86_64.iso" 2>/dev/null; then
         echo "   up to date"
     else
@@ -61,14 +67,26 @@ install)
     cp "$ovmf/OVMF_VARS.4m.fd" .
     step "3/4 Serving arch_install.sh (host 127.0.0.1 = 10.0.2.2 in the VM)"
     miniserve -i 127.0.0.1 -p 8000 "$HOME/arch_install.sh" >/dev/null &
-    trap 'kill $!' EXIT
-    step "4/4 Booting ISO; this terminal waits until the VM is closed"
+    srv=$!
+    trap 'kill $srv' EXIT
+    step "4/4 Booting ISO; in the VM run passwd, then press Enter here"
+    vm -cdrom archlinux-x86_64.iso -boot d & vmpid=$!
     printf '   %s\n' \
-        'In the VM, pick "Arch Linux install medium", then run:' \
-        '    curl -o arch_install.sh http://10.0.2.2:8000/ && bash arch_install.sh' \
-        'Target drive: /dev/vda   Release mouse/keyboard: Ctrl+Alt+G' \
+        'cgdisk /dev/vda: 1G ef00 (EFI), rest 8300 (root); Write, yes, Quit' \
+        'Installer: root vda2, home no, EFI vda1 (format), swap file 4G' \
         'When done: poweroff, then: arch-install-test boot'
-    vm -cdrom archlinux-x86_64.iso -boot d
+    read -r
+    xdg-terminal-exec "$0" run &
+    wait "$vmpid"
+    ;;
+run)
+    opts=(-p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null)
+    ssh-copy-id -i ~/.ssh/id_ed25519.pub "${opts[@]}" root@localhost
+    while :; do
+        ssh -t "${opts[@]}" root@localhost \
+            'curl -fsSo arch_install.sh http://10.0.2.2:8000/ && bash arch_install.sh' || true
+        read -rp $'\nEnter: rerun installer, Ctrl+C: close '
+    done
     ;;
 boot) step "Booting installed disk"; vm ;;
 clean) step "Removing $dir"; rm -rf "$dir" ;;

@@ -1,0 +1,4 @@
+# QEMU VM: aquamarine lacks DRM_CLIENT_CAP_CURSOR_PLANE_HOTSPOT, so atomic KMS hides virtio-gpu's cursor plane
+if [ "$(cat /sys/class/dmi/id/sys_vendor 2>/dev/null)" = QEMU ]; then
+  export AQ_NO_ATOMIC=1
+fi

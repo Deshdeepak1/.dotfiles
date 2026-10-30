@@ -1144,21 +1144,30 @@ def add_history(query):
 
 
 def watch(pnrs):
-    """Notify when a watched PNR's status changes; all watched if none given. Drop it after the journey."""
+    """Notify when a watched PNR changes; all watched if none given. Drop it after the journey."""
     WATCH.mkdir(parents=True, exist_ok=True)
-    # a file per watched PNR, holding its last seen status
+    # a file per watched PNR: its last text from each provider, and its seat statuses and chart state,
+    # which compare across providers
     for file in [WATCH / pnr for pnr in pnrs] or list(WATCH.iterdir()):
         try:
             result = ask("pnr", file.name)
         except Exception as error:  # noqa: BLE001
             print(f"{file.name}: {error}", file=sys.stderr)
             continue
-        status = as_text(result)
         if result.until < date.today():
             file.unlink(missing_ok=True)
-        elif not file.exists() or file.read_text() != status:
-            file.write_text(status)
-            notify(result.title, status)
+            continue
+        try:
+            seen = json.loads(file.read_text())
+        except (FileNotFoundError, ValueError):
+            seen = {}
+        text = as_text(result)
+        seats = [re.sub(r"[\s/]+", " ", str(row[1])) for row in result.rows]
+        status = [*seats, any("chart prepared" in note for note in result.notes)]
+        if status != seen.get("status") or seen.get(result.provider, text) != text:
+            notify(result.title, text)
+        seen |= {result.provider: text, "status": status}
+        file.write_text(json.dumps(seen))
 
 
 def parse_options():

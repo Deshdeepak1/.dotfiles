@@ -78,6 +78,7 @@ return {
         use_absolute_path = false,
         prompt_for_file_name = false,
         file_name = "%Y-%m-%d-at-%H-%M-%S",
+        verbose = false,
         drag_and_drop = {
           enabled = true,
           insert_mode = true,

@@ -1,0 +1,2 @@
+# QEMU VM: uwsm runs the vdagent outside the logind session, so skip the daemon's session check
+SPICE_VDAGENTD_EXTRA_ARGS="-X"
